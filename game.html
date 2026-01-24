@@ -33,7 +33,6 @@
   <button id="next-btn">Next Question</button>
 
   <script>
-    // Load user-created questions from localStorage
     let questions = JSON.parse(localStorage.getItem("learnifyGame") || "[]");
 
     if (questions.length === 0) {
@@ -78,8 +77,24 @@
         if (index < questions.length) {
           loadQuestion();
         } else {
-          document.body.innerHTML =
-            `<h1>🎉 Game Complete!</h1><p>Your score: ${score} / ${questions.length}</p>`;
+          // Game complete screen
+          document.body.innerHTML = `
+            <h1>🎉 Game Complete!</h1>
+            <p>Your score: ${score} / ${questions.length}</p>
+            <button id="back-lobby">Back to Lobby</button>
+            <button id="play-again">Play Again</button>
+          `;
+
+          document.getElementById("back-lobby").addEventListener("click", function() {
+            window.location.href = "join.html";
+          });
+
+          document.getElementById("play-again").addEventListener("click", function() {
+            index = 0;
+            score = 0;
+            loadQuestion();
+            location.reload(); // reset the game page
+          });
         }
       });
 
