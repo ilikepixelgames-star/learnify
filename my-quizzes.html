@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body { font-family: Arial; text-align: center; margin-top: 30px; }
-button { padding: 6px 15px; margin: 3px; cursor: pointer; }
+button { padding: 6px 12px; margin: 3px; cursor: pointer; }
 h2 { margin-top: 20px; }
 ul { list-style:none; padding:0; display:inline-block; text-align:left; }
 li { margin-bottom:5px; }
@@ -61,12 +61,12 @@ function loadQuizzes(){
       loadQuizzes();
     });
 
-    // Delete button
+    // Delete permanently button
     const del = document.createElement("button");
     del.textContent = "Delete";
     del.className = "delete";
     del.addEventListener("click", () => {
-      if (confirm(`Permanently delete "${name}"?`)) {
+      if(confirm(`Permanently delete "${name}"?`)){
         delete active[name];
         localStorage.setItem("myQuizzes", JSON.stringify(active));
         loadQuizzes();
@@ -92,12 +92,12 @@ function loadQuizzes(){
       window.location.href = "game.html";
     });
 
-    // Delete button
+    // Delete permanently button
     const del = document.createElement("button");
     del.textContent = "Delete";
     del.className = "delete";
     del.addEventListener("click", () => {
-      if (confirm(`Permanently delete "${name}" from archived quizzes?`)) {
+      if(confirm(`Permanently delete "${name}" from archived quizzes?`)){
         delete archived[name];
         localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
         loadQuizzes();
@@ -110,6 +110,7 @@ function loadQuizzes(){
   });
 }
 
+// Initial load
 loadQuizzes();
 </script>
 </body>
