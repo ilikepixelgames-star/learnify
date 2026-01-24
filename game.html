@@ -33,6 +33,7 @@
   <button id="next-btn">Next Question</button>
 
   <script>
+    // Load user-created questions from localStorage
     let questions = JSON.parse(localStorage.getItem("learnifyGame") || "[]");
 
     if (questions.length === 0) {
@@ -90,10 +91,40 @@
           });
 
           document.getElementById("play-again").addEventListener("click", function() {
+            // Reset game without reloading page
             index = 0;
             score = 0;
+            // Rebuild page elements
+            document.body.innerHTML = `
+              <h1 id="q-title"></h1>
+              <p id="q-text"></p>
+              <div id="answers"></div>
+              <p id="feedback"></p>
+              <button id="next-btn">Next Question</button>
+            `;
+            // Re-assign references
+            qTitle = document.getElementById("q-title");
+            qText = document.getElementById("q-text");
+            answersDiv = document.getElementById("answers");
+            feedback = document.getElementById("feedback");
+            nextBtn = document.getElementById("next-btn");
+
+            nextBtn.addEventListener("click", function () {
+              index++;
+              if (index < questions.length) {
+                loadQuestion();
+              } else {
+                // This will call the same end screen again
+                document.body.innerHTML = `
+                  <h1>🎉 Game Complete!</h1>
+                  <p>Your score: ${score} / ${questions.length}</p>
+                  <button id="back-lobby">Back to Lobby</button>
+                  <button id="play-again">Play Again</button>
+                `;
+              }
+            });
+
             loadQuestion();
-            location.reload(); // reset the game page
           });
         }
       });
