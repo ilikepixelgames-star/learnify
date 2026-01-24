@@ -18,106 +18,82 @@
     }
     #next-btn {
       display: none;
-      background-color: #4CAF50;
-      color: white;
     }
   </style>
 </head>
 <body>
 
-  <h1 id="question-title"></h1>
-  <p id="question-text"></p>
+  <h1 id="q-title">Question</h1>
+  <p id="q-text"></p>
 
   <div id="answers"></div>
 
   <p id="feedback"></p>
 
-  <button id="next-btn" onclick="nextQuestion()">Next Question</button>
+  <button id="next-btn">Next Question</button>
 
   <script>
-    let currentQuestion = 0;
-    let score = 0;
-
     const questions = [
       {
-        question: "What is 2 + 2?",
-        answers: [2, 3, 4, 5],
-        correct: 4
+        q: "What is 2 + 2?",
+        a: [2, 3, 4, 5],
+        c: 4
       },
       {
-        question: "What is 5 × 3?",
-        answers: [10, 15, 20, 8],
-        correct: 15
+        q: "What is 5 × 3?",
+        a: [10, 15, 20, 8],
+        c: 15
       },
       {
-        question: "What is 12 ÷ 4?",
-        answers: [2, 3, 4, 6],
-        correct: 3
-      },
-      {
-        question: "What is 9 − 5?",
-        answers: [2, 3, 4, 5],
-        correct: 4
-      },
-      {
-        question: "What is 7 × 6?",
-        answers: [36, 42, 48, 40],
-        correct: 42
-      },
-      {
-        question: "What is 20 ÷ 5?",
-        answers: [2, 3, 4, 5],
-        correct: 4
+        q: "What is 9 − 4?",
+        a: [3, 4, 5, 6],
+        c: 5
       }
     ];
 
+    let index = 0;
+    let score = 0;
+
+    const qTitle = document.getElementById("q-title");
+    const qText = document.getElementById("q-text");
+    const answersDiv = document.getElementById("answers");
+    const feedback = document.getElementById("feedback");
+    const nextBtn = document.getElementById("next-btn");
+
     function loadQuestion() {
-      const q = questions[currentQuestion];
-
-      document.getElementById("question-title").textContent =
-        "Question " + (currentQuestion + 1);
-
-      document.getElementById("question-text").textContent = q.question;
-
-      const answersDiv = document.getElementById("answers");
       answersDiv.innerHTML = "";
+      feedback.textContent = "";
+      nextBtn.style.display = "none";
 
-      q.answers.forEach(answer => {
+      const current = questions[index];
+      qTitle.textContent = "Question " + (index + 1);
+      qText.textContent = current.q;
+
+      current.a.forEach(value => {
         const btn = document.createElement("button");
-        btn.textContent = answer;
-        btn.onclick = () => checkAnswer(answer);
+        btn.textContent = value;
+        btn.addEventListener("click", function () {
+          if (value === current.c) {
+            feedback.textContent = "✅ Correct!";
+            score++;
+          } else {
+            feedback.textContent = "❌ Wrong!";
+          }
+          nextBtn.style.display = "inline-block";
+        });
         answersDiv.appendChild(btn);
       });
-
-      document.getElementById("feedback").textContent = "";
-      document.getElementById("next-btn").style.display = "none";
     }
 
-    function checkAnswer(value) {
-      const feedback = document.getElementById("feedback");
-
-      if (value === questions[currentQuestion].correct) {
-        feedback.textContent = "✅ Correct!";
-        score++;
-      } else {
-        feedback.textContent = "❌ Wrong!";
-      }
-
-      document.getElementById("next-btn").style.display = "inline-block";
-    }
-
-    function nextQuestion() {
-      currentQuestion++;
-
-      if (currentQuestion < questions.length) {
+    nextBtn.addEventListener("click", function () {
+      index++;
+      if (index < questions.length) {
         loadQuestion();
       } else {
-        document.body.innerHTML = `
-          <h1>🎉 Game Complete!</h1>
-          <p>Your score: ${score} / ${questions.length}</p>
-        `;
+        document.body.innerHTML =
+          "<h1>🎉 Finished!</h1><p>Score: " + score + " / " + questions.length + "</p>";
       }
-    }
+    });
 
     loadQuestion();
   </script>
