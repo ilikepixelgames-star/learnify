@@ -5,23 +5,10 @@
   <title>Learnify Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    #next-btn, #end-buttons {
-      display: none;
-    }
-    #end-buttons {
-      margin-top: 20px;
-    }
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    button { padding: 10px 20px; margin: 8px; font-size: 16px; cursor: pointer; }
+    #next-btn, #end-buttons { display: none; }
+    #end-buttons { margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -44,15 +31,16 @@
     // Load questions from localStorage
     let questions = JSON.parse(localStorage.getItem("learnifyGame") || "[]");
 
-    // Fallback if no questions exist
+    // Remove any invalid/empty questions
+    questions = questions.filter(q => q.q && q.answers && q.answers.length === 4);
+
+    // If no questions, show placeholder
     if (questions.length === 0) {
-      questions = [
-        {
-          q: "No questions found! Go to 'Create Your Own Questions' first.",
-          answers: ["OK"],
-          correct: 0
-        }
-      ];
+      questions = [{
+        q: "No questions found! Go to 'Create Your Own Questions'.",
+        answers: ["OK"],
+        correct: 0
+      }];
     }
 
     let index = 0;
@@ -80,20 +68,16 @@
       current.answers.forEach((ans, i) => {
         const btn = document.createElement("button");
         btn.textContent = ans;
-        btn.addEventListener("click", function () {
-          if (i === current.correct) {
-            feedback.textContent = "✅ Correct!";
-            score++;
-          } else {
-            feedback.textContent = "❌ Wrong!";
-          }
+        btn.addEventListener("click", () => {
+          if (i === current.correct) score++;
+          feedback.textContent = (i === current.correct) ? "✅ Correct!" : "❌ Wrong!";
           nextBtn.style.display = "inline-block";
         });
         answersDiv.appendChild(btn);
       });
     }
 
-    nextBtn.addEventListener("click", function () {
+    nextBtn.addEventListener("click", () => {
       index++;
       if (index < questions.length) {
         loadQuestion();
@@ -107,15 +91,8 @@
       }
     });
 
-    backLobbyBtn.addEventListener("click", function() {
-      window.location.href = "lobby.html";
-    });
-
-    playAgainBtn.addEventListener("click", function() {
-      index = 0;
-      score = 0;
-      loadQuestion();
-    });
+    backLobbyBtn.addEventListener("click", () => window.location.href = "lobby.html");
+    playAgainBtn.addEventListener("click", () => { index = 0; score = 0; loadQuestion(); });
 
     loadQuestion();
   </script>
