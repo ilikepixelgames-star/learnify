@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Lobby - Learnify</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Game Lobby</h1>
+  <p>Your game code is:</p>
+  <h2 id="code"></h2>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    document.getElementById('code').textContent = code || 'No code found';
+  </script>
+</body>
+</html>
