@@ -21,7 +21,7 @@
     button {
       padding: 10px 20px;
       font-size: 16px;
-      margin-top: 20px;
+      margin: 10px;
       cursor: pointer;
     }
     button:disabled {
@@ -33,23 +33,28 @@
 <body>
   <h1>Game Lobby</h1>
   <p>Your game code is: <strong id="code"></strong></p>
+  
   <h3>Players:</h3>
   <ul id="player-list">
     <li>You</li>
   </ul>
+  
   <p id="status">Waiting for players...</p>
+  
   <button id="start-btn" disabled>Start Game</button>
+  <button id="create-btn">Create Your Own Questions</button>
 
   <script>
-    // Get the code from the URL
+    // Display game code from URL
     const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    document.getElementById('code').textContent = code || 'No code';
+    const code = params.get('code') || 'ABC123';
+    document.getElementById('code').textContent = code;
 
     const fakePlayers = ["Alice", "Bob", "Charlie", "Dana"];
     const playerList = document.getElementById('player-list');
     const status = document.getElementById('status');
     const startBtn = document.getElementById('start-btn');
+    const createBtn = document.getElementById('create-btn');
 
     // Add fake players one by one
     let index = 0;
@@ -66,9 +71,14 @@
       }
     }, 1000);
 
-    // Start game button — redirects to game.html
+    // Start game button
     startBtn.addEventListener('click', () => {
       window.location.href = 'game.html?code=' + encodeURIComponent(code);
+    });
+
+    // Create your own questions button
+    createBtn.addEventListener('click', () => {
+      window.location.href = 'create.html';
     });
   </script>
 </body>
