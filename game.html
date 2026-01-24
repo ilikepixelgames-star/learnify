@@ -25,15 +25,10 @@
 </head>
 <body>
 
-  <h1 id="question-title">Question 1</h1>
-  <p id="question-text">What is 2 + 2?</p>
+  <h1 id="question-title"></h1>
+  <p id="question-text"></p>
 
-  <div id="answers">
-    <button onclick="checkAnswer(2)">2</button>
-    <button onclick="checkAnswer(3)">3</button>
-    <button onclick="checkAnswer(4)">4</button>
-    <button onclick="checkAnswer(5)">5</button>
-  </div>
+  <div id="answers"></div>
 
   <p id="feedback"></p>
 
@@ -41,6 +36,7 @@
 
   <script>
     let currentQuestion = 0;
+    let score = 0;
 
     const questions = [
       {
@@ -50,15 +46,37 @@
       },
       {
         question: "What is 5 × 3?",
-        answers: [8, 10, 15, 20],
+        answers: [10, 15, 20, 8],
         correct: 15
+      },
+      {
+        question: "What is 12 ÷ 4?",
+        answers: [2, 3, 4, 6],
+        correct: 3
+      },
+      {
+        question: "What is 9 − 5?",
+        answers: [2, 3, 4, 5],
+        correct: 4
+      },
+      {
+        question: "What is 7 × 6?",
+        answers: [36, 42, 48, 40],
+        correct: 42
+      },
+      {
+        question: "What is 20 ÷ 5?",
+        answers: [2, 3, 4, 5],
+        correct: 4
       }
     ];
 
     function loadQuestion() {
       const q = questions[currentQuestion];
+
       document.getElementById("question-title").textContent =
         "Question " + (currentQuestion + 1);
+
       document.getElementById("question-text").textContent = q.question;
 
       const answersDiv = document.getElementById("answers");
@@ -77,20 +95,27 @@
 
     function checkAnswer(value) {
       const feedback = document.getElementById("feedback");
+
       if (value === questions[currentQuestion].correct) {
         feedback.textContent = "✅ Correct!";
+        score++;
       } else {
         feedback.textContent = "❌ Wrong!";
       }
+
       document.getElementById("next-btn").style.display = "inline-block";
     }
 
     function nextQuestion() {
       currentQuestion++;
+
       if (currentQuestion < questions.length) {
         loadQuestion();
       } else {
-        document.body.innerHTML = "<h1>🎉 Game Complete!</h1><p>Nice job!</p>";
+        document.body.innerHTML = `
+          <h1>🎉 Game Complete!</h1>
+          <p>Your score: ${score} / ${questions.length}</p>
+        `;
       }
     }
 
