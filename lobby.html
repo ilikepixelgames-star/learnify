@@ -10,17 +10,66 @@
       font-family: Arial, sans-serif;
       margin-top: 50px;
     }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      font-size: 18px;
+      margin: 5px 0;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
   <h1>Game Lobby</h1>
-  <p>Your game code is:</p>
-  <h2 id="code"></h2>
+  <p>Your game code is: <strong id="code"></strong></p>
+  <h3>Players:</h3>
+  <ul id="player-list">
+    <li>You</li>
+  </ul>
+  <p id="status">Waiting for players...</p>
+  <button id="start-btn" disabled>Start Game</button>
 
   <script>
+    // Get the code from the URL
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
-    document.getElementById('code').textContent = code || 'No code found';
+    document.getElementById('code').textContent = code || 'No code';
+
+    const fakePlayers = ["Alice", "Bob", "Charlie", "Dana"];
+    const playerList = document.getElementById('player-list');
+    const status = document.getElementById('status');
+    const startBtn = document.getElementById('start-btn');
+
+    // Add fake players one by one
+    let index = 0;
+    const interval = setInterval(() => {
+      if (index < fakePlayers.length) {
+        const li = document.createElement('li');
+        li.textContent = fakePlayers[index];
+        playerList.appendChild(li);
+        index++;
+      } else {
+        clearInterval(interval);
+        status.textContent = "All players joined!";
+        startBtn.disabled = false;
+      }
+    }, 1000);
+
+    // Start game button
+    startBtn.addEventListener('click', () => {
+      alert("The game would start now! (Demo)");
+    });
   </script>
 </body>
 </html>
