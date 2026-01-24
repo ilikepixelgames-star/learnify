@@ -4,10 +4,48 @@
   <meta charset="UTF-8">
   <title>Join Game - Learnify</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin-top: 50px;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      width: 200px;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body style="text-align:center; font-family:Arial;">
+<body>
   <h1>Join a Learnify Game</h1>
-  <input type="text" placeholder="Enter game code" id="gameCode">
-  <button onclick="alert('Game joining not set up yet!')">Join</button>
+
+  <form id="join-form">
+    <input type="text" placeholder="Enter game code" id="game-code" required>
+    <button type="submit">Join</button>
+  </form>
+
+  <script>
+    const joinForm = document.getElementById('join-form');
+    const codeInput = document.getElementById('game-code');
+
+    joinForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // stops page from reloading
+      const code = codeInput.value.trim();
+
+      if (code) {
+        // redirect to lobby.html with the entered code
+        window.location.href = 'lobby.html?code=' + encodeURIComponent(code);
+      } else {
+        alert('Please enter a code!');
+      }
+    });
+  </script>
 </body>
 </html>
