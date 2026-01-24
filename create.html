@@ -130,7 +130,7 @@ archiveBtn.addEventListener("click", () => {
   alert(`Quiz "${name}" archived!`);
 });
 
-// Delete quiz
+// Delete quiz permanently
 deleteBtn.addEventListener("click", () => {
   if(questions.length===0){ alert("No quiz to delete!"); return; }
   if(confirm("Permanently delete the current quiz?")){
