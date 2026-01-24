@@ -152,6 +152,7 @@ deleteBtn.addEventListener("click", () => {
 // Play current quiz
 playBtn.addEventListener("click", () => {
   if(questions.length===0){ alert("Add at least one question!"); return; }
+  sessionStorage.setItem("currentQuiz", JSON.stringify(questions));
   window.location.href="game.html";
 });
 
