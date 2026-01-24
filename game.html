@@ -16,11 +16,10 @@
       font-size: 16px;
       cursor: pointer;
     }
-    #next-btn {
+    #next-btn, #end-buttons {
       display: none;
     }
     #end-buttons {
-      display: none;
       margin-top: 20px;
     }
   </style>
@@ -42,76 +41,92 @@
   </div>
 
   <script>
-    let questions = JSON.parse(localStorage.getItem("learnifyGame") || "[]");
+    const questions = [
+      {
+        q: "Who has the most home runs in the AL in MLB?",
+        answers: ["Aaron Judge", "Mike Trout", "Shohei Ohtani", "Jose Abreu"],
+        correct: 0
+      },
+      {
+        q: "What color is a baseball?",
+        answers: ["Red or White", "Blue", "Yellow", "Green"],
+        correct: 0
+      },
+      {
+        q: "Who had the most walks in the 2023 MLB season?",
+        answers: ["Juan Soto", "Mike Trout", "Aaron Judge", "Mookie Betts"],
+        correct: 0
+      },
+      {
+        q: "What team is Bobby Witt Jr. on?",
+        answers: ["Kansas City Royals", "New York Yankees", "Los Angeles Dodgers", "Chicago White Sox"],
+        correct: 0
+      }
+    ];
 
-    if (questions.length === 0) {
-      document.body.innerHTML = "<h1>No questions found!</h1><p>Go to create.html to add questions first.</p>";
-    } else {
-      let index = 0;
-      let score = 0;
+    let index = 0;
+    let score = 0;
 
-      const qTitle = document.getElementById("q-title");
-      const qText = document.getElementById("q-text");
-      const answersDiv = document.getElementById("answers");
-      const feedback = document.getElementById("feedback");
-      const nextBtn = document.getElementById("next-btn");
-      const endButtons = document.getElementById("end-buttons");
-      const backLobbyBtn = document.getElementById("back-lobby");
-      const playAgainBtn = document.getElementById("play-again");
+    const qTitle = document.getElementById("q-title");
+    const qText = document.getElementById("q-text");
+    const answersDiv = document.getElementById("answers");
+    const feedback = document.getElementById("feedback");
+    const nextBtn = document.getElementById("next-btn");
+    const endButtons = document.getElementById("end-buttons");
+    const backLobbyBtn = document.getElementById("back-lobby");
+    const playAgainBtn = document.getElementById("play-again");
 
-      function loadQuestion() {
-        const current = questions[index];
-        qTitle.textContent = "Question " + (index + 1);
-        qText.textContent = current.q;
+    function loadQuestion() {
+      const current = questions[index];
+      qTitle.textContent = "Question " + (index + 1);
+      qText.textContent = current.q;
 
+      answersDiv.innerHTML = "";
+      feedback.textContent = "";
+      nextBtn.style.display = "none";
+      endButtons.style.display = "none";
+
+      current.answers.forEach((ans, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = ans;
+        btn.addEventListener("click", function () {
+          if (i === current.correct) {
+            feedback.textContent = "✅ Correct!";
+            score++;
+          } else {
+            feedback.textContent = "❌ Wrong!";
+          }
+          nextBtn.style.display = "inline-block";
+        });
+        answersDiv.appendChild(btn);
+      });
+    }
+
+    nextBtn.addEventListener("click", function () {
+      index++;
+      if (index < questions.length) {
+        loadQuestion();
+      } else {
+        qTitle.textContent = "🎉 Game Complete!";
+        qText.textContent = "Your score: " + score + " / " + questions.length;
         answersDiv.innerHTML = "";
         feedback.textContent = "";
         nextBtn.style.display = "none";
-        endButtons.style.display = "none";
-
-        current.answers.forEach((ans, i) => {
-          const btn = document.createElement("button");
-          btn.textContent = ans;
-          btn.addEventListener("click", function () {
-            if (i === current.correct) {
-              feedback.textContent = "✅ Correct!";
-              score++;
-            } else {
-              feedback.textContent = "❌ Wrong!";
-            }
-            nextBtn.style.display = "inline-block";
-          });
-          answersDiv.appendChild(btn);
-        });
+        endButtons.style.display = "block";
       }
+    });
 
-      nextBtn.addEventListener("click", function () {
-        index++;
-        if (index < questions.length) {
-          loadQuestion();
-        } else {
-          // End screen
-          qTitle.textContent = "🎉 Game Complete!";
-          qText.textContent = "Your score: " + score + " / " + questions.length;
-          answersDiv.innerHTML = "";
-          feedback.textContent = "";
-          nextBtn.style.display = "none";
-          endButtons.style.display = "block";
-        }
-      });
+    backLobbyBtn.addEventListener("click", function() {
+      window.location.href = "join.html";
+    });
 
-      backLobbyBtn.addEventListener("click", function() {
-        window.location.href = "join.html";
-      });
-
-      playAgainBtn.addEventListener("click", function() {
-        index = 0;
-        score = 0;
-        loadQuestion();
-      });
-
+    playAgainBtn.addEventListener("click", function() {
+      index = 0;
+      score = 0;
       loadQuestion();
-    }
+    });
+
+    loadQuestion();
   </script>
 
 </body>
