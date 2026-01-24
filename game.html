@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Learnify Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin-top: 50px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Question 1</h1>
+  <p>What is 2 + 2?</p>
+  <button onclick="checkAnswer(this, 4)">2</button>
+  <button onclick="checkAnswer(this, 4)">3</button>
+  <button onclick="checkAnswer(this, 4)">4</button>
+  <button onclick="checkAnswer(this, 4)">5</button>
+
+  <p id="feedback"></p>
+
+  <script>
+    function checkAnswer(btn, correct) {
+      const value = parseInt(btn.textContent);
+      const feedback = document.getElementById('feedback');
+      if(value === correct){
+        feedback.textContent = "✅ Correct!";
+      } else {
+        feedback.textContent = "❌ Wrong!";
+      }
+    }
+  </script>
+</body>
+</html>
