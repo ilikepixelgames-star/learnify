@@ -24,12 +24,12 @@
 
   <button id="add-btn">Add Question</button>
   <button id="play-btn">Play My Game</button>
+  <button id="reset-btn" style="background-color: red; color: white;">Reset Questions</button>
 
   <h2>Questions Added:</h2>
   <ul id="questions-list"></ul>
 
   <script>
-    // Load existing questions from localStorage
     let questions = JSON.parse(localStorage.getItem("learnifyGame") || "[]");
 
     const qInput = document.getElementById("question");
@@ -40,9 +40,9 @@
     const correctInput = document.getElementById("correct");
     const addBtn = document.getElementById("add-btn");
     const playBtn = document.getElementById("play-btn");
+    const resetBtn = document.getElementById("reset-btn");
     const list = document.getElementById("questions-list");
 
-    // Show current questions in list
     function updateList() {
       list.innerHTML = "";
       questions.forEach((q, i) => {
@@ -60,7 +60,6 @@
       const a4 = a4Input.value.trim();
       const correct = parseInt(correctInput.value) - 1;
 
-      // Only add question if all fields are valid
       if (!q || !a1 || !a2 || !a3 || !a4 || isNaN(correct) || correct < 0 || correct > 3) {
         alert("Please fill all fields correctly!");
         return;
@@ -70,21 +69,21 @@
       localStorage.setItem("learnifyGame", JSON.stringify(questions));
       updateList();
 
-      // Clear inputs
-      qInput.value = "";
-      a1Input.value = "";
-      a2Input.value = "";
-      a3Input.value = "";
-      a4Input.value = "";
-      correctInput.value = "";
+      qInput.value = a1Input.value = a2Input.value = a3Input.value = a4Input.value = correctInput.value = "";
     });
 
     playBtn.addEventListener("click", () => {
-      if (questions.length === 0) {
-        alert("Add at least one question first!");
-        return;
-      }
+      if (questions.length === 0) { alert("Add at least one question first!"); return; }
       window.location.href = "game.html";
+    });
+
+    // Reset button clears everything
+    resetBtn.addEventListener("click", () => {
+      if (confirm("Are you sure you want to delete all questions?")) {
+        questions = [];
+        localStorage.removeItem("learnifyGame");
+        updateList();
+      }
     });
 
     updateList();
