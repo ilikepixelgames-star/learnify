@@ -19,6 +19,10 @@
     #next-btn {
       display: none;
     }
+    #end-buttons {
+      display: none;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -32,8 +36,12 @@
 
   <button id="next-btn">Next Question</button>
 
+  <div id="end-buttons">
+    <button id="back-lobby">Back to Lobby</button>
+    <button id="play-again">Play Again</button>
+  </div>
+
   <script>
-    // Load user-created questions from localStorage
     let questions = JSON.parse(localStorage.getItem("learnifyGame") || "[]");
 
     if (questions.length === 0) {
@@ -47,6 +55,9 @@
       const answersDiv = document.getElementById("answers");
       const feedback = document.getElementById("feedback");
       const nextBtn = document.getElementById("next-btn");
+      const endButtons = document.getElementById("end-buttons");
+      const backLobbyBtn = document.getElementById("back-lobby");
+      const playAgainBtn = document.getElementById("play-again");
 
       function loadQuestion() {
         const current = questions[index];
@@ -56,6 +67,7 @@
         answersDiv.innerHTML = "";
         feedback.textContent = "";
         nextBtn.style.display = "none";
+        endButtons.style.display = "none";
 
         current.answers.forEach((ans, i) => {
           const btn = document.createElement("button");
@@ -78,55 +90,24 @@
         if (index < questions.length) {
           loadQuestion();
         } else {
-          // Game complete screen
-          document.body.innerHTML = `
-            <h1>🎉 Game Complete!</h1>
-            <p>Your score: ${score} / ${questions.length}</p>
-            <button id="back-lobby">Back to Lobby</button>
-            <button id="play-again">Play Again</button>
-          `;
-
-          document.getElementById("back-lobby").addEventListener("click", function() {
-            window.location.href = "join.html";
-          });
-
-          document.getElementById("play-again").addEventListener("click", function() {
-            // Reset game without reloading page
-            index = 0;
-            score = 0;
-            // Rebuild page elements
-            document.body.innerHTML = `
-              <h1 id="q-title"></h1>
-              <p id="q-text"></p>
-              <div id="answers"></div>
-              <p id="feedback"></p>
-              <button id="next-btn">Next Question</button>
-            `;
-            // Re-assign references
-            qTitle = document.getElementById("q-title");
-            qText = document.getElementById("q-text");
-            answersDiv = document.getElementById("answers");
-            feedback = document.getElementById("feedback");
-            nextBtn = document.getElementById("next-btn");
-
-            nextBtn.addEventListener("click", function () {
-              index++;
-              if (index < questions.length) {
-                loadQuestion();
-              } else {
-                // This will call the same end screen again
-                document.body.innerHTML = `
-                  <h1>🎉 Game Complete!</h1>
-                  <p>Your score: ${score} / ${questions.length}</p>
-                  <button id="back-lobby">Back to Lobby</button>
-                  <button id="play-again">Play Again</button>
-                `;
-              }
-            });
-
-            loadQuestion();
-          });
+          // End screen
+          qTitle.textContent = "🎉 Game Complete!";
+          qText.textContent = "Your score: " + score + " / " + questions.length;
+          answersDiv.innerHTML = "";
+          feedback.textContent = "";
+          nextBtn.style.display = "none";
+          endButtons.style.display = "block";
         }
+      });
+
+      backLobbyBtn.addEventListener("click", function() {
+        window.location.href = "join.html";
+      });
+
+      playAgainBtn.addEventListener("click", function() {
+        index = 0;
+        score = 0;
+        loadQuestion();
       });
 
       loadQuestion();
