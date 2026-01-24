@@ -41,28 +41,19 @@
   </div>
 
   <script>
-    const questions = [
-      {
-        q: "Who has the most home runs in the AL in MLB?",
-        answers: ["Aaron Judge", "Mike Trout", "Shohei Ohtani", "Jose Abreu"],
-        correct: 0
-      },
-      {
-        q: "What color is a baseball?",
-        answers: ["Red or White", "Blue", "Yellow", "Green"],
-        correct: 0
-      },
-      {
-        q: "Who had the most walks in the 2023 MLB season?",
-        answers: ["Juan Soto", "Mike Trout", "Aaron Judge", "Mookie Betts"],
-        correct: 0
-      },
-      {
-        q: "What team is Bobby Witt Jr. on?",
-        answers: ["Kansas City Royals", "New York Yankees", "Los Angeles Dodgers", "Chicago White Sox"],
-        correct: 0
-      }
-    ];
+    // Load questions from localStorage
+    let questions = JSON.parse(localStorage.getItem("learnifyGame") || "[]");
+
+    // Fallback if no questions exist
+    if (questions.length === 0) {
+      questions = [
+        {
+          q: "No questions found! Go to 'Create Your Own Questions' first.",
+          answers: ["OK"],
+          correct: 0
+        }
+      ];
+    }
 
     let index = 0;
     let score = 0;
@@ -117,7 +108,7 @@
     });
 
     backLobbyBtn.addEventListener("click", function() {
-      window.location.href = "join.html";
+      window.location.href = "lobby.html";
     });
 
     playAgainBtn.addEventListener("click", function() {
