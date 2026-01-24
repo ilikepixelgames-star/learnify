@@ -11,6 +11,7 @@
     li { margin-bottom: 5px; }
     button.archive { background-color: orange; color: white; }
     button.delete { background-color: red; color: white; }
+    .button-row { margin-top: 15px; }
   </style>
 </head>
 <body>
@@ -18,6 +19,7 @@
 <h1>Create Your Own Quiz</h1>
 
 <input type="text" id="quiz-name" placeholder="Quiz Name"><br>
+
 <input type="text" id="question" placeholder="Question"><br>
 <input type="text" id="answer1" placeholder="Answer 1">
 <input type="text" id="answer2" placeholder="Answer 2">
@@ -25,13 +27,21 @@
 <input type="text" id="answer4" placeholder="Answer 4"><br>
 <input type="number" id="correct" placeholder="Correct answer (1-4)" min="1" max="4"><br>
 
-<button id="add-btn">Add Question</button>
-<button id="save-btn">Save Quiz</button>
-<button id="play-btn">Play Current Quiz</button>
-<button id="archive-btn" class="archive">Archive Current Quiz</button>
-<button id="delete-btn" class="delete">Delete Current Quiz</button>
-<button id="my-quizzes-btn">My Quizzes</button>
-<button id="back-lobby-btn">Back to Lobby</button>
+<div class="button-row">
+  <button id="add-btn">Add Question</button>
+  <button id="save-btn">Save Quiz</button>
+  <button id="play-btn">Play Current Quiz</button>
+</div>
+
+<div class="button-row">
+  <button id="archive-btn" class="archive">Archive Current Quiz</button>
+  <button id="delete-btn" class="delete">Delete Current Quiz</button>
+</div>
+
+<div class="button-row">
+  <button id="my-quizzes-btn">My Quizzes</button>
+  <button id="back-lobby-btn">Back to Lobby</button>
+</div>
 
 <h2>Questions Added:</h2>
 <ul id="questions-list"></ul>
