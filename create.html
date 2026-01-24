@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Game - Learnify</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 40px;
+    }
+    input {
+      padding: 8px;
+      margin: 5px;
+      width: 250px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .question-box {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin: 15px auto;
+      width: 320px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Create Your Game</h1>
+
+  <input id="question" placeholder="Question"><br>
+  <input id="a1" placeholder="Answer 1"><br>
+  <input id="a2" placeholder="Answer 2"><br>
+  <input id="a3" placeholder="Answer 3"><br>
+  <input id="a4" placeholder="Answer 4"><br>
+  <input id="correct" placeholder="Correct answer (1–4)"><br>
+
+  <button onclick="addQuestion()">Add Question</button>
+  <button onclick="playGame()">Play My Game</button>
+
+  <h3>Questions Added:</h3>
+  <div id="list"></div>
+
+  <script>
+    let questions = [];
+
+    function addQuestion() {
+      const q = document.getElementById("question").value;
+      const answers = [
+        document.getElementById("a1").value,
+        document.getElementById("a2").value,
+        document.getElementById("a3").value,
+        document.getElementById("a4").value
+      ];
+      const correct = parseInt(document.getElementById("correct").value) - 1;
+
+      if (!q || answers.includes("") || correct < 0 || correct > 3) {
+        alert("Please fill everything correctly");
+        return;
+      }
+
+      questions.push({ q, answers, correct });
+      localStorage.setItem("learnifyGame", JSON.stringify(questions));
+
+      document.getElementById("list").innerHTML +=
+        `<div class="question-box">${q}</div>`;
+
+      document.getElementById("question").value = "";
+      document.getElementById("a1").value = "";
+      document.getElementById("a2").value = "";
+      document.getElementById("a3").value = "";
+      document.getElementById("a4").value = "";
+      document.getElementById("correct").value = "";
+    }
+
+    function playGame() {
+      if (questions.length === 0) {
+        alert("Add at least one question!");
+        return;
+      }
+      window.location.href = "game.html";
+    }
+  </script>
+
+</body>
+</html>
