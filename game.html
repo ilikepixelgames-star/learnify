@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      text-align: center;
       font-family: Arial, sans-serif;
+      text-align: center;
       margin-top: 50px;
     }
     button {
@@ -23,7 +23,7 @@
 </head>
 <body>
 
-  <h1 id="q-title">Question</h1>
+  <h1 id="q-title"></h1>
   <p id="q-text"></p>
 
   <div id="answers"></div>
@@ -33,69 +33,58 @@
   <button id="next-btn">Next Question</button>
 
   <script>
-    const questions = [
-      {
-        q: "What is 2 + 2?",
-        a: [2, 3, 4, 5],
-        c: 4
-      },
-      {
-        q: "What is 5 × 3?",
-        a: [10, 15, 20, 8],
-        c: 15
-      },
-      {
-        q: "What is 9 − 4?",
-        a: [3, 4, 5, 6],
-        c: 5
-      }
-    ];
+    // Load user-created questions from localStorage
+    let questions = JSON.parse(localStorage.getItem("learnifyGame") || "[]");
 
-    let index = 0;
-    let score = 0;
+    if (questions.length === 0) {
+      document.body.innerHTML = "<h1>No questions found!</h1><p>Go to create.html to add questions first.</p>";
+    } else {
+      let index = 0;
+      let score = 0;
 
-    const qTitle = document.getElementById("q-title");
-    const qText = document.getElementById("q-text");
-    const answersDiv = document.getElementById("answers");
-    const feedback = document.getElementById("feedback");
-    const nextBtn = document.getElementById("next-btn");
+      const qTitle = document.getElementById("q-title");
+      const qText = document.getElementById("q-text");
+      const answersDiv = document.getElementById("answers");
+      const feedback = document.getElementById("feedback");
+      const nextBtn = document.getElementById("next-btn");
 
-    function loadQuestion() {
-      answersDiv.innerHTML = "";
-      feedback.textContent = "";
-      nextBtn.style.display = "none";
+      function loadQuestion() {
+        const current = questions[index];
+        qTitle.textContent = "Question " + (index + 1);
+        qText.textContent = current.q;
 
-      const current = questions[index];
-      qTitle.textContent = "Question " + (index + 1);
-      qText.textContent = current.q;
+        answersDiv.innerHTML = "";
+        feedback.textContent = "";
+        nextBtn.style.display = "none";
 
-      current.a.forEach(value => {
-        const btn = document.createElement("button");
-        btn.textContent = value;
-        btn.addEventListener("click", function () {
-          if (value === current.c) {
-            feedback.textContent = "✅ Correct!";
-            score++;
-          } else {
-            feedback.textContent = "❌ Wrong!";
-          }
-          nextBtn.style.display = "inline-block";
+        current.answers.forEach((ans, i) => {
+          const btn = document.createElement("button");
+          btn.textContent = ans;
+          btn.addEventListener("click", function () {
+            if (i === current.correct) {
+              feedback.textContent = "✅ Correct!";
+              score++;
+            } else {
+              feedback.textContent = "❌ Wrong!";
+            }
+            nextBtn.style.display = "inline-block";
+          });
+          answersDiv.appendChild(btn);
         });
-        answersDiv.appendChild(btn);
-      });
-    }
-
-    nextBtn.addEventListener("click", function () {
-      index++;
-      if (index < questions.length) {
-        loadQuestion();
-      } else {
-        document.body.innerHTML =
-          "<h1>🎉 Finished!</h1><p>Score: " + score + " / " + questions.length + "</p>";
       }
-    });
 
-    loadQuestion();
+      nextBtn.addEventListener("click", function () {
+        index++;
+        if (index < questions.length) {
+          loadQuestion();
+        } else {
+          document.body.innerHTML =
+            `<h1>🎉 Game Complete!</h1><p>Your score: ${score} / ${questions.length}</p>`;
+        }
+      });
+
+      loadQuestion();
+    }
   </script>
 
 </body>
