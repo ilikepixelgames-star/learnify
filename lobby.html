@@ -66,9 +66,9 @@
       }
     }, 1000);
 
-    // Start game button
+    // Start game button — redirects to game.html
     startBtn.addEventListener('click', () => {
-      alert("The game would start now! (Demo)");
+      window.location.href = 'game.html?code=' + encodeURIComponent(code);
     });
   </script>
 </body>
