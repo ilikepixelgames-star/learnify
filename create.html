@@ -5,35 +5,20 @@
   <title>Create Your Own Questions</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    input, button {
-      padding: 8px;
-      margin: 5px;
-      font-size: 16px;
-    }
-    #questions-list {
-      margin-top: 20px;
-      text-align: left;
-      display: inline-block;
-    }
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    input, button { padding: 8px; margin: 5px; font-size: 16px; }
+    #questions-list { margin-top: 20px; text-align: left; display: inline-block; }
     li { margin-bottom: 5px; }
   </style>
 </head>
 <body>
-
   <h1>Create Your Own Questions</h1>
-
   <input type="text" id="question" placeholder="Question"><br>
   <input type="text" id="answer1" placeholder="Answer 1">
   <input type="text" id="answer2" placeholder="Answer 2">
   <input type="text" id="answer3" placeholder="Answer 3">
   <input type="text" id="answer4" placeholder="Answer 4"><br>
   <input type="number" id="correct" placeholder="Correct answer (1-4)" min="1" max="4"><br>
-
   <button id="add-btn">Add Question</button>
   <button id="play-btn">Play My Game</button>
 
@@ -41,9 +26,7 @@
   <ul id="questions-list"></ul>
 
   <script>
-    // Load existing questions from localStorage
     let questions = JSON.parse(localStorage.getItem("learnifyGame") || "[]");
-
     const qInput = document.getElementById("question");
     const a1Input = document.getElementById("answer1");
     const a2Input = document.getElementById("answer2");
@@ -70,40 +53,22 @@
       const a3 = a3Input.value.trim();
       const a4 = a4Input.value.trim();
       const correct = parseInt(correctInput.value) - 1;
-
       if (!q || !a1 || !a2 || !a3 || !a4 || isNaN(correct) || correct < 0 || correct > 3) {
         alert("Please fill all fields correctly!");
         return;
       }
-
-      questions.push({
-        q,
-        answers: [a1,a2,a3,a4],
-        correct
-      });
-
+      questions.push({ q, answers: [a1,a2,a3,a4], correct });
       localStorage.setItem("learnifyGame", JSON.stringify(questions));
       updateList();
-
-      // Clear inputs
-      qInput.value = "";
-      a1Input.value = "";
-      a2Input.value = "";
-      a3Input.value = "";
-      a4Input.value = "";
-      correctInput.value = "";
+      qInput.value = a1Input.value = a2Input.value = a3Input.value = a4Input.value = correctInput.value = "";
     });
 
     playBtn.addEventListener("click", () => {
-      if (questions.length === 0) {
-        alert("Add at least one question first!");
-        return;
-      }
-      window.location.href = "game.html"; // This should open your game page
+      if (questions.length === 0) { alert("Add at least one question first!"); return; }
+      window.location.href = "game.html";
     });
 
-    updateList(); // show existing questions on load
+    updateList();
   </script>
-
 </body>
 </html>
