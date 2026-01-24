@@ -89,4 +89,13 @@
       currentQuestion++;
       if (currentQuestion < questions.length) {
         loadQuestion();
+      } else {
+        document.body.innerHTML = "<h1>🎉 Game Complete!</h1><p>Nice job!</p>";
       }
+    }
+
+    loadQuestion();
+  </script>
+
+</body>
+</html>
