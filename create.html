@@ -1,178 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Create Quiz</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f2f2f2;
-  padding: 30px;
-  text-align: center;
-}
-
-h1 {
-  margin-bottom: 20px;
-}
-
-input[type="text"] {
-  width: 250px;
-  padding: 8px;
-  margin: 5px 0;
-  font-size: 16px;
-}
-
-.question-box {
-  background: #fff;
-  border: 2px solid #aaa;
-  border-radius: 8px;
-  padding: 15px;
-  max-width: 650px;
-  margin: 20px auto;
-  text-align: left;
-}
-
-.answers {
-  display: flex;
-  flex-direction: column;
-  margin-top: 5px;
-}
-
-.answers label {
-  margin-bottom: 5px;
-  cursor: pointer;
-}
-
-.button-group {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.button-group button {
-  width: 140px;
-  padding: 10px;
-  font-size: 16px;
-  cursor: pointer;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Create Your Own Questions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    input, button { padding: 8px; margin: 5px; font-size: 16px; }
+    #questions-list { margin-top: 20px; text-align: left; display: inline-block; }
+    li { margin-bottom: 5px; }
+  </style>
 </head>
 <body>
 
-<h1>Create Your Own Quiz</h1>
+  <h1>Create Your Own Questions</h1>
 
-<input type="text" id="quizTitle" placeholder="Quiz Title">
+  <input type="text" id="question" placeholder="Question"><br>
+  <input type="text" id="answer1" placeholder="Answer 1">
+  <input type="text" id="answer2" placeholder="Answer 2">
+  <input type="text" id="answer3" placeholder="Answer 3">
+  <input type="text" id="answer4" placeholder="Answer 4"><br>
+  <input type="number" id="correct" placeholder="Correct answer (1-4)" min="1" max="4"><br>
 
-<div id="questionsContainer"></div>
+  <button id="add-btn">Add Question</button>
+  <button id="play-btn">Play My Game</button>
 
-<div class="button-group">
-  <button onclick="addQuestionBox()">Add Question</button>
-</div>
+  <h2>Questions Added:</h2>
+  <ul id="questions-list"></ul>
 
-<div class="button-group">
-  <button onclick="saveQuiz()">Save Quiz</button>
-  <button onclick="playCurrentQuiz()">Play Quiz</button>
-</div>
+  <script>
+    // Load existing questions from localStorage
+    let questions = JSON.parse(localStorage.getItem("learnifyGame") || "[]");
 
-<div class="button-group">
-  <button onclick="archiveCurrentQuiz()">Archive Quiz</button>
-  <button onclick="deleteCurrentQuiz()">Delete Quiz</button>
-</div>
+    const qInput = document.getElementById("question");
+    const a1Input = document.getElementById("answer1");
+    const a2Input = document.getElementById("answer2");
+    const a3Input = document.getElementById("answer3");
+    const a4Input = document.getElementById("answer4");
+    const correctInput = document.getElementById("correct");
+    const addBtn = document.getElementById("add-btn");
+    const playBtn = document.getElementById("play-btn");
+    const list = document.getElementById("questions-list");
 
-<div class="button-group">
-  <button onclick="window.location.href='my-quizzes.html'">My Quizzes</button>
-</div>
+    // Show current questions in list
+    function updateList() {
+      list.innerHTML = "";
+      questions.forEach((q, i) => {
+        const li = document.createElement("li");
+        li.textContent = `${i+1}. ${q.q} (Correct: ${q.answers[q.correct]})`;
+        list.appendChild(li);
+      });
+    }
 
-<script>
-let questions = [];
+    addBtn.addEventListener("click", () => {
+      const q = qInput.value.trim();
+      const a1 = a1Input.value.trim();
+      const a2 = a2Input.value.trim();
+      const a3 = a3Input.value.trim();
+      const a4 = a4Input.value.trim();
+      const correct = parseInt(correctInput.value) - 1;
 
-/* Add new question box */
-function addQuestionBox() {
-  const index = questions.length;
-  questions.push({ question: "", answers: ["", "", "", ""], correctIndex: 0 });
+      // Only add question if all fields are valid
+      if (!q || !a1 || !a2 || !a3 || !a4 || isNaN(correct) || correct < 0 || correct > 3) {
+        alert("Please fill all fields correctly!");
+        return;
+      }
 
-  const container = document.getElementById("questionsContainer");
-  const box = document.createElement("div");
-  box.className = "question-box";
-  box.id = "questionBox" + index;
+      questions.push({ q, answers: [a1,a2,a3,a4], correct });
+      localStorage.setItem("learnifyGame", JSON.stringify(questions));
+      updateList();
 
-  box.innerHTML = `
-    <b>Question ${index + 1}</b><br>
-    <input type="text" placeholder="Question text" oninput="questions[${index}].question=this.value"><br>
-    <div class="answers">
-      ${[0,1,2,3].map(i => `
-        <label>
-          <input type="radio" name="correct${index}" value="${i}" ${i===0?'checked':''} 
-            onchange="questions[${index}].correctIndex=${i}">
-          <input type="text" placeholder="Answer ${i+1}" 
-            oninput="questions[${index}].answers[${i}]=this.value">
-        </label>
-      `).join('')}
-    </div>
-  `;
-  container.appendChild(box);
-}
+      // Clear inputs
+      qInput.value = "";
+      a1Input.value = "";
+      a2Input.value = "";
+      a3Input.value = "";
+      a4Input.value = "";
+      correctInput.value = "";
+    });
 
-/* Add first question automatically */
-addQuestionBox();
+    playBtn.addEventListener("click", () => {
+      if (questions.length === 0) {
+        alert("Add at least one question first!");
+        return;
+      }
+      window.location.href = "game.html";
+    });
 
-/* Format questions for game */
-function formatQuestions() {
-  return questions.map(q => ({
-    question: q.question,
-    correct: q.answers[q.correctIndex],
-    choices: q.answers.sort(() => Math.random() - 0.5)
-  }));
-}
-
-/* Save quiz */
-function saveQuiz() {
-  const title = document.getElementById("quizTitle").value.trim();
-  if (!title || questions.length === 0) { alert("Enter title and questions"); return; }
-  const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "[]");
-  quizzes.push({ title, questions: formatQuestions() });
-  localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
-  alert("Quiz saved!");
-  location.href = "my-quizzes.html";
-}
-
-/* Play quiz */
-function playCurrentQuiz() {
-  const title = document.getElementById("quizTitle").value.trim();
-  if (!title || questions.length === 0) { alert("Enter title and questions"); return; }
-  sessionStorage.setItem("currentQuiz", JSON.stringify({ title, questions: formatQuestions() }));
-  location.href = "game.html";
-}
-
-/* Archive quiz */
-function archiveCurrentQuiz() {
-  const title = document.getElementById("quizTitle").value.trim();
-  if (!title || questions.length === 0) { alert("Nothing to archive"); return; }
-  const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "[]");
-  archived.push({ title, questions: formatQuestions() });
-  localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
-  clearQuiz();
-  alert("Quiz archived");
-}
-
-/* Delete current quiz */
-function deleteCurrentQuiz() {
-  if (!confirm("Delete current quiz?")) return;
-  clearQuiz();
-}
-
-/* Clear quiz */
-function clearQuiz() {
-  questions = [];
-  document.getElementById("quizTitle").value = "";
-  document.getElementById("questionsContainer").innerHTML = "";
-  addQuestionBox();
-}
-</script>
-
+    updateList();
+  </script>
 </body>
 </html>
-
