@@ -1,101 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Learnify Game</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { font-family: Arial; text-align: center; margin-top: 50px; }
-    button { padding: 10px 20px; margin: 8px; font-size: 16px; cursor: pointer; }
-    #next-btn, #end-buttons { display: none; }
-    #end-buttons { margin-top: 20px; }
-  </style>
+<meta charset="UTF-8">
+<title>Learnify Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: Arial; text-align: center; margin-top: 50px; }
+  button { padding: 10px 20px; margin: 8px; font-size: 16px; cursor: pointer; }
+  #next-btn, #end-buttons { display: none; }
+  #end-buttons { margin-top: 20px; }
+</style>
 </head>
 <body>
 
-  <h1 id="q-title"></h1>
-  <p id="q-text"></p>
+<h1 id="q-title"></h1>
+<p id="q-text"></p>
+<div id="answers"></div>
+<p id="feedback"></p>
 
-  <div id="answers"></div>
+<button id="next-btn">Next Question</button>
+<div id="end-buttons">
+  <button id="back-lobby">Back to Lobby</button>
+  <button id="play-again">Play Again</button>
+</div>
 
-  <p id="feedback"></p>
+<script>
+let questions = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
+questions = questions.filter(q => q.q && q.answers && q.answers.length===4);
 
-  <button id="next-btn">Next Question</button>
+if(questions.length===0) {
+  alert("No questions loaded! Go back to Create page.");
+  window.location.href="create.html";
+}
 
-  <div id="end-buttons">
-    <button id="back-lobby">Back to Lobby</button>
-    <button id="play-again">Play Again</button>
-  </div>
+let index=0, score=0;
 
-  <script>
-    // Load questions from localStorage
-    let questions = JSON.parse(localStorage.getItem("learnifyGame") || "[]");
+const qTitle = document.getElementById("q-title");
+const qText = document.getElementById("q-text");
+const answersDiv = document.getElementById("answers");
+const feedback = document.getElementById("feedback");
+const nextBtn = document.getElementById("next-btn");
+const endButtons = document.getElementById("end-buttons");
+const backLobbyBtn = document.getElementById("back-lobby");
+const playAgainBtn = document.getElementById("play-again");
 
-    // Remove any invalid/empty questions
-    questions = questions.filter(q => q.q && q.answers && q.answers.length === 4);
+function loadQuestion() {
+  const current = questions[index];
+  qTitle.textContent = "Question "+(index+1);
+  qText.textContent = current.q;
+  answersDiv.innerHTML=""; feedback.textContent=""; nextBtn.style.display="none"; endButtons.style.display="none";
 
-    // If no questions, show placeholder
-    if (questions.length === 0) {
-      questions = [{
-        q: "No questions found! Go to 'Create Your Own Questions'.",
-        answers: ["OK"],
-        correct: 0
-      }];
-    }
-
-    let index = 0;
-    let score = 0;
-
-    const qTitle = document.getElementById("q-title");
-    const qText = document.getElementById("q-text");
-    const answersDiv = document.getElementById("answers");
-    const feedback = document.getElementById("feedback");
-    const nextBtn = document.getElementById("next-btn");
-    const endButtons = document.getElementById("end-buttons");
-    const backLobbyBtn = document.getElementById("back-lobby");
-    const playAgainBtn = document.getElementById("play-again");
-
-    function loadQuestion() {
-      const current = questions[index];
-      qTitle.textContent = "Question " + (index + 1);
-      qText.textContent = current.q;
-
-      answersDiv.innerHTML = "";
-      feedback.textContent = "";
-      nextBtn.style.display = "none";
-      endButtons.style.display = "none";
-
-      current.answers.forEach((ans, i) => {
-        const btn = document.createElement("button");
-        btn.textContent = ans;
-        btn.addEventListener("click", () => {
-          if (i === current.correct) score++;
-          feedback.textContent = (i === current.correct) ? "✅ Correct!" : "❌ Wrong!";
-          nextBtn.style.display = "inline-block";
-        });
-        answersDiv.appendChild(btn);
-      });
-    }
-
-    nextBtn.addEventListener("click", () => {
-      index++;
-      if (index < questions.length) {
-        loadQuestion();
-      } else {
-        qTitle.textContent = "🎉 Game Complete!";
-        qText.textContent = "Your score: " + score + " / " + questions.length;
-        answersDiv.innerHTML = "";
-        feedback.textContent = "";
-        nextBtn.style.display = "none";
-        endButtons.style.display = "block";
-      }
+  current.answers.forEach((ans,i)=>{
+    const btn=document.createElement("button");
+    btn.textContent=ans;
+    btn.addEventListener("click", ()=>{
+      feedback.textContent=(i===current.correct)?"✅ Correct!":"❌ Wrong!";
+      if(i===current.correct) score++;
+      nextBtn.style.display="inline-block";
     });
+    answersDiv.appendChild(btn);
+  });
+}
 
-    backLobbyBtn.addEventListener("click", () => window.location.href = "lobby.html");
-    playAgainBtn.addEventListener("click", () => { index = 0; score = 0; loadQuestion(); });
+nextBtn.addEventListener("click", ()=>{
+  index++;
+  if(index<questions.length) loadQuestion();
+  else {
+    qTitle.textContent="🎉 Quiz Complete!";
+    qText.textContent="Score: "+score+" / "+questions.length;
+    answersDiv.innerHTML=""; feedback.textContent="";
+    nextBtn.style.display="none"; endButtons.style.display="block";
+  }
+});
 
-    loadQuestion();
-  </script>
+backLobbyBtn.addEventListener("click", ()=>{ window.location.href="lobby.html"; });
+playAgainBtn.addEventListener("click", ()=>{ index=0; score=0; loadQuestion(); });
 
+loadQuestion();
+</script>
 </body>
 </html>
