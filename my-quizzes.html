@@ -2,99 +2,106 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Quizzes - Learnify</title>
+  <title>My Quizzes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin-top: 40px;
+      background: #f4f4f4;
+      padding: 20px;
     }
+
+    h1, h2 {
+      margin-top: 30px;
+    }
+
     .quiz {
-      border: 1px solid #ccc;
+      background: white;
       padding: 15px;
       margin: 10px auto;
-      width: 320px;
-      border-radius: 5px;
+      max-width: 400px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+
     button {
-      padding: 8px 16px;
       margin: 5px;
-      font-size: 16px;
+      padding: 8px 14px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-<h1>My Quizzes</h1>
+  <h1>📚 My Quizzes</h1>
 
-<div id="quiz-list"></div>
+  <h2>Active Quizzes</h2>
+  <div id="active"></div>
 
-<br>
-<button onclick="goCreate()">Back to Create</button>
-<button onclick="goLobby()">Back to Lobby</button>
+  <h2>Archived Quizzes</h2>
+  <div id="archived"></div>
 
-<script>
-const quizList = document.getElementById("quiz-list");
+  <br>
+  <button onclick="location.href='lobby.html'">⬅ Back to Lobby</button>
 
-// Load quizzes from localStorage
-let quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+  <script>
+    const quizzes = JSON.parse(localStorage.getItem("myQuizzes")) || [];
 
-// If no quizzes exist
-if (Object.keys(quizzes).length === 0) {
-  quizList.innerHTML = "<p>No saved quizzes yet.</p>";
-}
+    const activeDiv = document.getElementById("active");
+    const archivedDiv = document.getElementById("archived");
 
-// Display each quiz
-for (const name in quizzes) {
-  const div = document.createElement("div");
-  div.className = "quiz";
+    if (quizzes.length === 0) {
+      activeDiv.innerHTML = "<p>No quizzes yet.</p>";
+    }
 
-  div.innerHTML = `
-    <h3>${name}</h3>
-    <button onclick="playQuiz('${name}')">Play</button>
-    <button onclick="deleteQuiz('${name}')">Delete</button>
-  `;
+    quizzes.forEach((quiz, index) => {
+      const div = document.createElement("div");
+      div.className = "quiz";
 
-  quizList.appendChild(div);
-}
+      div.innerHTML = `
+        <strong>${quiz.title}</strong><br><br>
+        ${quiz.archived ? "" : `<button onclick="playQuiz(${index})">▶ Play</button>`}
+        ${quiz.archived
+          ? `<button onclick="restoreQuiz(${index})">♻ Restore</button>`
+          : `<button onclick="archiveQuiz(${index})">🗄 Archive</button>`}
+        <button onclick="deleteForever(${index})">❌ Delete Forever</button>
+      `;
 
-// 🔑 THIS IS THE IMPORTANT PART
-function playQuiz(name) {
-  const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+      if (quiz.archived) {
+        archivedDiv.appendChild(div);
+      } else {
+        activeDiv.appendChild(div);
+      }
+    });
 
-  if (!quizzes[name] || quizzes[name].length === 0) {
-    alert("No questions found!");
-    return;
-  }
+    function playQuiz(index) {
+      sessionStorage.setItem(
+        "currentQuiz",
+        JSON.stringify(quizzes[index])
+      );
+      location.href = "game.html";
+    }
 
-  // Copy quiz so game.html can read it
-  sessionStorage.setItem(
-    "currentQuiz",
-    JSON.stringify(quizzes[name])
-  );
+    function archiveQuiz(index) {
+      quizzes[index].archived = true;
+      localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
+      location.reload();
+    }
 
-  window.location.href = "game.html";
-}
+    function restoreQuiz(index) {
+      quizzes[index].archived = false;
+      localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
+      location.reload();
+    }
 
-// Delete quiz permanently
-function deleteQuiz(name) {
-  if (confirm("Delete this quiz permanently?")) {
-    delete quizzes[name];
-    localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
-    location.reload();
-  }
-}
-
-function goCreate() {
-  window.location.href = "create.html";
-}
-
-function goLobby() {
-  window.location.href = "lobby.html";
-}
-</script>
+    function deleteForever(index) {
+      if (!confirm("Delete this quiz permanently?")) return;
+      quizzes.splice(index, 1);
+      localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
+      location.reload();
+    }
+  </script>
 
 </body>
 </html>
