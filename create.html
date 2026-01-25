@@ -2,93 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Learnify Quiz System</title>
+  <title>Create Your Quiz</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial; text-align: center; padding: 20px; background: #f7f7f7; }
+    body { font-family: Arial; text-align: center; padding: 20px; }
     input, button { margin: 5px; padding: 8px; font-size: 16px; }
-    .quiz, .question { background: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin: 10px auto; max-width: 400px; }
-    #feedback { font-weight: bold; margin-top: 15px; }
-    #next-btn { display:none; }
+    .question { margin-bottom: 10px; }
   </style>
 </head>
 <body>
 
-<h1>Learnify Quiz System</h1>
+<h1>✏️ Create Your Own Quiz</h1>
 
-<div id="menu">
-  <button onclick="showCreate()">✏️ Create New Quiz</button>
-  <button onclick="showMyQuizzes()">📚 My Quizzes</button>
-</div>
+<input type="text" id="quizTitle" placeholder="Quiz Title"><br>
 
-<div id="create" style="display:none;">
-  <h2>Create Your Quiz</h2>
-  <input type="text" id="quizTitle" placeholder="Quiz Title"><br>
-  <div id="questions"></div>
-  <button onclick="addQuestion()">➕ Add Question</button><br>
-  <button onclick="saveQuiz()">💾 Save Quiz</button>
-  <button onclick="backToMenu()">⬅ Back</button>
-</div>
+<div id="questions"></div>
 
-<div id="my-quizzes" style="display:none;">
-  <h2>My Quizzes</h2>
-  <div id="quiz-list"></div>
-  <button onclick="backToMenu()">⬅ Back to Menu</button>
-</div>
-
-<div id="game" style="display:none;">
-  <h2 id="quiz-title"></h2>
-  <div id="question-container"></div>
-  <p id="feedback"></p>
-  <button id="next-btn">Next Question</button>
-  <button onclick="backToMenu()">⬅ Back to My Quizzes</button>
-</div>
+<button onclick="addQuestion()">➕ Add Question</button><br>
+<button onclick="saveQuiz()">💾 Save Quiz</button>
+<button onclick="window.location.href='my-quizzes.html'">📚 My Quizzes</button>
 
 <script>
 let questions = [];
-let quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "[]");
-let currentQuiz = null;
-let currentQuestion = 0;
 
-// --- Menu functions ---
-function backToMenu() {
-  document.getElementById("menu").style.display = "block";
-  document.getElementById("create").style.display = "none";
-  document.getElementById("my-quizzes").style.display = "none";
-  document.getElementById("game").style.display = "none";
-}
-
-function showCreate() {
-  document.getElementById("menu").style.display = "none";
-  document.getElementById("create").style.display = "block";
-  questions = [];
-  document.getElementById("quizTitle").value = "";
-  document.getElementById("questions").innerHTML = "";
-}
-
-function showMyQuizzes() {
-  document.getElementById("menu").style.display = "none";
-  document.getElementById("my-quizzes").style.display = "block";
-  renderQuizzes();
-}
-
-// --- Create Quiz functions ---
 function addQuestion() {
-  const q = prompt("Enter your question:");
-  if (!q) return;
-  const correct = prompt("Enter correct answer:");
-  if (!correct) return;
+  const questionText = prompt("Enter your question:");
+  if (!questionText) return;
+  const correctAnswer = prompt("Enter the correct answer:");
+  if (!correctAnswer) return;
+
   const choices = [];
-  for (let i=0;i<3;i++) {
+  for (let i = 0; i < 3; i++) {
     const choice = prompt(`Enter wrong choice ${i+1}:`);
     if (!choice) return;
     choices.push(choice);
   }
+
   questions.push({
-    question: q,
-    correct: correct,
-    choices: [...choices, correct].sort(() => Math.random() - 0.5)
+    question: questionText,
+    correct: correctAnswer,
+    choices: [...choices, correctAnswer].sort(() => Math.random() - 0.5)
   });
+
   renderQuestions();
 }
 
@@ -109,88 +64,15 @@ function saveQuiz() {
     alert("Quiz must have a title and at least one question.");
     return;
   }
+
+  let quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "[]");
   quizzes.push({title, questions});
   localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
+
   alert("Quiz saved!");
-  showMyQuizzes();
+  window.location.href = "my-quizzes.html";
 }
-
-// --- My Quizzes functions ---
-function renderQuizzes() {
-  const quizList = document.getElementById("quiz-list");
-  quizList.innerHTML = "";
-  if (quizzes.length===0) {
-    quizList.innerHTML = "<p>No quizzes found. Create one!</p>";
-    return;
-  }
-  quizzes.forEach((quiz,index)=>{
-    const div = document.createElement("div");
-    div.className="quiz";
-    div.innerHTML = `
-      <strong>${quiz.title}</strong><br><br>
-      <button onclick="playQuiz(${index})">▶ Play</button>
-      <button onclick="deleteQuiz(${index})">❌ Delete</button>
-    `;
-    quizList.appendChild(div);
-  });
-}
-
-function playQuiz(index) {
-  currentQuiz = quizzes[index];
-  currentQuestion = 0;
-  document.getElementById("my-quizzes").style.display="none";
-  document.getElementById("game").style.display="block";
-  showQuestion();
-}
-
-function deleteQuiz(index) {
-  if (!confirm("Delete this quiz?")) return;
-  quizzes.splice(index,1);
-  localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
-  renderQuizzes();
-}
-
-// --- Game functions ---
-function showQuestion() {
-  const container = document.getElementById("question-container");
-  const feedback = document.getElementById("feedback");
-  const nextBtn = document.getElementById("next-btn");
-  feedback.textContent = "";
-  nextBtn.style.display="none";
-
-  if (currentQuestion >= currentQuiz.questions.length) {
-    container.innerHTML = "<p>✅ Quiz Complete!</p>";
-    return;
-  }
-
-  const q = currentQuiz.questions[currentQuestion];
-  let html = `<p><strong>${q.question}</strong></p>`;
-  q.choices.forEach(c=>{
-    html += `<button onclick="checkAnswer('${c}')">${c}</button> `;
-  });
-  container.innerHTML = html;
-}
-
-function checkAnswer(answer) {
-  const q = currentQuiz.questions[currentQuestion];
-  const feedback = document.getElementById("feedback");
-  const nextBtn = document.getElementById("next-btn");
-  if (answer===q.correct) {
-    feedback.textContent = "✅ Correct!";
-  } else {
-    feedback.textContent = `❌ Wrong! Correct: ${q.correct}`;
-  }
-  nextBtn.style.display="inline-block";
-}
-
-document.getElementById("next-btn").addEventListener("click", ()=>{
-  currentQuestion++;
-  showQuestion();
-});
-
-// --- Start on menu ---
-backToMenu();
-
 </script>
+
 </body>
 </html>
