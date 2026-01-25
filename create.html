@@ -7,8 +7,8 @@
 
   <style>
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: #f2f2f2;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
       text-align: center;
       padding: 30px;
     }
@@ -18,18 +18,18 @@
     }
 
     input {
+      width: 260px;
       padding: 10px;
       font-size: 16px;
-      width: 260px;
       margin-bottom: 15px;
     }
 
     button {
-      display: block;
       width: 260px;
-      margin: 6px auto;
       padding: 10px;
       font-size: 16px;
+      margin: 6px auto;
+      display: block;
       cursor: pointer;
     }
 
@@ -41,7 +41,7 @@
       background: white;
       border: 1px solid #ccc;
       border-radius: 6px;
-      padding: 12px;
+      padding: 10px;
       margin: 8px auto;
       max-width: 520px;
       text-align: left;
@@ -51,173 +51,120 @@
 
 <body>
 
-<h1>✏️ Create Your Own Quiz</h1>
+<h1>Create Your Own Quiz</h1>
 
-<input
-  type="text"
-  id="quizTitle"
-  placeholder="Quiz Title"
-/>
+<input type="text" id="quizTitle" placeholder="Quiz Title">
 
 <div id="questions"></div>
 
-<!-- SAME BUTTON ORDER AS BEFORE -->
-<button onclick="addQuestion()">➕ Add Question</button>
-
-<button onclick="saveQuiz()">💾 Save Quiz</button>
-
-<button onclick="playCurrentQuiz()">▶ Play Current Quiz</button>
-
-<button onclick="archiveCurrentQuiz()">📦 Archive Current Quiz</button>
-
-<button onclick="deleteCurrentQuiz()">🗑 Delete Current Quiz</button>
-
-<button onclick="window.location.href='my-quizzes.html'">
-  📚 My Quizzes
-</button>
+<button onclick="addQuestion()">Add Question</button>
+<button onclick="saveQuiz()">Save Quiz</button>
+<button onclick="playCurrentQuiz()">Play Current Quiz</button>
+<button onclick="archiveCurrentQuiz()">Archive Current Quiz</button>
+<button onclick="deleteCurrentQuiz()">Delete Current Quiz</button>
+<button onclick="window.location.href='my-quizzes.html'">My Quizzes</button>
 
 <script>
-/*********************************************************
- * STATE
- *********************************************************/
 let questions = [];
 
-/*********************************************************
- * ADD QUESTION
- *********************************************************/
 function addQuestion() {
-  const questionText = prompt("Enter the question:");
-  if (!questionText) return;
+  const question = prompt("Enter question:");
+  if (!question) return;
 
-  const correctAnswer = prompt("Enter the correct answer:");
-  if (!correctAnswer) return;
+  const correct = prompt("Correct answer:");
+  if (!correct) return;
 
-  let wrongChoices = [];
-
+  let wrong = [];
   for (let i = 1; i <= 3; i++) {
-    const wrong = prompt("Enter wrong choice " + i + ":");
-    if (!wrong) return;
-    wrongChoices.push(wrong);
+    const w = prompt("Wrong answer " + i + ":");
+    if (!w) return;
+    wrong.push(w);
   }
 
-  const allChoices = [...wrongChoices, correctAnswer];
-  allChoices.sort(() => Math.random() - 0.5);
+  const choices = [...wrong, correct].sort(() => Math.random() - 0.5);
 
   questions.push({
-    question: questionText,
-    correct: correctAnswer,
-    choices: allChoices
+    question,
+    correct,
+    choices
   });
 
   renderQuestions();
 }
 
-/*********************************************************
- * RENDER QUESTIONS
- *********************************************************/
 function renderQuestions() {
-  const container = document.getElementById("questions");
-  container.innerHTML = "";
+  const div = document.getElementById("questions");
+  div.innerHTML = "";
 
-  questions.forEach((q, index) => {
-    const div = document.createElement("div");
-    div.className = "question";
-    div.innerHTML =
-      "<strong>" + (index + 1) + ".</strong> " + q.question;
-    container.appendChild(div);
+  questions.forEach((q, i) => {
+    const el = document.createElement("div");
+    el.className = "question";
+    el.innerHTML = "<b>" + (i + 1) + ".</b> " + q.question;
+    div.appendChild(el);
   });
 }
 
-/*********************************************************
- * SAVE QUIZ
- *********************************************************/
 function saveQuiz() {
-  const title = document.getElementById("quizTitle").value.trim();
-
+  const title = quizTitle.value.trim();
   if (!title || questions.length === 0) {
-    alert("Quiz must have a title and at least one question.");
+    alert("Add a title and questions first.");
     return;
   }
 
-  const quizzes =
-    JSON.parse(localStorage.getItem("myQuizzes") || "[]");
-
-  quizzes.push({
-    title: title,
-    questions: questions
-  });
-
+  const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "[]");
+  quizzes.push({ title, questions });
   localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
 
   alert("Quiz saved!");
-  window.location.href = "my-quizzes.html";
+  location.href = "my-quizzes.html";
 }
 
-/*********************************************************
- * PLAY CURRENT QUIZ (PREVIEW)
- *********************************************************/
 function playCurrentQuiz() {
-  const title = document.getElementById("quizTitle").value.trim();
-
+  const title = quizTitle.value.trim();
   if (!title || questions.length === 0) {
-    alert("Add a title and at least one question first.");
+    alert("Nothing to play.");
     return;
   }
 
   sessionStorage.setItem(
     "currentQuiz",
-    JSON.stringify({
-      title: title,
-      questions: questions
-    })
+    JSON.stringify({ title, questions })
   );
 
-  window.location.href = "game.html";
+  location.href = "game.html";
 }
 
-/*********************************************************
- * ARCHIVE CURRENT QUIZ
- *********************************************************/
 function archiveCurrentQuiz() {
-  const title = document.getElementById("quizTitle").value.trim();
-
+  const title = quizTitle.value.trim();
   if (!title || questions.length === 0) {
     alert("Nothing to archive.");
     return;
   }
 
-  const archived =
-    JSON.parse(localStorage.getItem("archivedQuizzes") || "[]");
+  const archived = JSON.parse(
+    localStorage.getItem("archivedQuizzes") || "[]"
+  );
 
-  archived.push({
-    title: title,
-    questions: questions
-  });
-
+  archived.push({ title, questions });
   localStorage.setItem(
     "archivedQuizzes",
     JSON.stringify(archived)
   );
 
-  clearCurrentQuiz();
+  clearQuiz();
   alert("Quiz archived.");
 }
 
-/*********************************************************
- * DELETE CURRENT QUIZ
- *********************************************************/
 function deleteCurrentQuiz() {
-  if (!confirm("Delete the quiz you are creating?")) return;
-  clearCurrentQuiz();
+  if (!confirm("Delete current quiz?")) return;
+  clearQuiz();
 }
 
-/*********************************************************
- * CLEAR CURRENT QUIZ
- *********************************************************/
-function clearCurrentQuiz() {
+function clearQuiz() {
   questions = [];
-  document.getElementById("quizTitle").value = "";
-  document.getElementById("questions").innerHTML = "";
+  quizTitle.value = "";
+  questionsDiv = document.getElementById("questions");
+  questionsDiv.innerHTML = "";
 }
 </script>
 
