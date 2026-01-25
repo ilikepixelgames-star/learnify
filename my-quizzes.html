@@ -9,7 +9,9 @@
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 30px;
+      background: #f7f7f7;
     }
+
     .quiz {
       background: #fff;
       border: 1px solid #ccc;
@@ -18,6 +20,7 @@
       margin: 10px auto;
       max-width: 400px;
     }
+
     button {
       margin: 5px;
       padding: 8px 12px;
@@ -37,40 +40,41 @@
 <button onclick="window.location.href='create.html'">✏️ Create New Quiz</button>
 
 <script>
-const quizList = document.getElementById("quiz-list");
-const quizzes = JSON.parse(localStorage.getItem("myQuizzes")) || [];
+  const quizList = document.getElementById("quiz-list");
 
-if (quizzes.length === 0) {
-  quizList.innerHTML = "<p>No quizzes found. Go to 'Create New Quiz' to make one!</p>";
-}
+  // Load quizzes saved in localStorage
+  const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "[]");
 
-quizzes.forEach((quiz, index) => {
-  const div = document.createElement("div");
-  div.className = "quiz";
-  div.innerHTML = `
-    <strong>${quiz.title}</strong><br><br>
-    <button onclick="playQuiz(${index})">▶ Play</button>
-    <button onclick="deleteQuiz(${index})">❌ Delete</button>
-  `;
-  quizList.appendChild(div);
-});
+  if (quizzes.length === 0) {
+    quizList.innerHTML = "<p>No quizzes found. Go to 'Create New Quiz' to make one!</p>";
+  }
 
-function playQuiz(index) {
-  sessionStorage.setItem(
-    "currentQuiz",
-    JSON.stringify(quizzes[index])
-  );
-  window.location.href = "game.html";
-}
+  // Display quizzes
+  quizzes.forEach((quiz, index) => {
+    const div = document.createElement("div");
+    div.className = "quiz";
+    div.innerHTML = `
+      <strong>${quiz.title}</strong><br><br>
+      <button onclick="playQuiz(${index})">▶ Play</button>
+      <button onclick="deleteQuiz(${index})">❌ Delete</button>
+    `;
+    quizList.appendChild(div);
+  });
 
-function deleteQuiz(index) {
-  if (!confirm("Delete this quiz?")) return;
-  quizzes.splice(index, 1);
-  localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
-  location.reload();
-}
+  // Play quiz: store in sessionStorage for game.html
+  function playQuiz(index) {
+    sessionStorage.setItem("currentQuiz", JSON.stringify(quizzes[index]));
+    window.location.href = "game.html";
+  }
+
+  // Delete quiz permanently
+  function deleteQuiz(index) {
+    if (!confirm("Delete this quiz?")) return;
+    quizzes.splice(index, 1);
+    localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
+    location.reload();
+  }
 </script>
 
 </body>
 </html>
-
