@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Create Quiz</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -17,14 +16,13 @@ h1 {
   margin-bottom: 20px;
 }
 
-input {
-  width: 300px;
-  padding: 10px;
+input[type="text"] {
+  width: 250px;
+  padding: 8px;
   margin: 5px 0;
   font-size: 16px;
 }
 
-/* Container for each question */
 .question-box {
   background: #fff;
   border: 2px solid #aaa;
@@ -35,7 +33,17 @@ input {
   text-align: left;
 }
 
-/* Buttons layout */
+.answers {
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+}
+
+.answers label {
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
 .button-group {
   display: flex;
   justify-content: center;
@@ -56,13 +64,10 @@ input {
 
 <h1>Create Your Own Quiz</h1>
 
-<!-- Quiz title -->
 <input type="text" id="quizTitle" placeholder="Quiz Title">
 
-<!-- Questions container -->
 <div id="questionsContainer"></div>
 
-<!-- Buttons -->
 <div class="button-group">
   <button onclick="addQuestionBox()">Add Question</button>
 </div>
@@ -84,12 +89,12 @@ input {
 <script>
 let questions = [];
 
-/* ADD QUESTION BOX */
+/* Add new question box */
 function addQuestionBox() {
-  const container = document.getElementById("questionsContainer");
   const index = questions.length;
-  questions.push({ question: "", correct: "", wrong1: "", wrong2: "", wrong3: "" });
+  questions.push({ question: "", answers: ["", "", "", ""], correctIndex: 0 });
 
+  const container = document.getElementById("questionsContainer");
   const box = document.createElement("div");
   box.className = "question-box";
   box.id = "questionBox" + index;
@@ -97,77 +102,77 @@ function addQuestionBox() {
   box.innerHTML = `
     <b>Question ${index + 1}</b><br>
     <input type="text" placeholder="Question text" oninput="questions[${index}].question=this.value"><br>
-    <input type="text" placeholder="Correct answer" oninput="questions[${index}].correct=this.value"><br>
-    <input type="text" placeholder="Wrong answer 1" oninput="questions[${index}].wrong1=this.value"><br>
-    <input type="text" placeholder="Wrong answer 2" oninput="questions[${index}].wrong2=this.value"><br>
-    <input type="text" placeholder="Wrong answer 3" oninput="questions[${index}].wrong3=this.value"><br>
+    <div class="answers">
+      ${[0,1,2,3].map(i => `
+        <label>
+          <input type="radio" name="correct${index}" value="${i}" ${i===0?'checked':''} 
+            onchange="questions[${index}].correctIndex=${i}">
+          <input type="text" placeholder="Answer ${i+1}" 
+            oninput="questions[${index}].answers[${i}]=this.value">
+        </label>
+      `).join('')}
+    </div>
   `;
-
   container.appendChild(box);
 }
 
-/* Create first question box immediately */
+/* Add first question automatically */
 addQuestionBox();
 
-/* Convert question format for saving/playing */
+/* Format questions for game */
 function formatQuestions() {
   return questions.map(q => ({
     question: q.question,
-    correct: q.correct,
-    choices: [q.correct, q.wrong1, q.wrong2, q.wrong3].sort(() => Math.random() - 0.5)
+    correct: q.answers[q.correctIndex],
+    choices: q.answers.sort(() => Math.random() - 0.5)
   }));
 }
 
-/* SAVE QUIZ */
+/* Save quiz */
 function saveQuiz() {
   const title = document.getElementById("quizTitle").value.trim();
-  if (!title) { alert("Enter quiz title"); return; }
-  if (questions.length === 0) { alert("Add at least one question"); return; }
-
+  if (!title || questions.length === 0) { alert("Enter title and questions"); return; }
   const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "[]");
   quizzes.push({ title, questions: formatQuestions() });
   localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
-
   alert("Quiz saved!");
   location.href = "my-quizzes.html";
 }
 
-/* PLAY QUIZ */
+/* Play quiz */
 function playCurrentQuiz() {
   const title = document.getElementById("quizTitle").value.trim();
-  if (!title || questions.length === 0) { alert("Add title and questions"); return; }
-
+  if (!title || questions.length === 0) { alert("Enter title and questions"); return; }
   sessionStorage.setItem("currentQuiz", JSON.stringify({ title, questions: formatQuestions() }));
   location.href = "game.html";
 }
 
-/* ARCHIVE QUIZ */
+/* Archive quiz */
 function archiveCurrentQuiz() {
   const title = document.getElementById("quizTitle").value.trim();
   if (!title || questions.length === 0) { alert("Nothing to archive"); return; }
-
   const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "[]");
   archived.push({ title, questions: formatQuestions() });
   localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
-
   clearQuiz();
   alert("Quiz archived");
 }
 
-/* DELETE QUIZ */
+/* Delete current quiz */
 function deleteCurrentQuiz() {
   if (!confirm("Delete current quiz?")) return;
   clearQuiz();
 }
 
-/* CLEAR QUIZ */
+/* Clear quiz */
 function clearQuiz() {
   questions = [];
   document.getElementById("quizTitle").value = "";
   document.getElementById("questionsContainer").innerHTML = "";
-  addQuestionBox(); // Add a fresh question box automatically
+  addQuestionBox();
 }
 </script>
 
 </body>
 </html>
+
