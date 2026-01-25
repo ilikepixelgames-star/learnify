@@ -35,10 +35,11 @@ input {
   text-align: left;
 }
 
-/* Buttons grouped */
+/* Buttons layout */
 .button-group {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -51,7 +52,6 @@ input {
 }
 </style>
 </head>
-
 <body>
 
 <h1>Create Your Own Quiz</h1>
@@ -69,7 +69,7 @@ input {
 
 <div class="button-group">
   <button onclick="saveQuiz()">Save Quiz</button>
-  <button onclick="playCurrentQuiz()">Play Current Quiz</button>
+  <button onclick="playCurrentQuiz()">Play Quiz</button>
 </div>
 
 <div class="button-group">
@@ -87,24 +87,35 @@ let questions = [];
 /* ADD QUESTION BOX */
 function addQuestionBox() {
   const container = document.getElementById("questionsContainer");
-
-  const qIndex = questions.length;
+  const index = questions.length;
   questions.push({ question: "", correct: "", wrong1: "", wrong2: "", wrong3: "" });
 
   const box = document.createElement("div");
   box.className = "question-box";
-  box.id = "questionBox" + qIndex;
+  box.id = "questionBox" + index;
 
   box.innerHTML = `
-    <b>Question ${qIndex + 1}</b><br>
-    <input type="text" placeholder="Question text" oninput="questions[${qIndex}].question=this.value"><br>
-    <input type="text" placeholder="Correct answer" oninput="questions[${qIndex}].correct=this.value"><br>
-    <input type="text" placeholder="Wrong answer 1" oninput="questions[${qIndex}].wrong1=this.value"><br>
-    <input type="text" placeholder="Wrong answer 2" oninput="questions[${qIndex}].wrong2=this.value"><br>
-    <input type="text" placeholder="Wrong answer 3" oninput="questions[${qIndex}].wrong3=this.value"><br>
+    <b>Question ${index + 1}</b><br>
+    <input type="text" placeholder="Question text" oninput="questions[${index}].question=this.value"><br>
+    <input type="text" placeholder="Correct answer" oninput="questions[${index}].correct=this.value"><br>
+    <input type="text" placeholder="Wrong answer 1" oninput="questions[${index}].wrong1=this.value"><br>
+    <input type="text" placeholder="Wrong answer 2" oninput="questions[${index}].wrong2=this.value"><br>
+    <input type="text" placeholder="Wrong answer 3" oninput="questions[${index}].wrong3=this.value"><br>
   `;
 
   container.appendChild(box);
+}
+
+/* Create first question box immediately */
+addQuestionBox();
+
+/* Convert question format for saving/playing */
+function formatQuestions() {
+  return questions.map(q => ({
+    question: q.question,
+    correct: q.correct,
+    choices: [q.correct, q.wrong1, q.wrong2, q.wrong3].sort(() => Math.random() - 0.5)
+  }));
 }
 
 /* SAVE QUIZ */
@@ -113,57 +124,37 @@ function saveQuiz() {
   if (!title) { alert("Enter quiz title"); return; }
   if (questions.length === 0) { alert("Add at least one question"); return; }
 
-  // Convert to standard format for game
-  const formattedQuestions = questions.map(q => ({
-    question: q.question,
-    correct: q.correct,
-    choices: [q.correct, q.wrong1, q.wrong2, q.wrong3].sort(() => Math.random() - 0.5)
-  }));
-
   const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "[]");
-  quizzes.push({ title, questions: formattedQuestions });
+  quizzes.push({ title, questions: formatQuestions() });
   localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
 
   alert("Quiz saved!");
   location.href = "my-quizzes.html";
 }
 
-/* PLAY CURRENT QUIZ */
+/* PLAY QUIZ */
 function playCurrentQuiz() {
   const title = document.getElementById("quizTitle").value.trim();
-  if (!title) { alert("Enter quiz title"); return; }
-  if (questions.length === 0) { alert("Add questions"); return; }
+  if (!title || questions.length === 0) { alert("Add title and questions"); return; }
 
-  const formattedQuestions = questions.map(q => ({
-    question: q.question,
-    correct: q.correct,
-    choices: [q.correct, q.wrong1, q.wrong2, q.wrong3].sort(() => Math.random() - 0.5)
-  }));
-
-  sessionStorage.setItem("currentQuiz", JSON.stringify({ title, questions: formattedQuestions }));
+  sessionStorage.setItem("currentQuiz", JSON.stringify({ title, questions: formatQuestions() }));
   location.href = "game.html";
 }
 
-/* ARCHIVE CURRENT QUIZ */
+/* ARCHIVE QUIZ */
 function archiveCurrentQuiz() {
   const title = document.getElementById("quizTitle").value.trim();
   if (!title || questions.length === 0) { alert("Nothing to archive"); return; }
 
-  const formattedQuestions = questions.map(q => ({
-    question: q.question,
-    correct: q.correct,
-    choices: [q.correct, q.wrong1, q.wrong2, q.wrong3].sort(() => Math.random() - 0.5)
-  }));
-
   const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "[]");
-  archived.push({ title, questions: formattedQuestions });
+  archived.push({ title, questions: formatQuestions() });
   localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
 
   clearQuiz();
   alert("Quiz archived");
 }
 
-/* DELETE CURRENT QUIZ */
+/* DELETE QUIZ */
 function deleteCurrentQuiz() {
   if (!confirm("Delete current quiz?")) return;
   clearQuiz();
@@ -174,6 +165,7 @@ function clearQuiz() {
   questions = [];
   document.getElementById("quizTitle").value = "";
   document.getElementById("questionsContainer").innerHTML = "";
+  addQuestionBox(); // Add a fresh question box automatically
 }
 </script>
 
