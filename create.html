@@ -3,11 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Create Quiz</title>
-
-  <!-- Mobile support -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Basic styling -->
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
@@ -52,130 +49,175 @@
 
 <body>
 
-  <!-- Page title -->
-  <h1>✏️ Create Your Own Quiz</h1>
+<h1>✏️ Create Your Own Quiz</h1>
 
-  <!-- Quiz title input -->
-  <div>
-    <input
-      type="text"
-      id="quizTitle"
-      placeholder="Enter quiz title"
-    >
-  </div>
+<input
+  type="text"
+  id="quizTitle"
+  placeholder="Enter quiz title"
+/>
 
-  <!-- List of added questions -->
-  <div id="questions"></div>
+<div id="questions"></div>
 
-  <!-- Controls -->
-  <div>
-    <button onclick="addQuestion()">➕ Add Question</button><br>
-    <button onclick="saveQuiz()">💾 Save Quiz</button>
-    <button onclick="deleteCurrentQuiz()">🗑 Delete Current Quiz</button><br>
-    <button onclick="window.location.href='my-quizzes.html'">
-      📚 My Quizzes
-    </button>
-  </div>
+<!-- BUTTONS -->
+<div>
+  <button onclick="addQuestion()">➕ Add Question</button><br>
 
-  <!-- JavaScript -->
-  <script>
-    /*********************************************************
-     * STATE
-     *********************************************************/
-    let questions = [];
+  <button onclick="saveQuiz()">💾 Save Quiz</button>
+  <button onclick="archiveCurrentQuiz()">📦 Archive Current Quiz</button>
+  <button onclick="deleteCurrentQuiz()">🗑 Delete Current Quiz</button><br>
 
-    /*********************************************************
-     * ADD QUESTION
-     *********************************************************/
-    function addQuestion() {
-      const questionText = prompt("Enter the question:");
-      if (!questionText) return;
+  <button onclick="playCurrentQuiz()">▶ Play Current Quiz</button><br>
 
-      const correctAnswer = prompt("Enter the correct answer:");
-      if (!correctAnswer) return;
+  <button onclick="window.location.href='my-quizzes.html'">
+    📚 My Quizzes
+  </button>
+</div>
 
-      let wrongChoices = [];
+<script>
+/*********************************************************
+ * STATE
+ *********************************************************/
+let questions = [];
 
-      for (let i = 1; i <= 3; i++) {
-        const wrong = prompt("Enter wrong choice " + i + ":");
-        if (!wrong) return;
-        wrongChoices.push(wrong);
-      }
+/*********************************************************
+ * ADD QUESTION
+ *********************************************************/
+function addQuestion() {
+  const questionText = prompt("Enter the question:");
+  if (!questionText) return;
 
-      const allChoices = [...wrongChoices, correctAnswer];
-      allChoices.sort(() => Math.random() - 0.5);
+  const correctAnswer = prompt("Enter the correct answer:");
+  if (!correctAnswer) return;
 
-      questions.push({
-        question: questionText,
-        correct: correctAnswer,
-        choices: allChoices
-      });
+  let wrongChoices = [];
 
-      renderQuestions();
-    }
+  for (let i = 1; i <= 3; i++) {
+    const wrong = prompt("Enter wrong choice " + i + ":");
+    if (!wrong) return;
+    wrongChoices.push(wrong);
+  }
 
-    /*********************************************************
-     * RENDER QUESTIONS
-     *********************************************************/
-    function renderQuestions() {
-      const container = document.getElementById("questions");
-      container.innerHTML = "";
+  const allChoices = [...wrongChoices, correctAnswer];
+  allChoices.sort(() => Math.random() - 0.5);
 
-      questions.forEach((q, index) => {
-        const div = document.createElement("div");
-        div.className = "question";
-        div.innerHTML = "<strong>" + (index + 1) + ".</strong> " + q.question;
-        container.appendChild(div);
-      });
-    }
+  questions.push({
+    question: questionText,
+    correct: correctAnswer,
+    choices: allChoices
+  });
 
-    /*********************************************************
-     * SAVE QUIZ
-     *********************************************************/
-    function saveQuiz() {
-      const title = document
-        .getElementById("quizTitle")
-        .value
-        .trim();
+  renderQuestions();
+}
 
-      if (!title || questions.length === 0) {
-        alert("Quiz must have a title and at least one question.");
-        return;
-      }
+/*********************************************************
+ * RENDER QUESTIONS
+ *********************************************************/
+function renderQuestions() {
+  const container = document.getElementById("questions");
+  container.innerHTML = "";
 
-      let quizzes = JSON.parse(
-        localStorage.getItem("myQuizzes") || "[]"
-      );
+  questions.forEach((q, index) => {
+    const div = document.createElement("div");
+    div.className = "question";
+    div.innerHTML =
+      "<strong>" + (index + 1) + ".</strong> " + q.question;
+    container.appendChild(div);
+  });
+}
 
-      quizzes.push({
-        title: title,
-        questions: questions
-      });
+/*********************************************************
+ * SAVE QUIZ (ACTIVE)
+ *********************************************************/
+function saveQuiz() {
+  const title = document.getElementById("quizTitle").value.trim();
 
-      localStorage.setItem(
-        "myQuizzes",
-        JSON.stringify(quizzes)
-      );
+  if (!title || questions.length === 0) {
+    alert("Quiz must have a title and at least one question.");
+    return;
+  }
 
-      alert("Quiz saved successfully!");
-      window.location.href = "my-quizzes.html";
-    }
+  const quizzes =
+    JSON.parse(localStorage.getItem("myQuizzes") || "[]");
 
-    /*********************************************************
-     * DELETE CURRENT QUIZ (NOT SAVED ONES)
-     *********************************************************/
-    function deleteCurrentQuiz() {
-      const confirmDelete = confirm(
-        "Delete the quiz you are currently creating?"
-      );
+  quizzes.push({
+    title: title,
+    questions: questions
+  });
 
-      if (!confirmDelete) return;
+  localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
 
-      questions = [];
-      document.getElementById("quizTitle").value = "";
-      document.getElementById("questions").innerHTML = "";
-    }
-  </script>
+  alert("Quiz saved!");
+  window.location.href = "my-quizzes.html";
+}
+
+/*********************************************************
+ * ARCHIVE CURRENT QUIZ
+ *********************************************************/
+function archiveCurrentQuiz() {
+  const title = document.getElementById("quizTitle").value.trim();
+
+  if (!title || questions.length === 0) {
+    alert("Nothing to archive.");
+    return;
+  }
+
+  const archived =
+    JSON.parse(localStorage.getItem("archivedQuizzes") || "[]");
+
+  archived.push({
+    title: title,
+    questions: questions
+  });
+
+  localStorage.setItem(
+    "archivedQuizzes",
+    JSON.stringify(archived)
+  );
+
+  clearCurrentQuiz();
+  alert("Quiz archived.");
+}
+
+/*********************************************************
+ * DELETE CURRENT QUIZ (CREATOR ONLY)
+ *********************************************************/
+function deleteCurrentQuiz() {
+  if (!confirm("Delete the quiz you are creating?")) return;
+  clearCurrentQuiz();
+}
+
+/*********************************************************
+ * PLAY CURRENT QUIZ (PREVIEW)
+ *********************************************************/
+function playCurrentQuiz() {
+  const title = document.getElementById("quizTitle").value.trim();
+
+  if (!title || questions.length === 0) {
+    alert("Add a title and at least one question first.");
+    return;
+  }
+
+  sessionStorage.setItem(
+    "currentQuiz",
+    JSON.stringify({
+      title: title,
+      questions: questions
+    })
+  );
+
+  window.location.href = "game.html";
+}
+
+/*********************************************************
+ * CLEAR CURRENT QUIZ
+ *********************************************************/
+function clearCurrentQuiz() {
+  questions = [];
+  document.getElementById("quizTitle").value = "";
+  document.getElementById("questions").innerHTML = "";
+}
+</script>
 
 </body>
 </html>
