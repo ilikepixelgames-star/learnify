@@ -29,11 +29,17 @@ function loadQuizzes(){
   const archivedList=document.getElementById("archived-list");
   activeList.innerHTML=""; archivedList.innerHTML="";
 
+  // Active quizzes
   Object.keys(active).forEach(name=>{
     const li=document.createElement("li");
     li.textContent=name+" ";
+
     const play=document.createElement("button"); play.textContent="Play";
-    play.addEventListener("click",()=>{ sessionStorage.setItem("currentQuiz",JSON.stringify(active[name])); window.location.href="game.html"; });
+    play.addEventListener("click",()=>{ 
+      sessionStorage.setItem("currentQuiz",JSON.stringify(active[name])); 
+      window.location.href="game.html"; 
+    });
+
     const archive=document.createElement("button"); archive.textContent="Archive";
     archive.addEventListener("click",()=>{
       const archivedData=JSON.parse(localStorage.getItem("archivedQuizzes")||"{}");
@@ -43,15 +49,44 @@ function loadQuizzes(){
       localStorage.setItem("myQuizzes",JSON.stringify(active));
       loadQuizzes();
     });
-    li.appendChild(play); li.appendChild(archive); activeList.appendChild(li);
+
+    const del=document.createElement("button"); del.textContent="Delete";
+    del.addEventListener("click",()=>{
+      if(confirm(`Delete quiz "${name}" permanently?`)){
+        delete active[name];
+        localStorage.setItem("myQuizzes",JSON.stringify(active));
+        loadQuizzes();
+      }
+    });
+
+    li.appendChild(play); li.appendChild(archive); li.appendChild(del);
+    activeList.appendChild(li);
   });
 
+  // Archived quizzes
   Object.keys(archived).forEach(name=>{
     const li=document.createElement("li");
     li.textContent=name+" ";
-    const play=document.createElement("button"); play.textContent="Play";
-    play.addEventListener("click",()=>{ sessionStorage.setItem("currentQuiz",JSON.stringify(archived[name])); window.location.href="game.html"; });
-    li.appendChild(play); archivedList.appendChild(li);
+
+    const play=document.createElement("button"); 
+    play.textContent="Play";
+    play.addEventListener("click",()=>{ 
+      sessionStorage.setItem("currentQuiz",JSON.stringify(archived[name])); 
+      window.location.href="game.html"; 
+    });
+
+    const del=document.createElement("button"); 
+    del.textContent="Delete";
+    del.addEventListener("click",()=>{
+      if(confirm(`Delete archived quiz "${name}" permanently?`)){
+        delete archived[name];
+        localStorage.setItem("archivedQuizzes",JSON.stringify(archived));
+        loadQuizzes();
+      }
+    });
+
+    li.appendChild(play); li.appendChild(del);
+    archivedList.appendChild(li);
   });
 }
 
