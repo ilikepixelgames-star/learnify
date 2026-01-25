@@ -1,58 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Quizzes</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { font-family: Arial; text-align: center; padding: 30px; background: #f7f7f7; }
-    .quiz { background: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin: 10px auto; max-width: 400px; }
-    button { margin: 5px; padding: 8px 12px; cursor: pointer; font-size: 16px; }
-  </style>
+<meta charset="UTF-8">
+<title>My Quizzes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial; text-align: center; margin-top: 30px; }
+button { padding: 6px 15px; margin: 3px; cursor: pointer; }
+h2 { margin-top: 20px; }
+ul { list-style:none; padding:0; display:inline-block; text-align:left; }
+li { margin-bottom:5px; }
+</style>
 </head>
 <body>
-
-<h1>📚 My Quizzes</h1>
-
-<div id="quiz-list"></div>
-
-<br>
-<button onclick="window.location.href='create.html'">✏️ Create New Quiz</button>
-<button onclick="window.location.href='lobby.html'">⬅ Back to Lobby</button>
+<h1>My Quizzes</h1>
+<h2>Active Quizzes</h2>
+<ul id="active-list"></ul>
+<h2>Archived Quizzes</h2>
+<ul id="archived-list"></ul>
+<button onclick="window.location.href='create.html'">Back to Create</button>
 
 <script>
-const quizList = document.getElementById("quiz-list");
+function loadQuizzes(){
+  const active=JSON.parse(localStorage.getItem("myQuizzes")||"{}");
+  const archived=JSON.parse(localStorage.getItem("archivedQuizzes")||"{}");
 
-// ✅ FIX: always parse as array
-const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "[]");
+  const activeList=document.getElementById("active-list");
+  const archivedList=document.getElementById("archived-list");
+  activeList.innerHTML=""; archivedList.innerHTML="";
 
-if (quizzes.length === 0) {
-  quizList.innerHTML = "<p>No quizzes found. Go to 'Create New Quiz' to make one!</p>";
+  Object.keys(active).forEach(name=>{
+    const li=document.createElement("li");
+    li.textContent=name+" ";
+    const play=document.createElement("button"); play.textContent="Play";
+    play.addEventListener("click",()=>{ sessionStorage.setItem("currentQuiz",JSON.stringify(active[name])); window.location.href="game.html"; });
+    const archive=document.createElement("button"); archive.textContent="Archive";
+    archive.addEventListener("click",()=>{
+      const archivedData=JSON.parse(localStorage.getItem("archivedQuizzes")||"{}");
+      archivedData[name]=active[name];
+      localStorage.setItem("archivedQuizzes",JSON.stringify(archivedData));
+      delete active[name];
+      localStorage.setItem("myQuizzes",JSON.stringify(active));
+      loadQuizzes();
+    });
+    li.appendChild(play); li.appendChild(archive); activeList.appendChild(li);
+  });
+
+  Object.keys(archived).forEach(name=>{
+    const li=document.createElement("li");
+    li.textContent=name+" ";
+    const play=document.createElement("button"); play.textContent="Play";
+    play.addEventListener("click",()=>{ sessionStorage.setItem("currentQuiz",JSON.stringify(archived[name])); window.location.href="game.html"; });
+    li.appendChild(play); archivedList.appendChild(li);
+  });
 }
 
-quizzes.forEach((quiz, index) => {
-  const div = document.createElement("div");
-  div.className = "quiz";
-  div.innerHTML = `
-    <strong>${quiz.title}</strong><br><br>
-    <button onclick="playQuiz(${index})">▶ Play</button>
-    <button onclick="deleteQuiz(${index})">❌ Delete</button>
-  `;
-  quizList.appendChild(div);
-});
-
-function playQuiz(index) {
-  sessionStorage.setItem("currentQuiz", JSON.stringify(quizzes[index]));
-  window.location.href = "game.html";
-}
-
-function deleteQuiz(index) {
-  if (!confirm("Delete this quiz?")) return;
-  quizzes.splice(index,1);
-  localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
-  location.reload();
-}
+loadQuizzes();
 </script>
-
 </body>
 </html>
