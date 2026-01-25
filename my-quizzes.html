@@ -3,31 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>My Quizzes</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Arial, sans-serif;
-      text-align: center;
       background: #f4f4f4;
+      text-align: center;
       padding: 20px;
-    }
-
-    h1, h2 {
-      margin-top: 30px;
     }
 
     .quiz {
       background: white;
-      padding: 15px;
       margin: 10px auto;
+      padding: 15px;
       max-width: 400px;
       border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     button {
       margin: 5px;
-      padding: 8px 14px;
+      padding: 8px 12px;
       cursor: pointer;
     }
   </style>
@@ -35,24 +29,17 @@
 <body>
 
   <h1>📚 My Quizzes</h1>
-
-  <h2>Active Quizzes</h2>
-  <div id="active"></div>
-
-  <h2>Archived Quizzes</h2>
-  <div id="archived"></div>
+  <div id="quizList"></div>
 
   <br>
   <button onclick="location.href='lobby.html'">⬅ Back to Lobby</button>
 
   <script>
     const quizzes = JSON.parse(localStorage.getItem("myQuizzes")) || [];
-
-    const activeDiv = document.getElementById("active");
-    const archivedDiv = document.getElementById("archived");
+    const quizList = document.getElementById("quizList");
 
     if (quizzes.length === 0) {
-      activeDiv.innerHTML = "<p>No quizzes yet.</p>";
+      quizList.innerHTML = "<p>No quizzes found.</p>";
     }
 
     quizzes.forEach((quiz, index) => {
@@ -61,18 +48,11 @@
 
       div.innerHTML = `
         <strong>${quiz.title}</strong><br><br>
-        ${quiz.archived ? "" : `<button onclick="playQuiz(${index})">▶ Play</button>`}
-        ${quiz.archived
-          ? `<button onclick="restoreQuiz(${index})">♻ Restore</button>`
-          : `<button onclick="archiveQuiz(${index})">🗄 Archive</button>`}
-        <button onclick="deleteForever(${index})">❌ Delete Forever</button>
+        <button onclick="playQuiz(${index})">▶ Play</button>
+        <button onclick="deleteQuiz(${index})">❌ Delete</button>
       `;
 
-      if (quiz.archived) {
-        archivedDiv.appendChild(div);
-      } else {
-        activeDiv.appendChild(div);
-      }
+      quizList.appendChild(div);
     });
 
     function playQuiz(index) {
@@ -83,20 +63,8 @@
       location.href = "game.html";
     }
 
-    function archiveQuiz(index) {
-      quizzes[index].archived = true;
-      localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
-      location.reload();
-    }
-
-    function restoreQuiz(index) {
-      quizzes[index].archived = false;
-      localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
-      location.reload();
-    }
-
-    function deleteForever(index) {
-      if (!confirm("Delete this quiz permanently?")) return;
+    function deleteQuiz(index) {
+      if (!confirm("Delete this quiz?")) return;
       quizzes.splice(index, 1);
       localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
       location.reload();
