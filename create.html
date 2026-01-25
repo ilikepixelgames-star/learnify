@@ -10,29 +10,31 @@
       font-family: Arial, Helvetica, sans-serif;
       background-color: #f2f2f2;
       text-align: center;
-      padding: 25px;
+      padding: 30px;
     }
 
     h1 {
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     input {
       padding: 10px;
       font-size: 16px;
       width: 260px;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
     button {
-      padding: 10px 14px;
+      display: block;
+      width: 260px;
+      margin: 6px auto;
+      padding: 10px;
       font-size: 16px;
-      margin: 6px;
       cursor: pointer;
     }
 
     #questions {
-      margin-top: 15px;
+      margin-top: 20px;
     }
 
     .question {
@@ -41,7 +43,7 @@
       border-radius: 6px;
       padding: 12px;
       margin: 8px auto;
-      max-width: 500px;
+      max-width: 520px;
       text-align: left;
     }
   </style>
@@ -54,25 +56,25 @@
 <input
   type="text"
   id="quizTitle"
-  placeholder="Enter quiz title"
+  placeholder="Quiz Title"
 />
 
 <div id="questions"></div>
 
-<!-- BUTTONS -->
-<div>
-  <button onclick="addQuestion()">➕ Add Question</button><br>
+<!-- SAME BUTTON ORDER AS BEFORE -->
+<button onclick="addQuestion()">➕ Add Question</button>
 
-  <button onclick="saveQuiz()">💾 Save Quiz</button>
-  <button onclick="archiveCurrentQuiz()">📦 Archive Current Quiz</button>
-  <button onclick="deleteCurrentQuiz()">🗑 Delete Current Quiz</button><br>
+<button onclick="saveQuiz()">💾 Save Quiz</button>
 
-  <button onclick="playCurrentQuiz()">▶ Play Current Quiz</button><br>
+<button onclick="playCurrentQuiz()">▶ Play Current Quiz</button>
 
-  <button onclick="window.location.href='my-quizzes.html'">
-    📚 My Quizzes
-  </button>
-</div>
+<button onclick="archiveCurrentQuiz()">📦 Archive Current Quiz</button>
+
+<button onclick="deleteCurrentQuiz()">🗑 Delete Current Quiz</button>
+
+<button onclick="window.location.href='my-quizzes.html'">
+  📚 My Quizzes
+</button>
 
 <script>
 /*********************************************************
@@ -127,7 +129,7 @@ function renderQuestions() {
 }
 
 /*********************************************************
- * SAVE QUIZ (ACTIVE)
+ * SAVE QUIZ
  *********************************************************/
 function saveQuiz() {
   const title = document.getElementById("quizTitle").value.trim();
@@ -149,6 +151,28 @@ function saveQuiz() {
 
   alert("Quiz saved!");
   window.location.href = "my-quizzes.html";
+}
+
+/*********************************************************
+ * PLAY CURRENT QUIZ (PREVIEW)
+ *********************************************************/
+function playCurrentQuiz() {
+  const title = document.getElementById("quizTitle").value.trim();
+
+  if (!title || questions.length === 0) {
+    alert("Add a title and at least one question first.");
+    return;
+  }
+
+  sessionStorage.setItem(
+    "currentQuiz",
+    JSON.stringify({
+      title: title,
+      questions: questions
+    })
+  );
+
+  window.location.href = "game.html";
 }
 
 /*********************************************************
@@ -180,33 +204,11 @@ function archiveCurrentQuiz() {
 }
 
 /*********************************************************
- * DELETE CURRENT QUIZ (CREATOR ONLY)
+ * DELETE CURRENT QUIZ
  *********************************************************/
 function deleteCurrentQuiz() {
   if (!confirm("Delete the quiz you are creating?")) return;
   clearCurrentQuiz();
-}
-
-/*********************************************************
- * PLAY CURRENT QUIZ (PREVIEW)
- *********************************************************/
-function playCurrentQuiz() {
-  const title = document.getElementById("quizTitle").value.trim();
-
-  if (!title || questions.length === 0) {
-    alert("Add a title and at least one question first.");
-    return;
-  }
-
-  sessionStorage.setItem(
-    "currentQuiz",
-    JSON.stringify({
-      title: title,
-      questions: questions
-    })
-  );
-
-  window.location.href = "game.html";
 }
 
 /*********************************************************
