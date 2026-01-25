@@ -10,6 +10,7 @@
     #questions-list { margin-top: 20px; text-align: left; display: inline-block; }
     li { margin-bottom: 5px; }
     button.archive { background-color:red; color:white; }
+    button.delete { background-color:#555; color:white; }
   </style>
 </head>
 <body>
@@ -29,6 +30,7 @@
 <button id="play-btn">Play Current Quiz</button>
 <button id="my-quizzes-btn">My Quizzes</button>
 <button id="archive-btn" class="archive">Archive Current Quiz</button>
+<button id="delete-btn" class="delete">Delete Current Quiz</button>
 
 <h2>Questions Added:</h2>
 <ul id="questions-list"></ul>
@@ -47,6 +49,7 @@
   const saveBtn = document.getElementById("save-btn");
   const playBtn = document.getElementById("play-btn");
   const archiveBtn = document.getElementById("archive-btn");
+  const deleteBtn = document.getElementById("delete-btn");
   const myQuizzesBtn = document.getElementById("my-quizzes-btn");
   const list = document.getElementById("questions-list");
 
@@ -109,6 +112,21 @@
     updateList();
     quizNameInput.value="";
     alert(`Quiz "${name}" archived!`);
+  });
+
+  deleteBtn.addEventListener("click", () => {
+    const name = quizNameInput.value.trim();
+    if(!name){ alert("Enter the quiz name to delete!"); return; }
+    if(confirm(`Delete quiz "${name}" permanently?`)){
+      const saved = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+      if(saved[name]) delete saved[name];
+      localStorage.setItem("myQuizzes", JSON.stringify(saved));
+      questions=[];
+      sessionStorage.removeItem("currentQuiz");
+      updateList();
+      quizNameInput.value="";
+      alert(`Quiz "${name}" deleted!`);
+    }
   });
 
   playBtn.addEventListener("click", () => {
