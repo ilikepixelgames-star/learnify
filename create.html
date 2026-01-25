@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Create Your Quiz - Learnify</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Your Quiz</title>
   <style>
     body { font-family: Arial; text-align: center; padding: 20px; }
     input, button { margin: 5px; padding: 8px; font-size: 16px; }
@@ -12,25 +11,25 @@
 </head>
 <body>
 
-<h1>✏️ Create Your Own Quiz</h1>
+<h1>Create Your Own Quiz</h1>
 
 <input type="text" id="quizTitle" placeholder="Quiz Title"><br>
 
 <div id="questions"></div>
 
-<button onclick="addQuestion()">➕ Add Question</button><br>
-<button onclick="saveQuiz()">💾 Save Quiz</button>
-<button onclick="window.location.href='my-quizzes.html'">📚 My Quizzes</button>
+<button onclick="addQuestion()">Add Question</button><br>
+<button onclick="saveQuiz()">Save Quiz</button>
+<button onclick="window.location.href='my-quizzes.html'">My Quizzes</button>
 
 <script>
 let questions = [];
 
 function addQuestion() {
-  const questionText = prompt("Enter your question:");
-  if (!questionText) return;
-  const answer = prompt("Enter the correct answer:");
-  if (!answer) return;
-  
+  const q = prompt("Enter your question:");
+  if (!q) return;
+  const correct = prompt("Enter the correct answer:");
+  if (!correct) return;
+
   const choices = [];
   for (let i = 0; i < 3; i++) {
     const choice = prompt(`Enter wrong choice ${i+1}:`);
@@ -38,10 +37,11 @@ function addQuestion() {
     choices.push(choice);
   }
 
+  // Shuffle choices with correct answer
   questions.push({
-    question: questionText,
-    correct: answer,
-    choices: [...choices, answer].sort(() => Math.random() - 0.5)
+    question: q,
+    correct: correct,
+    choices: [...choices, correct].sort(() => Math.random() - 0.5)
   });
 
   renderQuestions();
@@ -65,8 +65,13 @@ function saveQuiz() {
     return;
   }
 
+  // Load existing quizzes
   let quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "[]");
-  quizzes.push({ title, questions });
+
+  // Add new quiz
+  quizzes.push({ title: title, questions: questions });
+
+  // Save back to localStorage under the key "myQuizzes"
   localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
 
   alert("Quiz saved!");
