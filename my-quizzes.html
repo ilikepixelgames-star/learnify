@@ -7,15 +7,19 @@
     body {
       font-family: Arial, sans-serif;
       background: #f4f4f4;
-      text-align: center;
       padding: 20px;
+      text-align: center;
+    }
+
+    .section {
+      margin-bottom: 30px;
     }
 
     .quiz {
       background: white;
-      margin: 10px auto;
       padding: 15px;
-      max-width: 400px;
+      margin: 10px auto;
+      max-width: 420px;
       border-radius: 8px;
     }
 
@@ -29,46 +33,102 @@
 <body>
 
   <h1>📚 My Quizzes</h1>
-  <div id="quizList"></div>
+
+  <div class="section">
+    <h2>Active Quizzes</h2>
+    <div id="activeList"></div>
+  </div>
+
+  <div class="section">
+    <h2>Archived Quizzes</h2>
+    <div id="archivedList"></div>
+  </div>
 
   <br>
   <button onclick="location.href='lobby.html'">⬅ Back to Lobby</button>
 
   <script>
-    const quizzes = JSON.parse(localStorage.getItem("myQuizzes")) || [];
-    const quizList = document.getElementById("quizList");
+    let activeQuizzes = JSON.parse(localStorage.getItem("myQuizzes")) || [];
+    let archivedQuizzes = JSON.parse(localStorage.getItem("archivedQuizzes")) || [];
 
-    if (quizzes.length === 0) {
-      quizList.innerHTML = "<p>No quizzes found.</p>";
+    const activeList = document.getElementById("activeList");
+    const archivedList = document.getElementById("archivedList");
+
+    function render() {
+      activeList.innerHTML = "";
+      archivedList.innerHTML = "";
+
+      if (activeQuizzes.length === 0) {
+        activeList.innerHTML = "<p>No active quizzes.</p>";
+      }
+
+      if (archivedQuizzes.length === 0) {
+        archivedList.innerHTML = "<p>No archived quizzes.</p>";
+      }
+
+      activeQuizzes.forEach((quiz, index) => {
+        const div = document.createElement("div");
+        div.className = "quiz";
+        div.innerHTML = `
+          <strong>${quiz.title}</strong><br><br>
+          <button onclick="playQuiz(${index})">▶ Play</button>
+          <button onclick="archiveQuiz(${index})">📦 Archive</button>
+          <button onclick="deleteActive(${index})">❌ Delete</button>
+        `;
+        activeList.appendChild(div);
+      });
+
+      archivedQuizzes.forEach((quiz, index) => {
+        const div = document.createElement("div");
+        div.className = "quiz";
+        div.innerHTML = `
+          <strong>${quiz.title}</strong><br><br>
+          <button onclick="restoreQuiz(${index})">♻ Restore</button>
+          <button onclick="deleteArchived(${index})">🗑 Delete Forever</button>
+        `;
+        archivedList.appendChild(div);
+      });
     }
-
-    quizzes.forEach((quiz, index) => {
-      const div = document.createElement("div");
-      div.className = "quiz";
-
-      div.innerHTML = `
-        <strong>${quiz.title}</strong><br><br>
-        <button onclick="playQuiz(${index})">▶ Play</button>
-        <button onclick="deleteQuiz(${index})">❌ Delete</button>
-      `;
-
-      quizList.appendChild(div);
-    });
 
     function playQuiz(index) {
       sessionStorage.setItem(
         "currentQuiz",
-        JSON.stringify(quizzes[index])
+        JSON.stringify(activeQuizzes[index])
       );
       location.href = "game.html";
     }
 
-    function deleteQuiz(index) {
-      if (!confirm("Delete this quiz?")) return;
-      quizzes.splice(index, 1);
-      localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
-      location.reload();
+    function archiveQuiz(index) {
+      archivedQuizzes.push(activeQuizzes[index]);
+      activeQuizzes.splice(index, 1);
+      save();
     }
+
+    function restoreQuiz(index) {
+      activeQuizzes.push(archivedQuizzes[index]);
+      archivedQuizzes.splice(index, 1);
+      save();
+    }
+
+    function deleteActive(index) {
+      if (!confirm("Delete this quiz?")) return;
+      activeQuizzes.splice(index, 1);
+      save();
+    }
+
+    function deleteArchived(index) {
+      if (!confirm("Delete forever? This cannot be undone.")) return;
+      archivedQuizzes.splice(index, 1);
+      save();
+    }
+
+    function save() {
+      localStorage.setItem("myQuizzes", JSON.stringify(activeQuizzes));
+      localStorage.setItem("archivedQuizzes", JSON.stringify(archivedQuizzes));
+      render();
+    }
+
+    render();
   </script>
 
 </body>
