@@ -18,32 +18,32 @@ h1 {
 }
 
 input {
-  width: 260px;
+  width: 300px;
   padding: 10px;
   font-size: 16px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
-/* Preview box for questions */
+/* PREVIEW BOX */
 #previewBox {
   background: #fff;
   border: 2px solid #aaa;
-  border-radius: 8px;
-  padding: 15px;
-  max-width: 600px;
-  margin: 20px auto;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 650px;
+  margin: 0 auto 30px auto;
   text-align: left;
 }
 
 .preview-title {
   font-weight: bold;
   font-size: 18px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .preview-question {
+  padding: 10px;
   margin-bottom: 10px;
-  padding: 8px;
   border-bottom: 1px solid #ddd;
 }
 
@@ -51,18 +51,20 @@ input {
   border-bottom: none;
 }
 
-button {
-  width: 260px;
-  padding: 10px;
-  font-size: 16px;
-  margin: 6px auto;
-  cursor: pointer;
-  display: block;
+/* BUTTON GROUPS */
+.button-group {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-/* Group spacing */
-.button-group {
-  margin-bottom: 20px;
+.button-group button {
+  width: 140px;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
 }
 </style>
 </head>
@@ -73,13 +75,13 @@ button {
 
 <input type="text" id="quizTitle" placeholder="Quiz Title">
 
-<!-- Preview Box -->
+<!-- PREVIEW BOX -->
 <div id="previewBox">
   <div class="preview-title" id="previewTitle">Quiz Title Here</div>
   <div id="previewQuestions"></div>
 </div>
 
-<!-- Buttons -->
+<!-- BUTTON GROUPS -->
 <div class="button-group">
   <button onclick="addQuestion()">Add Question</button>
 </div>
@@ -90,8 +92,8 @@ button {
 </div>
 
 <div class="button-group">
-  <button onclick="archiveCurrentQuiz()">Archive Current Quiz</button>
-  <button onclick="deleteCurrentQuiz()">Delete Current Quiz</button>
+  <button onclick="archiveCurrentQuiz()">Archive Quiz</button>
+  <button onclick="deleteCurrentQuiz()">Delete Quiz</button>
 </div>
 
 <div class="button-group">
