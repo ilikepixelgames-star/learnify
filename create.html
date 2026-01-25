@@ -1,54 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Create Quiz</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Create Quiz</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      text-align: center;
-      padding: 30px;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  text-align: center;
+  padding: 30px;
+}
 
-    h1 {
-      margin-bottom: 20px;
-    }
+h1 {
+  margin-bottom: 20px;
+}
 
-    input {
-      width: 260px;
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 15px;
-    }
+input {
+  width: 260px;
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
 
-    button {
-      width: 260px;
-      padding: 10px;
-      font-size: 16px;
-      margin: 6px auto;
-      display: block;
-      cursor: pointer;
-    }
+button {
+  width: 260px;
+  padding: 10px;
+  font-size: 16px;
+  margin: 6px auto;
+  cursor: pointer;
+  display: block;
+}
 
-    #questions {
-      margin-top: 20px;
-    }
+#questions {
+  margin-top: 20px;
+}
 
-    .question {
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 10px;
-      margin: 8px auto;
-      max-width: 520px;
-      text-align: left;
-    }
-  </style>
+.question {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  margin: 8px auto;
+  max-width: 520px;
+  text-align: left;
+}
+</style>
 </head>
-
 <body>
 
 <h1>Create Your Own Quiz</h1>
@@ -57,11 +56,21 @@
 
 <div id="questions"></div>
 
+<!-- BUTTONS WITH GROUPING / SPACING -->
 <button onclick="addQuestion()">Add Question</button>
+
+<br>
+
 <button onclick="saveQuiz()">Save Quiz</button>
 <button onclick="playCurrentQuiz()">Play Current Quiz</button>
+
+<br>
+
 <button onclick="archiveCurrentQuiz()">Archive Current Quiz</button>
 <button onclick="deleteCurrentQuiz()">Delete Current Quiz</button>
+
+<br>
+
 <button onclick="window.location.href='my-quizzes.html'">My Quizzes</button>
 
 <script>
@@ -83,12 +92,7 @@ function addQuestion() {
 
   const choices = [...wrong, correct].sort(() => Math.random() - 0.5);
 
-  questions.push({
-    question,
-    correct,
-    choices
-  });
-
+  questions.push({ question, correct, choices });
   renderQuestions();
 }
 
@@ -141,15 +145,9 @@ function archiveCurrentQuiz() {
     return;
   }
 
-  const archived = JSON.parse(
-    localStorage.getItem("archivedQuizzes") || "[]"
-  );
-
+  const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "[]");
   archived.push({ title, questions });
-  localStorage.setItem(
-    "archivedQuizzes",
-    JSON.stringify(archived)
-  );
+  localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
 
   clearQuiz();
   alert("Quiz archived.");
@@ -163,8 +161,7 @@ function deleteCurrentQuiz() {
 function clearQuiz() {
   questions = [];
   quizTitle.value = "";
-  questionsDiv = document.getElementById("questions");
-  questionsDiv.innerHTML = "";
+  document.getElementById("questions").innerHTML = "";
 }
 </script>
 
