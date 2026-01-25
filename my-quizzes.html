@@ -1,65 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Quizzes</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .quiz {
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin: 10px auto;
-      max-width: 400px;
-      border-radius: 8px;
-    }
-
-    button {
-      padding: 8px 12px;
-      margin: 5px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>My Quizzes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial; text-align: center; margin-top: 30px; }
+button { padding: 6px 12px; margin: 3px; cursor: pointer; }
+h2 { margin-top: 20px; }
+ul { list-style:none; padding:0; display:inline-block; text-align:left; }
+li { margin-bottom:5px; }
+button.archive { background-color: orange; color:white; }
+button.delete { background-color:red; color:white; }
+</style>
 </head>
 <body>
+<h1>My Quizzes</h1>
 
-  <h1>📘 My Quizzes</h1>
+<h2>Active Quizzes</h2>
+<ul id="active-list"></ul>
 
-  <div id="quizList"></div>
+<h2>Archived Quizzes</h2>
+<ul id="archived-list"></ul>
 
-  <br>
-  <button onclick="location.href='lobby.html'">⬅ Back to Lobby</button>
+<button onclick="window.location.href='create.html'">Back to Create</button>
 
-  <script>
-    const quizList = document.getElementById("quizList");
-    const quizzes = JSON.parse(localStorage.getItem("myQuizzes")) || [];
+<script>
+function loadQuizzes(){
+  const active = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+  const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
 
-    if (quizzes.length === 0) {
-      quizList.innerHTML = "<p>No quizzes found.</p>";
-    }
+  const activeList = document.getElementById("active-list");
+  const archivedList = document.getElementById("archived-list");
+  activeList.innerHTML = "";
+  archivedList.innerHTML = "";
 
-    quizzes.forEach((quiz, index) => {
-      const div = document.createElement("div");
-      div.className = "quiz";
-      div.innerHTML = `
-        <strong>${quiz.title}</strong><br><br>
-        <button onclick="playQuiz(${index})">▶ Play</button>
-      `;
-      quizList.appendChild(div);
+  // Active quizzes
+  Object.keys(active).forEach(name => {
+    const li = document.createElement("li");
+    li.textContent = name + " ";
+
+    // Play button
+    const play = document.createElement("button");
+    play.textContent = "Play";
+    play.addEventListener("click", () => {
+      sessionStorage.setItem("currentQuiz", JSON.stringify(active[name]));
+      window.location.href = "game.html";
     });
 
-    function playQuiz(index) {
-      sessionStorage.setItem(
-        "currentQuiz",
-        JSON.stringify(quizzes[index])
-      );
-      location.href = "game.html";
-    }
-  </script>
+    // Archive button
+    const archive = document.createElement("button");
+    archive.textContent = "Archive";
+    archive.className = "archive";
+    archive.addEventListener("click", () => {
+      const archivedData = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
+      archivedData[name] = active[name];
+      localStorage.setItem("archivedQuizzes", JSON.stringify(archivedData));
+      delete active[name];
+      localStorage.setItem("myQuizzes", JSON.stringify(active));
+      loadQuizzes();
+    });
 
+    // Delete permanently button
+    const del = document.createElement("button");
+    del.textContent = "Delete";
+    del.className = "delete";
+    del.addEventListener("click", () => {
+      if(confirm(`Permanently delete "${name}"?`)){
+        delete active[name];
+        localStorage.setItem("myQuizzes", JSON.stringify(active));
+        loadQuizzes();
+      }
+    });
+
+    li.appendChild(play);
+    li.appendChild(archive);
+    li.appendChild(del);
+    activeList.appendChild(li);
+  });
+
+  // Archived quizzes
+  Object.keys(archived).forEach(name => {
+    const li = document.createElement("li");
+    li.textContent = name + " ";
+
+    // Play button
+    const play = document.createElement("button");
+    play.textContent = "Play";
+    play.addEventListener("click", () => {
+      sessionStorage.setItem("currentQuiz", JSON.stringify(archived[name]));
+      window.location.href = "game.html";
+    });
+
+    // Delete permanently button
+    const del = document.createElement("button");
+    del.textContent = "Delete";
+    del.className = "delete";
+    del.addEventListener("click", () => {
+      if(confirm(`Permanently delete "${name}" from archived quizzes?`)){
+        delete archived[name];
+        localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
+        loadQuizzes();
+      }
+    });
+
+    li.appendChild(play);
+    li.appendChild(del);
+    archivedList.appendChild(li);
+  });
+}
+
+// Initial load
+loadQuizzes();
+</script>
 </body>
 </html>
