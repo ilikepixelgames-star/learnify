@@ -11,14 +11,14 @@
       margin-top: 40px;
     }
     .quiz {
-      margin: 15px 0;
-      padding: 10px;
       border: 1px solid #ccc;
-      display: inline-block;
-      width: 300px;
+      padding: 15px;
+      margin: 10px auto;
+      width: 320px;
+      border-radius: 5px;
     }
     button {
-      padding: 8px 15px;
+      padding: 8px 16px;
       margin: 5px;
       font-size: 16px;
       cursor: pointer;
@@ -32,33 +32,35 @@
 <div id="quiz-list"></div>
 
 <br>
-<button onclick="window.location.href='create.html'">Back to Create</button>
-<button onclick="window.location.href='lobby.html'">Back to Lobby</button>
+<button onclick="goCreate()">Back to Create</button>
+<button onclick="goLobby()">Back to Lobby</button>
 
 <script>
 const quizList = document.getElementById("quiz-list");
 
-// Load saved quizzes
-const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+// Load quizzes from localStorage
+let quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
 
 // If no quizzes exist
 if (Object.keys(quizzes).length === 0) {
   quizList.innerHTML = "<p>No saved quizzes yet.</p>";
 }
 
-// Display quizzes
+// Display each quiz
 for (const name in quizzes) {
   const div = document.createElement("div");
   div.className = "quiz";
+
   div.innerHTML = `
     <h3>${name}</h3>
     <button onclick="playQuiz('${name}')">Play</button>
     <button onclick="deleteQuiz('${name}')">Delete</button>
   `;
+
   quizList.appendChild(div);
 }
 
-// 🔑 PLAY QUIZ (THIS FIXES EVERYTHING)
+// 🔑 THIS IS THE IMPORTANT PART
 function playQuiz(name) {
   const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
 
@@ -67,19 +69,30 @@ function playQuiz(name) {
     return;
   }
 
-  // Copy quiz to sessionStorage so game.html can read it
-  sessionStorage.setItem("currentQuiz", JSON.stringify(quizzes[name]));
+  // Copy quiz so game.html can read it
+  sessionStorage.setItem(
+    "currentQuiz",
+    JSON.stringify(quizzes[name])
+  );
 
   window.location.href = "game.html";
 }
 
-// DELETE QUIZ FOREVER
+// Delete quiz permanently
 function deleteQuiz(name) {
   if (confirm("Delete this quiz permanently?")) {
     delete quizzes[name];
     localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
     location.reload();
   }
+}
+
+function goCreate() {
+  window.location.href = "create.html";
+}
+
+function goLobby() {
+  window.location.href = "lobby.html";
 }
 </script>
 
