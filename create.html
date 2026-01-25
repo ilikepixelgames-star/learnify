@@ -14,40 +14,55 @@ body {
 }
 
 h1 {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 input {
   width: 260px;
   padding: 10px;
   font-size: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+}
+
+/* Preview box for questions */
+#previewBox {
+  background: #fff;
+  border: 2px solid #aaa;
+  border-radius: 8px;
+  padding: 15px;
+  max-width: 600px;
+  margin: 20px auto;
+  text-align: left;
+}
+
+.preview-title {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.preview-question {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.preview-question:last-child {
+  border-bottom: none;
 }
 
 button {
   width: 260px;
   padding: 10px;
   font-size: 16px;
+  margin: 6px auto;
   cursor: pointer;
+  display: block;
 }
 
 /* Group spacing */
 .button-group {
   margin-bottom: 20px;
-}
-
-#questions {
-  margin-top: 20px;
-}
-
-.question {
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 12px;
-  margin: 8px auto;
-  max-width: 520px;
-  text-align: left;
 }
 </style>
 </head>
@@ -58,9 +73,13 @@ button {
 
 <input type="text" id="quizTitle" placeholder="Quiz Title">
 
-<div id="questions"></div>
+<!-- Preview Box -->
+<div id="previewBox">
+  <div class="preview-title" id="previewTitle">Quiz Title Here</div>
+  <div id="previewQuestions"></div>
+</div>
 
-<!-- Buttons grouped for old "spread out" layout -->
+<!-- Buttons -->
 <div class="button-group">
   <button onclick="addQuestion()">Add Question</button>
 </div>
@@ -82,6 +101,7 @@ button {
 <script>
 let questions = [];
 
+/* ADD QUESTION */
 function addQuestion() {
   const question = prompt("Enter question:");
   if (!question) return;
@@ -99,23 +119,31 @@ function addQuestion() {
   const choices = [...wrong, correct].sort(() => Math.random() - 0.5);
 
   questions.push({ question, correct, choices });
-  renderQuestions();
+  renderPreview();
 }
 
-function renderQuestions() {
-  const div = document.getElementById("questions");
-  div.innerHTML = "";
+/* RENDER PREVIEW BOX */
+function renderPreview() {
+  const title = document.getElementById("quizTitle").value.trim();
+  document.getElementById("previewTitle").textContent = title || "Quiz Title Here";
+
+  const container = document.getElementById("previewQuestions");
+  container.innerHTML = "";
 
   questions.forEach((q, i) => {
-    const el = document.createElement("div");
-    el.className = "question";
-    el.innerHTML = "<b>" + (i + 1) + ".</b> " + q.question;
-    div.appendChild(el);
+    const div = document.createElement("div");
+    div.className = "preview-question";
+
+    div.innerHTML = "<b>" + (i + 1) + ".</b> " + q.question +
+      "<br>Correct: " + q.correct +
+      "<br>Choices: " + q.choices.join(", ");
+    container.appendChild(div);
   });
 }
 
+/* SAVE QUIZ */
 function saveQuiz() {
-  const title = quizTitle.value.trim();
+  const title = document.getElementById("quizTitle").value.trim();
   if (!title || questions.length === 0) {
     alert("Add a title and questions first.");
     return;
@@ -129,23 +157,21 @@ function saveQuiz() {
   location.href = "my-quizzes.html";
 }
 
+/* PLAY CURRENT QUIZ */
 function playCurrentQuiz() {
-  const title = quizTitle.value.trim();
+  const title = document.getElementById("quizTitle").value.trim();
   if (!title || questions.length === 0) {
     alert("Nothing to play.");
     return;
   }
 
-  sessionStorage.setItem(
-    "currentQuiz",
-    JSON.stringify({ title, questions })
-  );
-
+  sessionStorage.setItem("currentQuiz", JSON.stringify({ title, questions }));
   location.href = "game.html";
 }
 
+/* ARCHIVE CURRENT QUIZ */
 function archiveCurrentQuiz() {
-  const title = quizTitle.value.trim();
+  const title = document.getElementById("quizTitle").value.trim();
   if (!title || questions.length === 0) {
     alert("Nothing to archive.");
     return;
@@ -159,15 +185,18 @@ function archiveCurrentQuiz() {
   alert("Quiz archived.");
 }
 
+/* DELETE CURRENT QUIZ */
 function deleteCurrentQuiz() {
   if (!confirm("Delete current quiz?")) return;
   clearQuiz();
 }
 
+/* CLEAR QUIZ */
 function clearQuiz() {
   questions = [];
-  quizTitle.value = "";
-  document.getElementById("questions").innerHTML = "";
+  document.getElementById("quizTitle").value = "";
+  document.getElementById("previewTitle").textContent = "Quiz Title Here";
+  document.getElementById("previewQuestions").innerHTML = "";
 }
 </script>
 
