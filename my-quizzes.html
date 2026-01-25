@@ -2,64 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Quizzes</title>
+  <title>My Quizzes - Learnify</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Arial, sans-serif;
+      background: #f7f7f7;
       text-align: center;
-      padding: 20px;
+      padding: 30px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
     }
 
     .quiz {
+      background: #fff;
       border: 1px solid #ccc;
+      border-radius: 8px;
       padding: 15px;
       margin: 10px auto;
       max-width: 400px;
-      border-radius: 8px;
     }
 
     button {
-      padding: 8px 12px;
       margin: 5px;
+      padding: 8px 14px;
       cursor: pointer;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
 
-  <h1>📘 My Quizzes</h1>
+<h1>📚 My Quizzes</h1>
 
-  <div id="quizList"></div>
+<div id="quiz-list"></div>
 
-  <br>
-  <button onclick="location.href='lobby.html'">⬅ Back to Lobby</button>
+<br>
+<button onclick="window.location.href='lobby.html'">⬅ Back to Lobby</button>
+<button onclick="window.location.href='create.html'">✏️ Create New Quiz</button>
 
-  <script>
-    const quizList = document.getElementById("quizList");
-    const quizzes = JSON.parse(localStorage.getItem("myQuizzes")) || [];
+<script>
+  // Load quizzes from localStorage
+  const quizList = document.getElementById("quiz-list");
+  const quizzes = JSON.parse(localStorage.getItem("myQuizzes")) || [];
 
-    if (quizzes.length === 0) {
-      quizList.innerHTML = "<p>No quizzes found.</p>";
-    }
+  // Show message if no quizzes exist
+  if (quizzes.length === 0) {
+    quizList.innerHTML = "<p>No quizzes found. Go to 'Create New Quiz' to make one!</p>";
+  }
 
-    quizzes.forEach((quiz, index) => {
-      const div = document.createElement("div");
-      div.className = "quiz";
-      div.innerHTML = `
-        <strong>${quiz.title}</strong><br><br>
-        <button onclick="playQuiz(${index})">▶ Play</button>
-      `;
-      quizList.appendChild(div);
-    });
+  // Display all quizzes
+  quizzes.forEach((quiz, index) => {
+    const div = document.createElement("div");
+    div.className = "quiz";
+    div.innerHTML = `
+      <strong>${quiz.title}</strong><br><br>
+      <button onclick="playQuiz(${index})">▶ Play</button>
+      <button onclick="deleteQuiz(${index})">❌ Delete</button>
+    `;
+    quizList.appendChild(div);
+  });
 
-    function playQuiz(index) {
-      sessionStorage.setItem(
-        "currentQuiz",
-        JSON.stringify(quizzes[index])
-      );
-      location.href = "game.html";
-    }
-  </script>
+  // Play quiz: store it in sessionStorage for game.html
+  function playQuiz(index) {
+    sessionStorage.setItem(
+      "currentQuiz",
+      JSON.stringify(quizzes[index])
+    );
+    window.location.href = "game.html";
+  }
+
+  // Delete quiz permanently
+  function deleteQuiz(index) {
+    if (!confirm("Delete this quiz?")) return;
+    quizzes.splice(index, 1);
+    localStorage.setItem("myQuizzes", JSON.stringify(quizzes));
+    location.reload();
+  }
+</script>
 
 </body>
 </html>
