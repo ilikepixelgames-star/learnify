@@ -36,7 +36,7 @@
 
   #next-btn { display:none; }
 
-  /* New Lobby Button */
+  /* Lobby Button */
   #lobby-btn {
     background: #ff5722;
     margin-top: 20px;
@@ -72,31 +72,8 @@
 <button id="lobby-btn">⬅️ Back to Lobby</button>
 
 <script>
-// LOAD QUESTIONS
 let questions = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
 
-// If no questions, show a message but DO NOT redirect automatically
-if (!Array.isArray(questions) || questions.length === 0) {
-  document.getElementById("q-title").textContent = "No quiz loaded!";
-  document.getElementById("q-text").textContent = "Go back and create or load a quiz to play.";
-}
-
-// PLAYER SETUP
-let players = [
-  { name: "YOU", score: 0 }
-];
-
-const simNames = ["Alex","Jamie","Sam","Taylor","Jordan","Chris","Morgan","Riley","Casey"];
-simNames.forEach(n => {
-  players.push({
-    name: n,
-    score: Math.floor(Math.random()*300)
-  });
-});
-
-let index = 0;
-
-// ELEMENTS
 const qTitle = document.getElementById("q-title");
 const qText = document.getElementById("q-text");
 const answersDiv = document.getElementById("answers");
@@ -107,84 +84,71 @@ const yourPlaceEl = document.getElementById("your-place");
 const nextBtn = document.getElementById("next-btn");
 const lobbyBtn = document.getElementById("lobby-btn");
 
-// LOAD QUESTION
+if(questions.length === 0){
+  qTitle.textContent = "No quiz loaded!";
+  qText.textContent = "Go back and create or load a quiz to play.";
+}
+
+// PLAYER SETUP
+let players = [{ name: "YOU", score: 0 }];
+const simNames = ["Alex","Jamie","Sam","Taylor","Jordan","Chris","Morgan","Riley","Casey"];
+simNames.forEach(n => players.push({ name:n, score: Math.floor(Math.random()*300) }));
+
+let index = 0;
+
 function loadQuestion() {
-  if(questions.length === 0) return; // nothing to load
-  leaderboard.style.display = "none";
-  nextBtn.style.display = "none";
-  answersDiv.innerHTML = "";
+  if(questions.length===0) return;
+  leaderboard.style.display="none";
+  nextBtn.style.display="none";
+  answersDiv.innerHTML="";
 
   const q = questions[index];
   qTitle.textContent = "Question " + (index + 1);
   qText.textContent = q.q;
 
-  q.answers.forEach((ans, i) => {
+  q.answers.forEach((ans,i)=>{
     const btn = document.createElement("button");
     btn.textContent = ans;
-    btn.onclick = () => answerQuestion(i);
+    btn.onclick = ()=>answerQuestion(i);
     answersDiv.appendChild(btn);
   });
 }
 
-// ANSWER QUESTION
-function answerQuestion(choice) {
-  answersDiv.querySelectorAll("button").forEach(b => b.disabled = true);
-
-  if (choice === questions[index].correct) {
-    players[0].score += 1000;
+function answerQuestion(choice){
+  answersDiv.querySelectorAll("button").forEach(b=>b.disabled=true);
+  if(choice === questions[index].correct) players[0].score +=1000;
+  for(let i=1;i<players.length;i++){
+    if(Math.random()<0.6) players[i].score += Math.floor(600 + Math.random()*500);
   }
-
-  // Simulated players scoring
-  for (let i = 1; i < players.length; i++) {
-    if (Math.random() < 0.6) {
-      players[i].score += Math.floor(600 + Math.random() * 500);
-    }
-  }
-
   showLeaderboard();
 }
 
-// SHOW LEADERBOARD
-function showLeaderboard() {
-  players.sort((a,b) => b.score - a.score);
-
-  const top3 = players.slice(0,3)
-    .map((p,i)=> `${i+1}️⃣ ${p.name} — ${p.score} pts`)
-    .join("<br>");
-
+function showLeaderboard(){
+  players.sort((a,b)=>b.score-a.score);
+  const top3 = players.slice(0,3).map((p,i)=> `${i+1}️⃣ ${p.name} — ${p.score} pts`).join("<br>");
   top3El.innerHTML = top3;
-
-  const yourIndex = players.findIndex(p => p.name === "YOU");
+  const yourIndex = players.findIndex(p=>p.name==="YOU");
   yourScoreEl.textContent = players[yourIndex].score;
-  yourPlaceEl.textContent = (yourIndex + 1) + " / " + players.length;
-
-  leaderboard.style.display = "block";
-  nextBtn.style.display = "inline-block";
+  yourPlaceEl.textContent = (yourIndex+1) + " / " + players.length;
+  leaderboard.style.display="block";
+  nextBtn.style.display="inline-block";
 }
 
-// NEXT BUTTON
-nextBtn.onclick = () => {
+nextBtn.onclick = ()=>{
   index++;
-  if (index < questions.length) {
-    loadQuestion();
-  } else {
-    qTitle.textContent = "🎉 Quiz Complete!";
-    qText.textContent = "Final Score: " + players.find(p=>p.name==="YOU").score;
-    answersDiv.innerHTML = "";
-    leaderboard.style.display = "block";
-    nextBtn.style.display = "none";
+  if(index<questions.length) loadQuestion();
+  else{
+    qTitle.textContent="🎉 Quiz Complete!";
+    qText.textContent="Final Score: " + players.find(p=>p.name==="YOU").score;
+    answersDiv.innerHTML="";
+    leaderboard.style.display="block";
+    nextBtn.style.display="none";
   }
 };
 
-// LOBBY BUTTON
-lobbyBtn.addEventListener("click", () => {
-  window.location.href = "lobby.html";
-});
+lobbyBtn.addEventListener("click", ()=>window.location.href="lobby.html");
 
-// Only load questions if a quiz exists
-if(questions.length > 0) {
-  loadQuestion();
-}
+if(questions.length>0) loadQuestion();
 </script>
 </body>
 </html>
