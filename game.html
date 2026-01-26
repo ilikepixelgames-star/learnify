@@ -35,6 +35,21 @@
   }
 
   #next-btn { display:none; }
+
+  /* New Lobby Button */
+  #lobby-btn {
+    background: #ff5722;
+    margin-top: 20px;
+    font-weight: bold;
+    box-shadow: 0 0 10px #ff5722, 0 0 20px #ff7043;
+    transition: 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+  }
+  #lobby-btn:hover {
+    box-shadow: 0 0 20px #ff5722, 0 0 30px #ff7043;
+    transform: scale(1.05);
+  }
 </style>
 </head>
 <body>
@@ -54,6 +69,8 @@
 </div>
 
 <button id="next-btn">Next Question</button>
+<!-- NEW: Back to Lobby button -->
+<button id="lobby-btn">⬅️ Back to Lobby</button>
 
 <script>
 // LOAD QUESTIONS
@@ -87,7 +104,9 @@ const top3El = document.getElementById("top3");
 const yourScoreEl = document.getElementById("your-score");
 const yourPlaceEl = document.getElementById("your-place");
 const nextBtn = document.getElementById("next-btn");
+const lobbyBtn = document.getElementById("lobby-btn");
 
+// LOAD QUESTION
 function loadQuestion() {
   leaderboard.style.display = "none";
   nextBtn.style.display = "none";
@@ -105,6 +124,7 @@ function loadQuestion() {
   });
 }
 
+// ANSWER QUESTION
 function answerQuestion(choice) {
   answersDiv.querySelectorAll("button").forEach(b => b.disabled = true);
 
@@ -122,6 +142,7 @@ function answerQuestion(choice) {
   showLeaderboard();
 }
 
+// SHOW LEADERBOARD
 function showLeaderboard() {
   players.sort((a,b) => b.score - a.score);
 
@@ -139,6 +160,7 @@ function showLeaderboard() {
   nextBtn.style.display = "inline-block";
 }
 
+// NEXT BUTTON
 nextBtn.onclick = () => {
   index++;
   if (index < questions.length) {
@@ -151,6 +173,11 @@ nextBtn.onclick = () => {
     nextBtn.style.display = "none";
   }
 };
+
+// LOBBY BUTTON
+lobbyBtn.addEventListener("click", () => {
+  window.location.href = "lobby.html";
+});
 
 loadQuestion();
 </script>
