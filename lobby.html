@@ -43,6 +43,8 @@
   
   <button id="start-btn" disabled>Start Game</button>
   <button id="create-btn">Create Your Own Questions</button>
+  <!-- NEW BUTTON: Play Game directly -->
+  <button id="play-btn">🎮 Play Game</button>
 
   <script>
     // Display game code from URL
@@ -55,6 +57,7 @@
     const status = document.getElementById('status');
     const startBtn = document.getElementById('start-btn');
     const createBtn = document.getElementById('create-btn');
+    const playBtn = document.getElementById('play-btn');
 
     // Add fake players one by one
     let index = 0;
@@ -79,6 +82,11 @@
     // Create your own questions button
     createBtn.addEventListener('click', () => {
       window.location.href = 'create.html';
+    });
+
+    // Play game button (NEW)
+    playBtn.addEventListener('click', () => {
+      window.location.href = 'game.html';
     });
   </script>
 </body>
