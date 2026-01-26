@@ -2,95 +2,58 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My Quizzes</title>
+<title>Fancy Button Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-body { font-family: Arial; text-align: center; margin-top: 30px; }
-button { padding: 6px 15px; margin: 3px; cursor: pointer; }
-h2 { margin-top: 20px; }
-ul { list-style:none; padding:0; display:inline-block; text-align:left; }
-li { margin-bottom:5px; }
-</style>
-</head>
-<body>
-<h1>My Quizzes</h1>
-<h2>Active Quizzes</h2>
-<ul id="active-list"></ul>
-<h2>Archived Quizzes</h2>
-<ul id="archived-list"></ul>
-<button onclick="window.location.href='create.html'">Back to Create</button>
-
-<script>
-function loadQuizzes(){
-  const active=JSON.parse(localStorage.getItem("myQuizzes")||"{}");
-  const archived=JSON.parse(localStorage.getItem("archivedQuizzes")||"{}");
-
-  const activeList=document.getElementById("active-list");
-  const archivedList=document.getElementById("archived-list");
-  activeList.innerHTML=""; archivedList.innerHTML="";
-
-  // Active quizzes
-  Object.keys(active).forEach(name=>{
-    const li=document.createElement("li");
-    li.textContent=name+" ";
-
-    const play=document.createElement("button"); play.textContent="Play";
-    play.addEventListener("click",()=>{ 
-      sessionStorage.setItem("currentQuiz",JSON.stringify(active[name])); 
-      window.location.href="game.html"; 
-    });
-
-    const archive=document.createElement("button"); archive.textContent="Archive";
-    archive.addEventListener("click",()=>{
-      const archivedData=JSON.parse(localStorage.getItem("archivedQuizzes")||"{}");
-      archivedData[name]=active[name];
-      localStorage.setItem("archivedQuizzes",JSON.stringify(archivedData));
-      delete active[name];
-      localStorage.setItem("myQuizzes",JSON.stringify(active));
-      loadQuizzes();
-    });
-
-    const del=document.createElement("button"); del.textContent="Delete";
-    del.addEventListener("click",()=>{
-      if(confirm(`Delete quiz "${name}" permanently?`)){
-        delete active[name];
-        localStorage.setItem("myQuizzes",JSON.stringify(active));
-        loadQuizzes();
-      }
-    });
-
-    li.appendChild(play); li.appendChild(archive); li.appendChild(del);
-    activeList.appendChild(li);
-  });
-
-  // Archived quizzes
-  Object.keys(archived).forEach(name=>{
-    const li=document.createElement("li");
-    li.textContent=name+" ";
-
-    const play=document.createElement("button"); 
-    play.textContent="Play";
-    play.addEventListener("click",()=>{ 
-      sessionStorage.setItem("currentQuiz",JSON.stringify(archived[name])); 
-      window.location.href="game.html"; 
-    });
-
-    const del=document.createElement("button"); 
-    del.textContent="Delete";
-    del.addEventListener("click",()=>{
-      if(confirm(`Delete archived quiz "${name}" permanently?`)){
-        delete archived[name];
-        localStorage.setItem("archivedQuizzes",JSON.stringify(archived));
-        loadQuizzes();
-      }
-    });
-
-    li.appendChild(play); li.appendChild(del);
-    archivedList.appendChild(li);
-  });
+body {
+  background: #050510;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
 }
 
-loadQuizzes();
-</script>
+/* === NEON BUTTON STYLE (same style as your image) === */
+.neon-btn {
+  width: 280px;
+  padding: 18px;
+  font-size: 20px;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #00c6ff, #0072ff, #7f00ff);
+  box-shadow:
+    0 0 15px rgba(0,198,255,0.8),
+    0 0 30px rgba(127,0,255,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.neon-btn:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 0 25px rgba(0,198,255,1),
+    0 0 45px rgba(127,0,255,0.9);
+}
+
+.arrow {
+  font-size: 24px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- === UNARCHIVE BUTTON === -->
+<button class="neon-btn">
+  Unarchive Quiz
+  <span class="arrow">➜</span>
+</button>
+
 </body>
 </html>
