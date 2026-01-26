@@ -9,23 +9,23 @@
 body {
   font-family: Arial, sans-serif;
   text-align: center;
-  margin-top: 40px;
+  margin-top: 60px;
   background: radial-gradient(circle at top, #12002b, #050510);
   color: white;
 }
 
 /* ===== HEADERS ===== */
 h1 {
-  font-size: 52px;
-  margin-bottom: 30px;
+  font-size: 72px;
+  margin-bottom: 50px;
 }
 
 h2 {
-  font-size: 36px;
-  margin: 35px 0 20px;
+  font-size: 48px;
+  margin: 60px 0 35px;
 }
 
-/* ===== LIST CONTAINER ===== */
+/* ===== LIST ===== */
 ul {
   list-style: none;
   padding: 0;
@@ -38,14 +38,14 @@ li {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  margin-bottom: 24px;
-  font-size: 22px;
+  gap: 40px;
+  margin-bottom: 40px;
+  font-size: 30px;
 }
 
-/* Quiz title kept compact */
+/* Quiz name */
 .quiz-title {
-  max-width: 280px;
+  max-width: 420px;
   text-align: right;
   overflow-wrap: break-word;
 }
@@ -53,41 +53,36 @@ li {
 /* ===== BUTTON GROUP ===== */
 .btn-group {
   display: flex;
-  gap: 12px;
+  gap: 24px;
 }
 
-/* ===== NEON BUTTONS ===== */
+/* ===== BIG NEON BUTTONS ===== */
 .neon-btn {
-  padding: 16px 36px;
-  font-size: 18px;
+  padding: 22px 52px;
+  font-size: 24px;
   color: white;
   border: none;
-  border-radius: 18px;
+  border-radius: 26px;
   cursor: pointer;
   background: linear-gradient(90deg, #00e5ff, #2979ff, #7c4dff);
   box-shadow:
-    0 0 14px rgba(0,229,255,1),
-    0 0 30px rgba(124,77,255,0.9);
+    0 0 22px rgba(0,229,255,1),
+    0 0 46px rgba(124,77,255,0.9);
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
 
 .neon-btn:hover {
-  transform: scale(1.08);
+  transform: scale(1.12);
   box-shadow:
-    0 0 22px rgba(0,229,255,1),
-    0 0 44px rgba(124,77,255,1);
-}
-
-.neon-small {
-  padding: 12px 26px;
-  font-size: 16px;
+    0 0 30px rgba(0,229,255,1),
+    0 0 60px rgba(124,77,255,1);
 }
 
 /* ===== BACK BUTTON ===== */
 .back-container {
-  margin-top: 60px;
+  margin-top: 80px;
 }
 </style>
 </head>
@@ -130,7 +125,7 @@ function loadQuizzes(){
     btnGroup.className = "btn-group";
 
     const play = document.createElement("button");
-    play.className = "neon-btn neon-small";
+    play.className = "neon-btn";
     play.textContent = "Play ▶";
     play.onclick = () => {
       sessionStorage.setItem("currentQuiz", JSON.stringify(active[name]));
@@ -138,7 +133,7 @@ function loadQuizzes(){
     };
 
     const archive = document.createElement("button");
-    archive.className = "neon-btn neon-small";
+    archive.className = "neon-btn";
     archive.textContent = "Archive 📦";
     archive.onclick = () => {
       const archivedData = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
@@ -168,7 +163,7 @@ function loadQuizzes(){
     btnGroup.className = "btn-group";
 
     const play = document.createElement("button");
-    play.className = "neon-btn neon-small";
+    play.className = "neon-btn";
     play.textContent = "Play ▶";
     play.onclick = () => {
       sessionStorage.setItem("currentQuiz", JSON.stringify(archived[name]));
@@ -176,7 +171,7 @@ function loadQuizzes(){
     };
 
     const unarchive = document.createElement("button");
-    unarchive.className = "neon-btn neon-small";
+    unarchive.className = "neon-btn";
     unarchive.textContent = "Unarchive ↩";
     unarchive.onclick = () => {
       const activeData = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
