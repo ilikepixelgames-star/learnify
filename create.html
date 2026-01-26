@@ -56,6 +56,12 @@
     left: 125%;
   }
 
+  /* Fancy red Delete button */
+  .delete-btn {
+    background: red;
+    box-shadow: 0 0 22px rgba(255,0,0,1), 0 0 46px rgba(255,50,50,0.9);
+  }
+
   #questions-list {
     margin-top: 20px;
     text-align: left;
@@ -89,7 +95,7 @@
 <button id="play-btn">Play Current Quiz</button>
 <button id="my-quizzes-btn">My Quizzes</button>
 <button id="archive-btn">Archive Current Quiz</button>
-<button id="delete-btn">Delete Current Quiz</button>
+<button id="delete-btn" class="delete-btn">Delete Current Quiz</button>
 <button id="lobby-btn">Back to Lobby</button>
 
 <h2>Questions Added:</h2>
