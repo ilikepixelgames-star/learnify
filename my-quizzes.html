@@ -7,20 +7,16 @@
 
 <style>
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   text-align: center;
   margin-top: 30px;
-  background: #050510;
+  background: radial-gradient(circle at top, #12002b, #050510);
   color: white;
 }
 
-button {
-  padding: 6px 15px;
-  margin: 3px;
-  cursor: pointer;
+h1, h2 {
+  margin-bottom: 15px;
 }
-
-h2 { margin-top: 20px; }
 
 ul {
   list-style: none;
@@ -29,29 +25,44 @@ ul {
   text-align: left;
 }
 
-li { margin-bottom: 10px; }
+li {
+  margin-bottom: 14px;
+}
 
-/* === FANCY NEON BUTTON STYLE === */
+/* ===== NEON BUTTON STYLE ===== */
 .neon-btn {
-  padding: 8px 18px;
+  padding: 10px 22px;
   font-size: 14px;
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
-  background: linear-gradient(90deg, #00c6ff, #0072ff, #7f00ff);
+  background: linear-gradient(90deg, #00e5ff, #2979ff, #7c4dff);
   box-shadow:
-    0 0 8px rgba(0,198,255,0.8),
-    0 0 16px rgba(127,0,255,0.6);
+    0 0 10px rgba(0,229,255,0.9),
+    0 0 22px rgba(124,77,255,0.7);
+  margin: 4px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
 .neon-btn:hover {
+  transform: scale(1.05);
   box-shadow:
-    0 0 14px rgba(0,198,255,1),
-    0 0 26px rgba(127,0,255,0.9);
+    0 0 16px rgba(0,229,255,1),
+    0 0 30px rgba(124,77,255,1);
+}
+
+/* Smaller inline buttons */
+.neon-small {
+  padding: 7px 16px;
+  font-size: 13px;
+}
+
+/* Back button spacing */
+.back-container {
+  margin-top: 40px;
 }
 </style>
 </head>
@@ -66,7 +77,11 @@ li { margin-bottom: 10px; }
 <h2>Archived Quizzes</h2>
 <ul id="archived-list"></ul>
 
-<button onclick="window.location.href='create.html'">Back to Create</button>
+<div class="back-container">
+  <button class="neon-btn" onclick="window.location.href='create.html'">
+    Back to Create ➜
+  </button>
+</div>
 
 <script>
 function loadQuizzes(){
@@ -79,20 +94,22 @@ function loadQuizzes(){
   activeList.innerHTML = "";
   archivedList.innerHTML = "";
 
-  // === ACTIVE QUIZZES ===
+  // ===== ACTIVE QUIZZES =====
   Object.keys(active).forEach(name => {
     const li = document.createElement("li");
     li.textContent = name + " ";
 
     const play = document.createElement("button");
-    play.textContent = "Play";
+    play.className = "neon-btn neon-small";
+    play.innerHTML = "Play ▶";
     play.onclick = () => {
       sessionStorage.setItem("currentQuiz", JSON.stringify(active[name]));
       window.location.href = "game.html";
     };
 
     const archive = document.createElement("button");
-    archive.textContent = "Archive";
+    archive.className = "neon-btn neon-small";
+    archive.innerHTML = "Archive 📦";
     archive.onclick = () => {
       const archivedData = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
       archivedData[name] = active[name];
@@ -107,22 +124,22 @@ function loadQuizzes(){
     activeList.appendChild(li);
   });
 
-  // === ARCHIVED QUIZZES ===
+  // ===== ARCHIVED QUIZZES =====
   Object.keys(archived).forEach(name => {
     const li = document.createElement("li");
     li.textContent = name + " ";
 
     const play = document.createElement("button");
-    play.textContent = "Play";
+    play.className = "neon-btn neon-small";
+    play.innerHTML = "Play ▶";
     play.onclick = () => {
       sessionStorage.setItem("currentQuiz", JSON.stringify(archived[name]));
       window.location.href = "game.html";
     };
 
-    /* === NEW UNARCHIVE BUTTON (FANCY) === */
     const unarchive = document.createElement("button");
-    unarchive.className = "neon-btn";
-    unarchive.innerHTML = "Unarchive ➜";
+    unarchive.className = "neon-btn neon-small";
+    unarchive.innerHTML = "Unarchive ↩";
     unarchive.onclick = () => {
       const activeData = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
       activeData[name] = archived[name];
