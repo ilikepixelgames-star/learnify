@@ -99,7 +99,7 @@
 <button id="add-btn">Add Question</button>
 <button id="save-btn">Save Quiz</button>
 <button id="play-btn">Play Current Quiz</button>
-<button id="direct-play-btn">🎮 Play Game</button>
+<button id="direct-play-btn">🎮 Direct Play Game</button>
 <button id="my-quizzes-btn">My Quizzes</button>
 <button id="archive-btn">Archive Current Quiz</button>
 <button id="delete-btn" class="delete-btn">Delete Current Quiz</button>
@@ -139,7 +139,6 @@ function updateList() {
   });
 }
 
-// Add Question
 addBtn.addEventListener("click", () => {
   const q = qInput.value.trim();
   const a1 = a1Input.value.trim();
@@ -160,7 +159,6 @@ addBtn.addEventListener("click", () => {
   qInput.value = a1Input.value = a2Input.value = a3Input.value = a4Input.value = correctInput.value = "";
 });
 
-// Save Quiz
 saveBtn.addEventListener("click", () => {
   const name = quizNameInput.value.trim() || "Untitled Quiz";
   if(questions.length===0){ alert("Add at least one question!"); return; }
@@ -176,7 +174,6 @@ saveBtn.addEventListener("click", () => {
   alert(`Quiz "${name}" saved!`);
 });
 
-// Archive Quiz
 archiveBtn.addEventListener("click", () => {
   const name = quizNameInput.value.trim() || "Untitled Quiz";
   if(questions.length===0){ alert("Add at least one question!"); return; }
@@ -196,7 +193,6 @@ archiveBtn.addEventListener("click", () => {
   alert(`Quiz "${name}" archived!`);
 });
 
-// Delete Quiz
 deleteBtn.addEventListener("click", () => {
   const name = quizNameInput.value.trim();
   if(!name){ alert("Enter the quiz name to delete!"); return; }
@@ -212,25 +208,20 @@ deleteBtn.addEventListener("click", () => {
   }
 });
 
-// Buttons
 lobbyBtn.addEventListener("click", () => { window.location.href = "lobby.html"; });
 myQuizzesBtn.addEventListener("click", () => { window.location.href="my-quizzes.html"; });
 
-// Play Current Quiz (solo)
+// PLAY CURRENT QUIZ SOLO
 playBtn.addEventListener("click", () => {
-  if(questions.length === 0){ alert("Add at least one question!"); return; }
-  // SAVE quiz to sessionStorage before playing
-  sessionStorage.setItem("currentQuiz", JSON.stringify(questions));
-  window.location.href = "game.html";
+  if(questions.length===0){ alert("Add at least one question!"); return; }
+  sessionStorage.setItem("currentQuiz", JSON.stringify(questions)); // ENSURE sessionStorage
+  window.location.href="game.html";
 });
 
-// Direct Play Game button (optional)
+// DIRECT PLAY GAME BUTTON
 directPlayBtn.addEventListener("click", () => {
   const storedQuiz = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
-  if(storedQuiz.length === 0){
-    alert("No quiz found! Create or load one first.");
-    return;
-  }
+  if(storedQuiz.length===0){ alert("No quiz found! Create one first."); return; }
   window.location.href="game.html";
 });
 
