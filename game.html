@@ -2,79 +2,155 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Learnify Game</title>
+<title>Quiz Game</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  body { font-family: Arial; text-align: center; margin-top: 50px; }
-  button { padding: 10px 20px; margin: 8px; font-size: 16px; cursor: pointer; }
-  #next-btn, #end-buttons { display: none; }
-  #end-buttons { margin-top: 20px; }
+  body { font-family: Arial; text-align: center; margin-top: 40px; background:#f4f6fb; }
+  h1 { margin-bottom:10px; }
+  button {
+    padding: 12px 24px;
+    margin: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+    background: #4f46e5;
+    color: white;
+  }
+  button:disabled { background:#999; cursor: not-allowed; }
+
+  #answers button {
+    display:block;
+    margin:10px auto;
+    width:60%;
+  }
+
+  #leaderboard {
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    width:60%;
+    margin:20px auto;
+    box-shadow:0 5px 15px rgba(0,0,0,0.15);
+  }
+
+  #next-btn { display:none; }
 </style>
 </head>
 <body>
 
 <h1 id="q-title"></h1>
 <p id="q-text"></p>
-<div id="answers"></div>
-<p id="feedback"></p>
 
-<button id="next-btn">Next Question</button>
-<div id="end-buttons">
-  <button id="back-lobby">Back to Lobby</button>
-  <button id="play-again">Play Again</button>
+<div id="answers"></div>
+
+<div id="leaderboard" style="display:none;">
+  <h2>🏆 Leaderboard (Top 3)</h2>
+  <p id="top3"></p>
+  <hr>
+  <p><strong>Your Score:</strong> <span id="your-score"></span></p>
+  <p><strong>Your Place:</strong> <span id="your-place"></span></p>
+  <p>⏳ Waiting for host to continue…</p>
 </div>
 
-<script>
-let questions = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
-questions = questions.filter(q => q.q && q.answers && q.answers.length===4);
+<button id="next-btn">Next Question</button>
 
-if(questions.length===0) {
-  alert("No questions loaded! Go back to Create page.");
-  window.location.href="create.html";
+<script>
+// LOAD QUESTIONS
+let questions = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
+if (!Array.isArray(questions) || questions.length === 0) {
+  alert("No questions found! Go back to Create.");
+  window.location.href = "create.html";
 }
 
-let index=0, score=0;
+// PLAYER SETUP
+let players = [
+  { name: "YOU", score: 0 }
+];
 
+const simNames = ["Alex","Jamie","Sam","Taylor","Jordan","Chris","Morgan","Riley","Casey"];
+simNames.forEach(n => {
+  players.push({
+    name: n,
+    score: Math.floor(Math.random()*300)
+  });
+});
+
+let index = 0;
+
+// ELEMENTS
 const qTitle = document.getElementById("q-title");
 const qText = document.getElementById("q-text");
 const answersDiv = document.getElementById("answers");
-const feedback = document.getElementById("feedback");
+const leaderboard = document.getElementById("leaderboard");
+const top3El = document.getElementById("top3");
+const yourScoreEl = document.getElementById("your-score");
+const yourPlaceEl = document.getElementById("your-place");
 const nextBtn = document.getElementById("next-btn");
-const endButtons = document.getElementById("end-buttons");
-const backLobbyBtn = document.getElementById("back-lobby");
-const playAgainBtn = document.getElementById("play-again");
 
 function loadQuestion() {
-  const current = questions[index];
-  qTitle.textContent = "Question "+(index+1);
-  qText.textContent = current.q;
-  answersDiv.innerHTML=""; feedback.textContent=""; nextBtn.style.display="none"; endButtons.style.display="none";
+  leaderboard.style.display = "none";
+  nextBtn.style.display = "none";
+  answersDiv.innerHTML = "";
 
-  current.answers.forEach((ans,i)=>{
-    const btn=document.createElement("button");
-    btn.textContent=ans;
-    btn.addEventListener("click", ()=>{
-      feedback.textContent=(i===current.correct)?"✅ Correct!":"❌ Wrong!";
-      if(i===current.correct) score++;
-      nextBtn.style.display="inline-block";
-    });
+  const q = questions[index];
+  qTitle.textContent = "Question " + (index + 1);
+  qText.textContent = q.q;
+
+  q.answers.forEach((ans, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = ans;
+    btn.onclick = () => answerQuestion(i);
     answersDiv.appendChild(btn);
   });
 }
 
-nextBtn.addEventListener("click", ()=>{
-  index++;
-  if(index<questions.length) loadQuestion();
-  else {
-    qTitle.textContent="🎉 Quiz Complete!";
-    qText.textContent="Score: "+score+" / "+questions.length;
-    answersDiv.innerHTML=""; feedback.textContent="";
-    nextBtn.style.display="none"; endButtons.style.display="block";
-  }
-});
+function answerQuestion(choice) {
+  answersDiv.querySelectorAll("button").forEach(b => b.disabled = true);
 
-backLobbyBtn.addEventListener("click", ()=>{ window.location.href="lobby.html"; });
-playAgainBtn.addEventListener("click", ()=>{ index=0; score=0; loadQuestion(); });
+  if (choice === questions[index].correct) {
+    players[0].score += 1000;
+  }
+
+  // Simulated players scoring
+  for (let i = 1; i < players.length; i++) {
+    if (Math.random() < 0.6) {
+      players[i].score += Math.floor(600 + Math.random() * 500);
+    }
+  }
+
+  showLeaderboard();
+}
+
+function showLeaderboard() {
+  players.sort((a,b) => b.score - a.score);
+
+  const top3 = players.slice(0,3)
+    .map((p,i)=> `${i+1}️⃣ ${p.name} — ${p.score} pts`)
+    .join("<br>");
+
+  top3El.innerHTML = top3;
+
+  const yourIndex = players.findIndex(p => p.name === "YOU");
+  yourScoreEl.textContent = players[yourIndex].score;
+  yourPlaceEl.textContent = (yourIndex + 1) + " / " + players.length;
+
+  leaderboard.style.display = "block";
+  nextBtn.style.display = "inline-block";
+}
+
+nextBtn.onclick = () => {
+  index++;
+  if (index < questions.length) {
+    loadQuestion();
+  } else {
+    qTitle.textContent = "🎉 Quiz Complete!";
+    qText.textContent = "Final Score: " + players.find(p=>p.name==="YOU").score;
+    answersDiv.innerHTML = "";
+    leaderboard.style.display = "block";
+    nextBtn.style.display = "none";
+  }
+};
 
 loadQuestion();
 </script>
