@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Create Your Own Questions</title>
+<title>Create Your Own Questions - Solo</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   body { font-family: Arial; text-align: center; margin-top: 30px; background: #000; color: #fff; }
@@ -71,6 +71,7 @@ function updateList() {
   });
 }
 
+// Add question
 addBtn.addEventListener("click", ()=>{
   const q=qInput.value.trim(), a1=a1Input.value.trim(), a2=a2Input.value.trim(),
         a3=a3Input.value.trim(), a4=a4Input.value.trim();
@@ -82,6 +83,7 @@ addBtn.addEventListener("click", ()=>{
   qInput.value=a1Input.value=a2Input.value=a3Input.value=a4Input.value=correctInput.value="";
 });
 
+// Save quiz
 saveBtn.addEventListener("click", ()=>{
   const name = quizNameInput.value.trim()||"Untitled Quiz";
   if(questions.length===0){ alert("Add at least one question!"); return; }
@@ -91,6 +93,7 @@ saveBtn.addEventListener("click", ()=>{
   sessionStorage.removeItem("currentQuiz"); questions=[]; updateList(); quizNameInput.value=""; alert(`Quiz "${name}" saved!`);
 });
 
+// Archive quiz
 archiveBtn.addEventListener("click", ()=>{
   const name = quizNameInput.value.trim()||"Untitled Quiz";
   if(questions.length===0){ alert("Add at least one question!"); return; }
@@ -102,6 +105,7 @@ archiveBtn.addEventListener("click", ()=>{
   questions=[]; sessionStorage.removeItem("currentQuiz"); updateList(); quizNameInput.value=""; alert(`Quiz "${name}" archived!`);
 });
 
+// Delete quiz
 deleteBtn.addEventListener("click", ()=>{
   const name=quizNameInput.value.trim();
   if(!name){ alert("Enter the quiz name to delete!"); return; }
@@ -113,11 +117,14 @@ deleteBtn.addEventListener("click", ()=>{
   }
 });
 
+// My quizzes page
 myQuizzesBtn.addEventListener("click", ()=>window.location.href="my-quizzes.html");
 
+// Play solo quiz
 playBtn.addEventListener("click", ()=>{
   if(questions.length===0){ alert("Add at least one question!"); return; }
-  window.location.href="game.html";
+  sessionStorage.setItem("currentQuiz",JSON.stringify(questions));
+  window.location.href="game.html"; // Goes to solo game
 });
 
 updateList();
