@@ -69,15 +69,16 @@
 </div>
 
 <button id="next-btn">Next Question</button>
-<!-- NEW: Back to Lobby button -->
 <button id="lobby-btn">⬅️ Back to Lobby</button>
 
 <script>
 // LOAD QUESTIONS
 let questions = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
+
+// If no questions, show a message but DO NOT redirect automatically
 if (!Array.isArray(questions) || questions.length === 0) {
-  alert("No questions found! Go back to Create.");
-  window.location.href = "create.html";
+  document.getElementById("q-title").textContent = "No quiz loaded!";
+  document.getElementById("q-text").textContent = "Go back and create or load a quiz to play.";
 }
 
 // PLAYER SETUP
@@ -108,6 +109,7 @@ const lobbyBtn = document.getElementById("lobby-btn");
 
 // LOAD QUESTION
 function loadQuestion() {
+  if(questions.length === 0) return; // nothing to load
   leaderboard.style.display = "none";
   nextBtn.style.display = "none";
   answersDiv.innerHTML = "";
@@ -179,7 +181,10 @@ lobbyBtn.addEventListener("click", () => {
   window.location.href = "lobby.html";
 });
 
-loadQuestion();
+// Only load questions if a quiz exists
+if(questions.length > 0) {
+  loadQuestion();
+}
 </script>
 </body>
 </html>
