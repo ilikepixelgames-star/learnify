@@ -76,12 +76,6 @@
   h1, h2 {
     color: #fff;
   }
-
-  /* Direct Play Button */
-  #direct-play-btn {
-    background: #28a745;
-    box-shadow: 0 0 10px #28a745, 0 0 20px #218838;
-  }
 </style>
 </head>
 <body>
@@ -99,7 +93,6 @@
 <button id="add-btn">Add Question</button>
 <button id="save-btn">Save Quiz</button>
 <button id="play-btn">Play Current Quiz</button>
-<button id="direct-play-btn">🎮 Direct Play Game</button>
 <button id="my-quizzes-btn">My Quizzes</button>
 <button id="archive-btn">Archive Current Quiz</button>
 <button id="delete-btn" class="delete-btn">Delete Current Quiz</button>
@@ -122,7 +115,6 @@ const correctInput = document.getElementById("correct");
 const addBtn = document.getElementById("add-btn");
 const saveBtn = document.getElementById("save-btn");
 const playBtn = document.getElementById("play-btn");
-const directPlayBtn = document.getElementById("direct-play-btn");
 const archiveBtn = document.getElementById("archive-btn");
 const deleteBtn = document.getElementById("delete-btn");
 const lobbyBtn = document.getElementById("lobby-btn");
@@ -209,21 +201,8 @@ deleteBtn.addEventListener("click", () => {
 });
 
 lobbyBtn.addEventListener("click", () => { window.location.href = "lobby.html"; });
+playBtn.addEventListener("click", () => { window.location.href="game.html"; });
 myQuizzesBtn.addEventListener("click", () => { window.location.href="my-quizzes.html"; });
-
-// PLAY CURRENT QUIZ SOLO
-playBtn.addEventListener("click", () => {
-  if(questions.length===0){ alert("Add at least one question!"); return; }
-  sessionStorage.setItem("currentQuiz", JSON.stringify(questions)); // ENSURE sessionStorage
-  window.location.href="game.html";
-});
-
-// DIRECT PLAY GAME BUTTON
-directPlayBtn.addEventListener("click", () => {
-  const storedQuiz = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
-  if(storedQuiz.length===0){ alert("No quiz found! Create one first."); return; }
-  window.location.href="game.html";
-});
 
 updateList();
 </script>
