@@ -63,17 +63,6 @@ li {
   box-shadow: 0 0 30px rgba(0,229,255,1), 0 0 60px rgba(124,77,255,1);
 }
 
-/* Delete button */
-.delete-btn {
-  background: red;
-  box-shadow: 0 0 22px rgba(255,0,0,1), 0 0 46px rgba(255,50,50,0.9);
-}
-
-.delete-btn:hover {
-  transform: scale(1.12);
-  box-shadow: 0 0 30px rgba(255,0,0,1), 0 0 60px rgba(255,50,50,1);
-}
-
 /* ===== BACK BUTTON ===== */
 .back-container { margin-top: 80px; }
 </style>
@@ -137,7 +126,7 @@ function loadQuizzes() {
     };
 
     const del = document.createElement("button");
-    del.className = "delete-btn";
+    del.className = "neon-btn"; // <— now Delete looks like the others
     del.textContent = "Delete ❌";
     del.onclick = () => {
       if(confirm(`Delete "${name}" permanently?`)) {
@@ -187,7 +176,7 @@ function loadQuizzes() {
     };
 
     const del = document.createElement("button");
-    del.className = "delete-btn";
+    del.className = "neon-btn"; // <— same as other buttons
     del.textContent = "Delete ❌";
     del.onclick = () => {
       if(confirm(`Delete "${name}" permanently?`)) {
