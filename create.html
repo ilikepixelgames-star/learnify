@@ -219,11 +219,12 @@ myQuizzesBtn.addEventListener("click", () => { window.location.href="my-quizzes.
 // Play Current Quiz (solo)
 playBtn.addEventListener("click", () => {
   if(questions.length === 0){ alert("Add at least one question!"); return; }
+  // SAVE quiz to sessionStorage before playing
   sessionStorage.setItem("currentQuiz", JSON.stringify(questions));
   window.location.href = "game.html";
 });
 
-// Direct Play Game button
+// Direct Play Game button (optional)
 directPlayBtn.addEventListener("click", () => {
   const storedQuiz = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
   if(storedQuiz.length === 0){
