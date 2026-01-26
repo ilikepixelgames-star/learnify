@@ -214,13 +214,16 @@ deleteBtn.addEventListener("click", () => {
 
 // Buttons
 lobbyBtn.addEventListener("click", () => { window.location.href = "lobby.html"; });
-playBtn.addEventListener("click", () => {
-  if(questions.length===0){ alert("Add at least one question!"); return; }
-  window.location.href="game.html";
-});
 myQuizzesBtn.addEventListener("click", () => { window.location.href="my-quizzes.html"; });
 
-// NEW: Direct Play button
+// Play Current Quiz (solo)
+playBtn.addEventListener("click", () => {
+  if(questions.length === 0){ alert("Add at least one question!"); return; }
+  sessionStorage.setItem("currentQuiz", JSON.stringify(questions));
+  window.location.href = "game.html";
+});
+
+// Direct Play Game button
 directPlayBtn.addEventListener("click", () => {
   const storedQuiz = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
   if(storedQuiz.length === 0){
