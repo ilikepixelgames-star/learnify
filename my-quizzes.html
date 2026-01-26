@@ -55,6 +55,7 @@ li {
   display: inline-flex;
   align-items: center;
   gap: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .neon-btn:hover {
@@ -62,8 +63,16 @@ li {
   box-shadow: 0 0 30px rgba(0,229,255,1), 0 0 60px rgba(124,77,255,1);
 }
 
-/* Delete button style */
-.delete-btn { background: red; box-shadow: 0 0 22px rgba(255,0,0,1), 0 0 46px rgba(255,50,50,0.9); }
+/* Delete button */
+.delete-btn {
+  background: red;
+  box-shadow: 0 0 22px rgba(255,0,0,1), 0 0 46px rgba(255,50,50,0.9);
+}
+
+.delete-btn:hover {
+  transform: scale(1.12);
+  box-shadow: 0 0 30px rgba(255,0,0,1), 0 0 60px rgba(255,50,50,1);
+}
 
 /* ===== BACK BUTTON ===== */
 .back-container { margin-top: 80px; }
@@ -87,7 +96,7 @@ li {
 </div>
 
 <script>
-function loadQuizzes(){
+function loadQuizzes() {
   const active = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
   const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
 
@@ -98,37 +107,40 @@ function loadQuizzes(){
   archivedList.innerHTML = "";
 
   // Active quizzes
-  Object.keys(active).forEach(name=>{
-    const li=document.createElement("li");
-    const title=document.createElement("span");
-    title.className="quiz-title";
-    title.textContent=name;
+  Object.keys(active).forEach(name => {
+    const li = document.createElement("li");
+    const title = document.createElement("span");
+    title.className = "quiz-title";
+    title.textContent = name;
 
-    const btnGroup=document.createElement("div");
-    btnGroup.className="btn-group";
+    const btnGroup = document.createElement("div");
+    btnGroup.className = "btn-group";
 
-    const play=document.createElement("button");
-    play.className="neon-btn";
-    play.textContent="Play ▶";
-    play.onclick=()=>{ sessionStorage.setItem("currentQuiz", JSON.stringify(active[name])); window.location.href="game.html"; }
+    const play = document.createElement("button");
+    play.className = "neon-btn";
+    play.textContent = "Play ▶";
+    play.onclick = () => {
+      sessionStorage.setItem("currentQuiz", JSON.stringify(active[name]));
+      window.location.href = "game.html";
+    };
 
-    const archive=document.createElement("button");
-    archive.className="neon-btn";
-    archive.textContent="Archive 📦";
-    archive.onclick=()=>{
-      const archivedData=JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
-      archivedData[name]=active[name];
+    const archive = document.createElement("button");
+    archive.className = "neon-btn";
+    archive.textContent = "Archive 📦";
+    archive.onclick = () => {
+      const archivedData = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
+      archivedData[name] = active[name];
       localStorage.setItem("archivedQuizzes", JSON.stringify(archivedData));
       delete active[name];
       localStorage.setItem("myQuizzes", JSON.stringify(active));
       loadQuizzes();
     };
 
-    const del=document.createElement("button");
-    del.className="delete-btn";
-    del.textContent="Delete ❌";
-    del.onclick=()=>{
-      if(confirm(`Delete "${name}" permanently?`)){
+    const del = document.createElement("button");
+    del.className = "delete-btn";
+    del.textContent = "Delete ❌";
+    del.onclick = () => {
+      if(confirm(`Delete "${name}" permanently?`)) {
         delete active[name];
         localStorage.setItem("myQuizzes", JSON.stringify(active));
         loadQuizzes();
@@ -145,37 +157,40 @@ function loadQuizzes(){
   });
 
   // Archived quizzes
-  Object.keys(archived).forEach(name=>{
-    const li=document.createElement("li");
-    const title=document.createElement("span");
-    title.className="quiz-title";
-    title.textContent=name;
+  Object.keys(archived).forEach(name => {
+    const li = document.createElement("li");
+    const title = document.createElement("span");
+    title.className = "quiz-title";
+    title.textContent = name;
 
-    const btnGroup=document.createElement("div");
-    btnGroup.className="btn-group";
+    const btnGroup = document.createElement("div");
+    btnGroup.className = "btn-group";
 
-    const play=document.createElement("button");
-    play.className="neon-btn";
-    play.textContent="Play ▶";
-    play.onclick=()=>{ sessionStorage.setItem("currentQuiz", JSON.stringify(archived[name])); window.location.href="game.html"; }
+    const play = document.createElement("button");
+    play.className = "neon-btn";
+    play.textContent = "Play ▶";
+    play.onclick = () => {
+      sessionStorage.setItem("currentQuiz", JSON.stringify(archived[name]));
+      window.location.href = "game.html";
+    };
 
-    const unarchive=document.createElement("button");
-    unarchive.className="neon-btn";
-    unarchive.textContent="Unarchive ↩";
-    unarchive.onclick=()=>{
-      const activeData=JSON.parse(localStorage.getItem("myQuizzes") || "{}");
-      activeData[name]=archived[name];
+    const unarchive = document.createElement("button");
+    unarchive.className = "neon-btn";
+    unarchive.textContent = "Unarchive ↩";
+    unarchive.onclick = () => {
+      const activeData = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+      activeData[name] = archived[name];
       localStorage.setItem("myQuizzes", JSON.stringify(activeData));
       delete archived[name];
       localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
       loadQuizzes();
     };
 
-    const del=document.createElement("button");
-    del.className="delete-btn";
-    del.textContent="Delete ❌";
-    del.onclick=()=>{
-      if(confirm(`Delete "${name}" permanently?`)){
+    const del = document.createElement("button");
+    del.className = "delete-btn";
+    del.textContent = "Delete ❌";
+    del.onclick = () => {
+      if(confirm(`Delete "${name}" permanently?`)) {
         delete archived[name];
         localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
         loadQuizzes();
