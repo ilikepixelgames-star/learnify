@@ -1,4 +1,4 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -10,43 +10,63 @@ body {
   font-family: Arial, sans-serif;
   text-align: center;
   margin-top: 60px;
-  background-color: #000;
-  color: #fff;
+  background: radial-gradient(circle at top, #12002b, #050510);
+  color: white;
 }
 
-h1 { font-size: 48px; margin-bottom: 50px; }
-h2 { font-size: 36px; margin-top: 40px; }
+/* ===== HEADERS ===== */
+h1 { font-size: 72px; margin-bottom: 50px; }
+h2 { font-size: 48px; margin: 60px 0 35px; }
 
-ul { list-style: none; padding: 0; }
+/* ===== LIST ===== */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  width: fit-content;
+}
 
+/* ===== QUIZ ROW ===== */
 li {
-  margin-bottom: 20px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 40px;
+  font-size: 30px;
 }
 
-button {
-  font-size: 16px;
-  margin: 2px;
-  padding: 8px 16px;
+/* Quiz name */
+.quiz-title { max-width: 420px; text-align: right; overflow-wrap: break-word; }
+
+/* ===== BUTTON GROUP ===== */
+.btn-group { display: flex; gap: 24px; }
+
+/* ===== BIG NEON BUTTONS ===== */
+.neon-btn {
+  padding: 22px 52px;
+  font-size: 24px;
+  color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 26px;
   cursor: pointer;
-  color: #fff;
-  background: linear-gradient(90deg, #1e90ff, #ff1493);
+  background: linear-gradient(90deg, #00e5ff, #2979ff, #7c4dff);
+  box-shadow: 0 0 22px rgba(0,229,255,1), 0 0 46px rgba(124,77,255,0.9);
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
 }
 
-button.delete-btn { background: red; }
-button.edit-btn { background: green; }
-
-.back-btn {
-  margin-top: 50px;
-  font-size: 18px;
-  padding: 12px 28px;
+.neon-btn:hover {
+  transform: scale(1.12);
+  box-shadow: 0 0 30px rgba(0,229,255,1), 0 0 60px rgba(124,77,255,1);
 }
+
+/* Delete button style */
+.delete-btn { background: red; box-shadow: 0 0 22px rgba(255,0,0,1), 0 0 46px rgba(255,50,50,0.9); }
+
+/* ===== BACK BUTTON ===== */
+.back-container { margin-top: 80px; }
 </style>
 </head>
 
@@ -60,8 +80,10 @@ button.edit-btn { background: green; }
 <h2>Archived Quizzes</h2>
 <ul id="archived-list"></ul>
 
-<div>
-  <button class="back-btn" onclick="window.location.href='create.html'">Create New Quiz</button>
+<div class="back-container">
+  <button class="neon-btn" onclick="window.location.href='create.html'">
+    Back to Create ➜
+  </button>
 </div>
 
 <script>
@@ -71,45 +93,41 @@ function loadQuizzes(){
 
   const activeList = document.getElementById("active-list");
   const archivedList = document.getElementById("archived-list");
+
   activeList.innerHTML = "";
   archivedList.innerHTML = "";
 
   // Active quizzes
-  Object.keys(active).forEach(name => {
-    const li = document.createElement("li");
-    li.textContent = name + " ";
+  Object.keys(active).forEach(name=>{
+    const li=document.createElement("li");
+    const title=document.createElement("span");
+    title.className="quiz-title";
+    title.textContent=name;
 
-    const playBtn = document.createElement("button");
-    playBtn.textContent = "Play ▶";
-    playBtn.onclick = () => {
-      sessionStorage.setItem("currentQuiz", JSON.stringify(active[name]));
-      window.location.href = "game.html";
-    };
+    const btnGroup=document.createElement("div");
+    btnGroup.className="btn-group";
 
-    const archiveBtn = document.createElement("button");
-    archiveBtn.textContent = "Archive 📦";
-    archiveBtn.onclick = () => {
-      const archivedData = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
-      archivedData[name] = active[name];
+    const play=document.createElement("button");
+    play.className="neon-btn";
+    play.textContent="Play ▶";
+    play.onclick=()=>{ sessionStorage.setItem("currentQuiz", JSON.stringify(active[name])); window.location.href="game.html"; }
+
+    const archive=document.createElement("button");
+    archive.className="neon-btn";
+    archive.textContent="Archive 📦";
+    archive.onclick=()=>{
+      const archivedData=JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
+      archivedData[name]=active[name];
       localStorage.setItem("archivedQuizzes", JSON.stringify(archivedData));
       delete active[name];
       localStorage.setItem("myQuizzes", JSON.stringify(active));
       loadQuizzes();
     };
 
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "Edit ✏️";
-    editBtn.className = "edit-btn";
-    editBtn.onclick = () => {
-      sessionStorage.setItem("editQuizName", name);
-      sessionStorage.setItem("editQuizData", JSON.stringify(active[name]));
-      window.location.href = "create.html";
-    };
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete ❌";
-    deleteBtn.className = "delete-btn";
-    deleteBtn.onclick = () => {
+    const del=document.createElement("button");
+    del.className="delete-btn";
+    del.textContent="Delete ❌";
+    del.onclick=()=>{
       if(confirm(`Delete "${name}" permanently?`)){
         delete active[name];
         localStorage.setItem("myQuizzes", JSON.stringify(active));
@@ -117,49 +135,46 @@ function loadQuizzes(){
       }
     };
 
-    li.appendChild(playBtn);
-    li.appendChild(archiveBtn);
-    li.appendChild(editBtn);
-    li.appendChild(deleteBtn);
+    btnGroup.appendChild(play);
+    btnGroup.appendChild(archive);
+    btnGroup.appendChild(del);
+
+    li.appendChild(title);
+    li.appendChild(btnGroup);
     activeList.appendChild(li);
   });
 
   // Archived quizzes
-  Object.keys(archived).forEach(name => {
-    const li = document.createElement("li");
-    li.textContent = name + " ";
+  Object.keys(archived).forEach(name=>{
+    const li=document.createElement("li");
+    const title=document.createElement("span");
+    title.className="quiz-title";
+    title.textContent=name;
 
-    const playBtn = document.createElement("button");
-    playBtn.textContent = "Play ▶";
-    playBtn.onclick = () => {
-      sessionStorage.setItem("currentQuiz", JSON.stringify(archived[name]));
-      window.location.href = "game.html";
-    };
+    const btnGroup=document.createElement("div");
+    btnGroup.className="btn-group";
 
-    const unarchiveBtn = document.createElement("button");
-    unarchiveBtn.textContent = "Unarchive ↩";
-    unarchiveBtn.onclick = () => {
-      const activeData = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
-      activeData[name] = archived[name];
+    const play=document.createElement("button");
+    play.className="neon-btn";
+    play.textContent="Play ▶";
+    play.onclick=()=>{ sessionStorage.setItem("currentQuiz", JSON.stringify(archived[name])); window.location.href="game.html"; }
+
+    const unarchive=document.createElement("button");
+    unarchive.className="neon-btn";
+    unarchive.textContent="Unarchive ↩";
+    unarchive.onclick=()=>{
+      const activeData=JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+      activeData[name]=archived[name];
       localStorage.setItem("myQuizzes", JSON.stringify(activeData));
       delete archived[name];
       localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
       loadQuizzes();
     };
 
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "Edit ✏️";
-    editBtn.className = "edit-btn";
-    editBtn.onclick = () => {
-      sessionStorage.setItem("editQuizName", name);
-      sessionStorage.setItem("editQuizData", JSON.stringify(archived[name]));
-      window.location.href = "create.html";
-    };
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete ❌";
-    deleteBtn.className = "delete-btn";
-    deleteBtn.onclick = () => {
+    const del=document.createElement("button");
+    del.className="delete-btn";
+    del.textContent="Delete ❌";
+    del.onclick=()=>{
       if(confirm(`Delete "${name}" permanently?`)){
         delete archived[name];
         localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
@@ -167,10 +182,12 @@ function loadQuizzes(){
       }
     };
 
-    li.appendChild(playBtn);
-    li.appendChild(unarchiveBtn);
-    li.appendChild(editBtn);
-    li.appendChild(deleteBtn);
+    btnGroup.appendChild(play);
+    btnGroup.appendChild(unarchive);
+    btnGroup.appendChild(del);
+
+    li.appendChild(title);
+    li.appendChild(btnGroup);
     archivedList.appendChild(li);
   });
 }
