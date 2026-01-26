@@ -5,64 +5,71 @@
 <title>Create Your Own Questions</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  margin-top: 30px;
-  background-color: #000;
-  color: #fff;
-}
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 30px;
+    background-color: #000;
+    color: #fff;
+  }
 
-input {
-  padding: 8px;
-  margin: 5px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid #444;
-}
+  input {
+    padding: 8px;
+    margin: 5px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #444;
+  }
 
-button {
-  font-size: 16px;
-  padding: 12px 20px;
-  margin: 5px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  color: #fff;
-  font-weight: bold;
-  background: linear-gradient(90deg, #1e90ff, #ff1493);
-  box-shadow: 0 0 10px #1e90ff, 0 0 20px #ff1493, 0 0 30px #ff4500;
-  transition: 0.3s ease-in-out;
-  position: relative;
-  overflow: hidden;
-}
+  button {
+    font-size: 16px;
+    padding: 12px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #fff;
+    font-weight: bold;
+    background: linear-gradient(90deg, #1e90ff, #ff1493);
+    box-shadow: 0 0 10px #1e90ff, 0 0 20px #ff1493, 0 0 30px #ff4500;
+    transition: 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+  }
 
-button:hover {
-  box-shadow: 0 0 20px #1e90ff, 0 0 30px #ff1493, 0 0 40px #ff4500;
-  transform: scale(1.05);
-}
+  button:hover {
+    box-shadow: 0 0 20px #1e90ff, 0 0 30px #ff1493, 0 0 40px #ff4500;
+    transform: scale(1.05);
+  }
 
-button::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -75%;
-  width: 50%; height: 100%;
-  background: rgba(255,255,255,0.2);
-  transform: skewX(-25deg);
-  transition: all 0.5s;
-}
+  button::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -75%;
+    width: 50%; height: 100%;
+    background: rgba(255,255,255,0.2);
+    transform: skewX(-25deg);
+    transition: all 0.5s;
+  }
 
-button:hover::after { left: 125%; }
+  button:hover::after {
+    left: 125%;
+  }
 
-#questions-list {
-  margin-top: 20px;
-  text-align: left;
-  display: inline-block;
-}
+  #questions-list {
+    margin-top: 20px;
+    text-align: left;
+    display: inline-block;
+  }
 
-li { margin-bottom: 5px; color: #fff; }
+  li {
+    margin-bottom: 5px;
+    color: #fff;
+  }
 
-h1, h2 { color: #fff; }
+  h1, h2 {
+    color: #fff;
+  }
 </style>
 </head>
 <body>
@@ -118,7 +125,6 @@ function updateList() {
   });
 }
 
-// Add question
 addBtn.addEventListener("click", () => {
   const q = qInput.value.trim();
   const a1 = a1Input.value.trim();
@@ -139,7 +145,6 @@ addBtn.addEventListener("click", () => {
   qInput.value = a1Input.value = a2Input.value = a3Input.value = a4Input.value = correctInput.value = "";
 });
 
-// Save quiz
 saveBtn.addEventListener("click", () => {
   const name = quizNameInput.value.trim() || "Untitled Quiz";
   if(questions.length===0){ alert("Add at least one question!"); return; }
@@ -149,13 +154,12 @@ saveBtn.addEventListener("click", () => {
   localStorage.setItem("myQuizzes", JSON.stringify(saved));
 
   sessionStorage.removeItem("currentQuiz");
-  questions = [];
+  questions=[];
   updateList();
   quizNameInput.value="";
   alert(`Quiz "${name}" saved!`);
 });
 
-// Archive quiz
 archiveBtn.addEventListener("click", () => {
   const name = quizNameInput.value.trim() || "Untitled Quiz";
   if(questions.length===0){ alert("Add at least one question!"); return; }
@@ -175,17 +179,13 @@ archiveBtn.addEventListener("click", () => {
   alert(`Quiz "${name}" archived!`);
 });
 
-// Delete quiz
 deleteBtn.addEventListener("click", () => {
   const name = quizNameInput.value.trim();
   if(!name){ alert("Enter the quiz name to delete!"); return; }
   if(confirm(`Delete quiz "${name}" permanently?`)){
     const saved = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
     if(saved[name]) delete saved[name];
-    const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
-    if(archived[name]) delete archived[name];
     localStorage.setItem("myQuizzes", JSON.stringify(saved));
-    localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
     questions=[];
     sessionStorage.removeItem("currentQuiz");
     updateList();
@@ -195,25 +195,11 @@ deleteBtn.addEventListener("click", () => {
 });
 
 lobbyBtn.addEventListener("click", () => { window.location.href = "lobby.html"; });
-playBtn.addEventListener("click", () => { 
-  if(questions.length===0){ alert("Add at least one question!"); return; } 
-  window.location.href="game.html"; 
+playBtn.addEventListener("click", () => {
+  if(questions.length===0){ alert("Add at least one question!"); return; }
+  window.location.href="game.html";
 });
 myQuizzesBtn.addEventListener("click", () => { window.location.href="my-quizzes.html"; });
-
-// Load quiz if editing
-window.addEventListener("DOMContentLoaded", () => {
-  const editName = sessionStorage.getItem("editQuizName");
-  const editData = sessionStorage.getItem("editQuizData");
-  if(editName && editData){
-    const quiz = JSON.parse(editData);
-    quizNameInput.value = editName;
-    questions = quiz; // load questions array
-    updateList();
-    sessionStorage.removeItem("editQuizName");
-    sessionStorage.removeItem("editQuizData");
-  }
-});
 
 updateList();
 </script>
