@@ -14,26 +14,14 @@ body {
   color: white;
 }
 
-/* ===== HEADERS ===== */
-h1 {
-  font-size: 72px;
-  margin-bottom: 50px;
-}
+/* HEADERS */
+h1 { font-size: 72px; margin-bottom: 50px; }
+h2 { font-size: 48px; margin: 60px 0 35px; }
 
-h2 {
-  font-size: 48px;
-  margin: 60px 0 35px;
-}
+/* LIST */
+ul { list-style: none; padding: 0; margin: 0 auto; width: fit-content; }
 
-/* ===== LIST ===== */
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0 auto;
-  width: fit-content;
-}
-
-/* ===== QUIZ ROW ===== */
+/* QUIZ ROW */
 li {
   display: flex;
   align-items: center;
@@ -41,36 +29,30 @@ li {
   gap: 20px;
   margin-bottom: 40px;
   font-size: 30px;
-  flex-wrap: wrap; /* allows buttons to wrap if needed */
+  flex-wrap: wrap;
 }
 
 /* Quiz name */
-.quiz-title {
-  max-width: 420px;
-  text-align: right;
-  overflow-wrap: break-word;
-}
+.quiz-title { max-width: 420px; text-align: right; overflow-wrap: break-word; }
 
-/* ===== BUTTON GROUP ===== */
+/* BUTTON GROUP */
 .btn-group {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
-/* ===== BIG NEON BUTTONS ===== */
+/* BIG NEON BUTTONS */
 .neon-btn {
-  padding: 18px 40px;
+  padding: 18px 36px;
   font-size: 22px;
   color: white;
   border: none;
   border-radius: 26px;
   cursor: pointer;
   background: linear-gradient(90deg, #00e5ff, #2979ff, #7c4dff);
-  box-shadow:
-    0 0 22px rgba(0,229,255,1),
-    0 0 46px rgba(124,77,255,0.9);
+  box-shadow: 0 0 22px rgba(0,229,255,1), 0 0 46px rgba(124,77,255,0.9);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -78,21 +60,14 @@ li {
 
 .neon-btn:hover {
   transform: scale(1.12);
-  box-shadow:
-    0 0 30px rgba(0,229,255,1),
-    0 0 60px rgba(124,77,255,1);
+  box-shadow: 0 0 30px rgba(0,229,255,1), 0 0 60px rgba(124,77,255,1);
 }
 
-/* Delete button style */
-.delete-btn {
-  background-color: red;
-  color: white;
-}
+/* Delete button */
+.delete-btn { background-color: red; }
 
-/* ===== BACK BUTTON ===== */
-.back-container {
-  margin-top: 80px;
-}
+/* BACK BUTTON */
+.back-container { margin-top: 80px; }
 </style>
 </head>
 
@@ -126,7 +101,6 @@ function loadQuizzes(){
   // Active quizzes
   Object.keys(active).forEach(name => {
     const li = document.createElement("li");
-
     const title = document.createElement("span");
     title.className = "quiz-title";
     title.textContent = name;
@@ -134,6 +108,7 @@ function loadQuizzes(){
     const btnGroup = document.createElement("div");
     btnGroup.className = "btn-group";
 
+    // Play
     const play = document.createElement("button");
     play.className = "neon-btn";
     play.textContent = "Play ▶";
@@ -142,6 +117,7 @@ function loadQuizzes(){
       window.location.href = "game.html";
     };
 
+    // Archive
     const archive = document.createElement("button");
     archive.className = "neon-btn";
     archive.textContent = "Archive 📦";
@@ -154,6 +130,7 @@ function loadQuizzes(){
       loadQuizzes();
     };
 
+    // Edit
     const edit = document.createElement("button");
     edit.className = "neon-btn";
     edit.textContent = "Edit ✏️";
@@ -163,6 +140,7 @@ function loadQuizzes(){
       window.location.href = "create.html";
     };
 
+    // Delete
     const del = document.createElement("button");
     del.className = "neon-btn delete-btn";
     del.textContent = "Delete ❌";
@@ -187,7 +165,6 @@ function loadQuizzes(){
   // Archived quizzes
   Object.keys(archived).forEach(name => {
     const li = document.createElement("li");
-
     const title = document.createElement("span");
     title.className = "quiz-title";
     title.textContent = name;
@@ -195,6 +172,7 @@ function loadQuizzes(){
     const btnGroup = document.createElement("div");
     btnGroup.className = "btn-group";
 
+    // Play
     const play = document.createElement("button");
     play.className = "neon-btn";
     play.textContent = "Play ▶";
@@ -203,6 +181,7 @@ function loadQuizzes(){
       window.location.href = "game.html";
     };
 
+    // Unarchive
     const unarchive = document.createElement("button");
     unarchive.className = "neon-btn";
     unarchive.textContent = "Unarchive ↩";
@@ -215,6 +194,7 @@ function loadQuizzes(){
       loadQuizzes();
     };
 
+    // Edit
     const edit = document.createElement("button");
     edit.className = "neon-btn";
     edit.textContent = "Edit ✏️";
@@ -224,6 +204,7 @@ function loadQuizzes(){
       window.location.href = "create.html";
     };
 
+    // Delete
     const del = document.createElement("button");
     del.className = "neon-btn delete-btn";
     del.textContent = "Delete ❌";
@@ -248,6 +229,5 @@ function loadQuizzes(){
 
 loadQuizzes();
 </script>
-
 </body>
 </html>
