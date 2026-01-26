@@ -34,12 +34,10 @@
 
 <button id="add-btn">Add Question</button>
 <button id="save-btn">Save Quiz</button>
-<button id="play-btn">Play Quiz Normally</button>
-<button id="solo-btn">🎮 Play Solo</button>
+<button id="play-btn">Play Quiz</button>
 <button id="my-quizzes-btn">My Quizzes</button>
 <button id="archive-btn">Archive Current Quiz</button>
 <button id="delete-btn" class="delete-btn">Delete Current Quiz</button>
-<button id="lobby-btn">Back to Lobby</button>
 
 <h2>Questions Added:</h2>
 <ul id="questions-list"></ul>
@@ -58,10 +56,8 @@ const correctInput = document.getElementById("correct");
 const addBtn = document.getElementById("add-btn");
 const saveBtn = document.getElementById("save-btn");
 const playBtn = document.getElementById("play-btn");
-const soloBtn = document.getElementById("solo-btn");
 const archiveBtn = document.getElementById("archive-btn");
 const deleteBtn = document.getElementById("delete-btn");
-const lobbyBtn = document.getElementById("lobby-btn");
 const myQuizzesBtn = document.getElementById("my-quizzes-btn");
 
 const list = document.getElementById("questions-list");
@@ -76,7 +72,8 @@ function updateList() {
 }
 
 addBtn.addEventListener("click", ()=>{
-  const q=qInput.value.trim(), a1=a1Input.value.trim(), a2=a2Input.value.trim(), a3=a3Input.value.trim(), a4=a4Input.value.trim();
+  const q=qInput.value.trim(), a1=a1Input.value.trim(), a2=a2Input.value.trim(),
+        a3=a3Input.value.trim(), a4=a4Input.value.trim();
   const correct=parseInt(correctInput.value)-1;
   if(!q||!a1||!a2||!a3||!a4||isNaN(correct)||correct<0||correct>3){ alert("Please fill all fields correctly!"); return; }
   questions.push({q,answers:[a1,a2,a3,a4],correct});
@@ -116,16 +113,11 @@ deleteBtn.addEventListener("click", ()=>{
   }
 });
 
-lobbyBtn.addEventListener("click", ()=>window.location.href="lobby.html");
 myQuizzesBtn.addEventListener("click", ()=>window.location.href="my-quizzes.html");
 
-playBtn.addEventListener("click", ()=>{ window.location.href="game.html"; });
-
-// SOLO PLAY BUTTON: always uses current quiz for solo
-soloBtn.addEventListener("click", ()=>{
+playBtn.addEventListener("click", ()=>{
   if(questions.length===0){ alert("Add at least one question!"); return; }
-  sessionStorage.setItem("currentQuiz",JSON.stringify(questions));
-  window.location.href="game.html?solo=1"; // query param marks solo
+  window.location.href="game.html";
 });
 
 updateList();
