@@ -38,9 +38,10 @@ li {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px;
+  gap: 20px;
   margin-bottom: 40px;
   font-size: 30px;
+  flex-wrap: wrap; /* allows buttons to wrap if needed */
 }
 
 /* Quiz name */
@@ -53,13 +54,15 @@ li {
 /* ===== BUTTON GROUP ===== */
 .btn-group {
   display: flex;
-  gap: 24px;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* ===== BIG NEON BUTTONS ===== */
 .neon-btn {
-  padding: 22px 52px;
-  font-size: 24px;
+  padding: 18px 40px;
+  font-size: 22px;
   color: white;
   border: none;
   border-radius: 26px;
@@ -70,7 +73,7 @@ li {
     0 0 46px rgba(124,77,255,0.9);
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 8px;
 }
 
 .neon-btn:hover {
@@ -151,6 +154,15 @@ function loadQuizzes(){
       loadQuizzes();
     };
 
+    const edit = document.createElement("button");
+    edit.className = "neon-btn";
+    edit.textContent = "Edit ✏️";
+    edit.onclick = () => {
+      sessionStorage.setItem("editQuizName", name);
+      sessionStorage.setItem("editQuizData", JSON.stringify(active[name]));
+      window.location.href = "create.html";
+    };
+
     const del = document.createElement("button");
     del.className = "neon-btn delete-btn";
     del.textContent = "Delete ❌";
@@ -164,6 +176,7 @@ function loadQuizzes(){
 
     btnGroup.appendChild(play);
     btnGroup.appendChild(archive);
+    btnGroup.appendChild(edit);
     btnGroup.appendChild(del);
 
     li.appendChild(title);
@@ -202,6 +215,15 @@ function loadQuizzes(){
       loadQuizzes();
     };
 
+    const edit = document.createElement("button");
+    edit.className = "neon-btn";
+    edit.textContent = "Edit ✏️";
+    edit.onclick = () => {
+      sessionStorage.setItem("editQuizName", name);
+      sessionStorage.setItem("editQuizData", JSON.stringify(archived[name]));
+      window.location.href = "create.html";
+    };
+
     const del = document.createElement("button");
     del.className = "neon-btn delete-btn";
     del.textContent = "Delete ❌";
@@ -215,6 +237,7 @@ function loadQuizzes(){
 
     btnGroup.appendChild(play);
     btnGroup.appendChild(unarchive);
+    btnGroup.appendChild(edit);
     btnGroup.appendChild(del);
 
     li.appendChild(title);
