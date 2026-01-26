@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Quiz Game</title>
+<title>Quiz Game - Solo</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  body { font-family: Arial; text-align: center; margin-top: 40px; background:#f4f6fb; }
-  button { padding: 12px 24px; margin: 8px; font-size: 18px; cursor: pointer; border-radius: 10px; border:none; background:#4f46e5; color:white; }
-  button:disabled{background:#999;}
-  #answers button{display:block;margin:10px auto;width:60%;}
-  #leaderboard{background:white;padding:20px;border-radius:15px;width:60%;margin:20px auto;box-shadow:0 5px 15px rgba(0,0,0,0.15);}
-  #next-btn{display:none;}
+  body { font-family: Arial; text-align: center; margin-top: 50px; background:#f4f6fb; }
+  h1 { margin-bottom: 10px; }
+  button { padding: 12px 24px; margin: 10px; font-size: 18px; cursor: pointer; border-radius: 10px; border:none; background:#4f46e5; color:white; }
+  button:disabled{ background:#999; }
+  #answers button{ display:block; margin:10px auto; width:60%; }
+  #score-board { background:white; padding:20px; border-radius:15px; width:60%; margin:20px auto; box-shadow:0 5px 15px rgba(0,0,0,0.15);}
+  #next-btn{ display:none; }
 </style>
 </head>
 <body>
@@ -18,68 +19,70 @@
 <h1 id="q-title"></h1>
 <p id="q-text"></p>
 <div id="answers"></div>
-<div id="leaderboard" style="display:none;">
-  <h2>🏆 Score</h2>
-  <p>Your Score: <span id="your-score"></span></p>
+
+<div id="score-board" style="display:none;">
+  <h2>🏆 Your Score</h2>
+  <p><span id="your-score">0</span> points</p>
 </div>
+
 <button id="next-btn">Next Question</button>
-<button id="back-btn">⬅️ Back</button>
+<button id="back-btn">⬅️ Back to Create</button>
 
 <script>
-let questions=JSON.parse(sessionStorage.getItem("currentQuiz")||"[]");
+let questions = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
 
-if(questions.length===0){
+if(questions.length === 0){
   alert("No questions found! Go back to Create.");
-  window.location.href="create.html";
+  window.location.href = "create.html";
 }
 
-const title=document.getElementById("q-title");
-const qText=document.getElementById("q-text");
-const ansDiv=document.getElementById("answers");
-const nextBtn=document.getElementById("next-btn");
-const leaderboard=document.getElementById("leaderboard");
-const yourScoreEl=document.getElementById("your-score");
-const backBtn=document.getElementById("back-btn");
+const title = document.getElementById("q-title");
+const qText = document.getElementById("q-text");
+const answersDiv = document.getElementById("answers");
+const nextBtn = document.getElementById("next-btn");
+const scoreBoard = document.getElementById("score-board");
+const yourScoreEl = document.getElementById("your-score");
+const backBtn = document.getElementById("back-btn");
 
-let index=0;
-let score=0;
+let index = 0;
+let score = 0;
 
 function loadQuestion(){
-  const q=questions[index];
-  title.textContent="Question "+(index+1);
-  qText.textContent=q.q;
-  ansDiv.innerHTML="";
-  nextBtn.style.display="none";
-  leaderboard.style.display="none";
+  const q = questions[index];
+  title.textContent = "Question " + (index+1);
+  qText.textContent = q.q;
+  answersDiv.innerHTML = "";
+  nextBtn.style.display = "none";
+  scoreBoard.style.display = "none";
 
-  q.answers.forEach((a,i)=>{
-    const b=document.createElement("button");
-    b.textContent=a;
-    b.onclick=()=>answer(i);
-    ansDiv.appendChild(b);
+  q.answers.forEach((ans, i)=>{
+    const btn = document.createElement("button");
+    btn.textContent = ans;
+    btn.onclick = ()=> answerQuestion(i);
+    answersDiv.appendChild(btn);
   });
 }
 
-function answer(choice){
-  ansDiv.querySelectorAll("button").forEach(b=>b.disabled=true);
-  if(choice===questions[index].correct) score+=1000;
-  yourScoreEl.textContent=score;
-  leaderboard.style.display="block";
-  nextBtn.style.display="inline-block";
+function answerQuestion(choice){
+  answersDiv.querySelectorAll("button").forEach(b=>b.disabled=true);
+  if(choice === questions[index].correct) score += 1000;
+  yourScoreEl.textContent = score;
+  scoreBoard.style.display = "block";
+  nextBtn.style.display = "inline-block";
 }
 
-nextBtn.onclick=()=>{
+nextBtn.onclick = ()=>{
   index++;
-  if(index<questions.length) loadQuestion();
+  if(index < questions.length) loadQuestion();
   else{
-    title.textContent="🎉 Quiz Complete!";
-    qText.textContent="Final Score: "+score;
-    ansDiv.innerHTML="";
-    nextBtn.style.display="none";
+    title.textContent = "🎉 Quiz Complete!";
+    qText.textContent = "Final Score: " + score;
+    answersDiv.innerHTML = "";
+    nextBtn.style.display = "none";
   }
 };
 
-backBtn.onclick=()=>window.location.href="create.html";
+backBtn.onclick = ()=> window.location.href = "create.html";
 
 loadQuestion();
 </script>
