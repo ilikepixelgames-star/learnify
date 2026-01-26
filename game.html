@@ -5,92 +5,154 @@
 <title>Quiz Game</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  body { font-family: Arial; text-align:center; margin-top:40px; background:#f4f6fb; }
-  button { padding:12px 24px; margin:8px; cursor:pointer; border-radius:10px; border:none; background:#4f46e5; color:white; }
-  button:disabled{background:#999;}
-  #answers button { display:block; margin:10px auto; width:60%; }
+  body { font-family: Arial; text-align: center; margin-top: 40px; background:#f4f6fb; }
+  h1 { margin-bottom:10px; }
+  button {
+    padding: 12px 24px;
+    margin: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+    background: #4f46e5;
+    color: white;
+  }
+  button:disabled { background:#999; cursor: not-allowed; }
+
+  #answers button {
+    display:block;
+    margin:10px auto;
+    width:60%;
+  }
+
+  #leaderboard {
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    width:60%;
+    margin:20px auto;
+    box-shadow:0 5px 15px rgba(0,0,0,0.15);
+  }
+
+  #next-btn { display:none; }
 </style>
 </head>
 <body>
 
 <h1 id="q-title"></h1>
 <p id="q-text"></p>
+
 <div id="answers"></div>
+
 <div id="leaderboard" style="display:none;">
-  <h2>🏆 Leaderboard</h2>
+  <h2>🏆 Leaderboard (Top 3)</h2>
   <p id="top3"></p>
+  <hr>
   <p><strong>Your Score:</strong> <span id="your-score"></span></p>
+  <p><strong>Your Place:</strong> <span id="your-place"></span></p>
+  <p>⏳ Waiting for host to continue…</p>
 </div>
-<button id="next-btn" style="display:none;">Next Question</button>
-<button id="lobby-btn">⬅️ Back to Lobby</button>
+
+<button id="next-btn">Next Question</button>
 
 <script>
+// LOAD QUESTIONS
 let questions = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
-
-const title=document.getElementById("q-title");
-const qText=document.getElementById("q-text");
-const ansDiv=document.getElementById("answers");
-const nextBtn=document.getElementById("next-btn");
-const lobbyBtn=document.getElementById("lobby-btn");
-const leaderboard=document.getElementById("leaderboard");
-const top3El=document.getElementById("top3");
-const yourScoreEl=document.getElementById("your-score");
-
-if(questions.length===0){
-  title.textContent="No quiz loaded!";
-  qText.textContent="Go back and create a quiz first.";
+if (!Array.isArray(questions) || questions.length === 0) {
+  alert("No questions found! Go back to Create.");
+  window.location.href = "create.html";
 }
 
-let index=0;
-let score=0;
-let players=[{name:"YOU",score:0}];
-const simNames=["Alex","Jamie","Sam","Taylor","Jordan","Chris","Morgan","Riley","Casey"];
-simNames.forEach(n=>players.push({name:n, score:Math.floor(Math.random()*300)}));
+// PLAYER SETUP
+let players = [
+  { name: "YOU", score: 0 }
+];
 
-function loadQuestion(){
-  if(questions.length===0) return;
-  ansDiv.innerHTML="";
-  title.textContent=`Question ${index+1}`;
-  qText.textContent=questions[index].q;
-  questions[index].answers.forEach((a,i)=>{
-    const b=document.createElement("button");
-    b.textContent=a;
-    b.onclick=()=>answer(i);
-    ansDiv.appendChild(b);
+const simNames = ["Alex","Jamie","Sam","Taylor","Jordan","Chris","Morgan","Riley","Casey"];
+simNames.forEach(n => {
+  players.push({
+    name: n,
+    score: Math.floor(Math.random()*300)
   });
-  nextBtn.style.display="none";
+});
+
+let index = 0;
+
+// ELEMENTS
+const qTitle = document.getElementById("q-title");
+const qText = document.getElementById("q-text");
+const answersDiv = document.getElementById("answers");
+const leaderboard = document.getElementById("leaderboard");
+const top3El = document.getElementById("top3");
+const yourScoreEl = document.getElementById("your-score");
+const yourPlaceEl = document.getElementById("your-place");
+const nextBtn = document.getElementById("next-btn");
+
+function loadQuestion() {
+  leaderboard.style.display = "none";
+  nextBtn.style.display = "none";
+  answersDiv.innerHTML = "";
+
+  const q = questions[index];
+  qTitle.textContent = "Question " + (index + 1);
+  qText.textContent = q.q;
+
+  q.answers.forEach((ans, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = ans;
+    btn.onclick = () => answerQuestion(i);
+    answersDiv.appendChild(btn);
+  });
 }
 
-function answer(choice){
-  ansDiv.querySelectorAll("button").forEach(b=>b.disabled=true);
-  if(choice===questions[index].correct) score+=1000;
-  for(let i=1;i<players.length;i++){ if(Math.random()<0.6) players[i].score+=Math.floor(600+Math.random()*500); }
+function answerQuestion(choice) {
+  answersDiv.querySelectorAll("button").forEach(b => b.disabled = true);
+
+  if (choice === questions[index].correct) {
+    players[0].score += 1000;
+  }
+
+  // Simulated players scoring
+  for (let i = 1; i < players.length; i++) {
+    if (Math.random() < 0.6) {
+      players[i].score += Math.floor(600 + Math.random() * 500);
+    }
+  }
+
   showLeaderboard();
 }
 
-function showLeaderboard(){
-  players.sort((a,b)=>b.score-a.score);
-  const top3=players.slice(0,3).map((p,i)=>`${i+1}️⃣ ${p.name} — ${p.score} pts`).join("<br>");
-  top3El.innerHTML=top3;
-  yourScoreEl.textContent=players[0].score;
-  leaderboard.style.display="block";
-  nextBtn.style.display="inline-block";
+function showLeaderboard() {
+  players.sort((a,b) => b.score - a.score);
+
+  const top3 = players.slice(0,3)
+    .map((p,i)=> `${i+1}️⃣ ${p.name} — ${p.score} pts`)
+    .join("<br>");
+
+  top3El.innerHTML = top3;
+
+  const yourIndex = players.findIndex(p => p.name === "YOU");
+  yourScoreEl.textContent = players[yourIndex].score;
+  yourPlaceEl.textContent = (yourIndex + 1) + " / " + players.length;
+
+  leaderboard.style.display = "block";
+  nextBtn.style.display = "inline-block";
 }
 
-nextBtn.onclick=()=>{
+nextBtn.onclick = () => {
   index++;
-  if(index<questions.length) loadQuestion();
-  else{
-    title.textContent="🎉 Quiz Complete!";
-    qText.textContent="Score: "+players[0].score;
-    ansDiv.innerHTML="";
-    nextBtn.style.display="none";
+  if (index < questions.length) {
+    loadQuestion();
+  } else {
+    qTitle.textContent = "🎉 Quiz Complete!";
+    qText.textContent = "Final Score: " + players.find(p=>p.name==="YOU").score;
+    answersDiv.innerHTML = "";
+    leaderboard.style.display = "block";
+    nextBtn.style.display = "none";
   }
 };
 
-lobbyBtn.addEventListener("click", ()=>window.location.href="lobby.html");
-
-if(questions.length>0) loadQuestion();
+loadQuestion();
 </script>
 </body>
 </html>
