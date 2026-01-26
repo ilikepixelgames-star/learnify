@@ -97,6 +97,8 @@
 <button id="archive-btn">Archive Current Quiz</button>
 <button id="delete-btn" class="delete-btn">Delete Current Quiz</button>
 <button id="lobby-btn">Back to Lobby</button>
+<!-- NEW BUTTON: Play Game directly from lobby if quiz exists -->
+<button id="direct-play-btn">🎮 Play Game</button>
 
 <h2>Questions Added:</h2>
 <ul id="questions-list"></ul>
@@ -119,6 +121,7 @@ const archiveBtn = document.getElementById("archive-btn");
 const deleteBtn = document.getElementById("delete-btn");
 const lobbyBtn = document.getElementById("lobby-btn");
 const myQuizzesBtn = document.getElementById("my-quizzes-btn");
+const directPlayBtn = document.getElementById("direct-play-btn");
 
 const list = document.getElementById("questions-list");
 
@@ -206,6 +209,16 @@ playBtn.addEventListener("click", () => {
   window.location.href="game.html";
 });
 myQuizzesBtn.addEventListener("click", () => { window.location.href="my-quizzes.html"; });
+
+// NEW: Direct Play Game button
+directPlayBtn.addEventListener("click", () => {
+  const storedQuiz = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
+  if(storedQuiz.length === 0){
+    alert("No quiz found to play! Create or load a quiz first.");
+    return;
+  }
+  window.location.href = "game.html";
+});
 
 updateList();
 </script>
