@@ -1,202 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>My Quizzes</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  margin-top: 60px;
-  background: radial-gradient(circle at top, #12002b, #050510);
-  color: white;
-}
-
-/* ===== HEADERS ===== */
-h1 { font-size: 72px; margin-bottom: 50px; }
-h2 { font-size: 48px; margin: 60px 0 35px; }
-
-/* ===== LIST ===== */
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0 auto;
-  width: fit-content;
-}
-
-/* ===== QUIZ ROW ===== */
-li {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
-  margin-bottom: 40px;
-  font-size: 30px;
-}
-
-/* Quiz name */
-.quiz-title { max-width: 420px; text-align: right; overflow-wrap: break-word; }
-
-/* ===== BUTTON GROUP ===== */
-.btn-group { display: flex; gap: 24px; }
-
-/* ===== BIG NEON BUTTONS ===== */
-.neon-btn {
-  padding: 22px 52px;
-  font-size: 24px;
-  color: white;
-  border: none;
-  border-radius: 26px;
-  cursor: pointer;
-  background: linear-gradient(90deg, #00e5ff, #2979ff, #7c4dff);
-  box-shadow: 0 0 22px rgba(0,229,255,1), 0 0 46px rgba(124,77,255,0.9);
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.neon-btn:hover {
-  transform: scale(1.12);
-  box-shadow: 0 0 30px rgba(0,229,255,1), 0 0 60px rgba(124,77,255,1);
-}
-
-/* ===== BACK BUTTON ===== */
-.back-container { margin-top: 80px; }
-</style>
+  <meta charset="UTF-8">
+  <title>My Quizzes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 40px;
+    }
+    button {
+      padding: 8px 16px;
+      margin: 5px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
-
 <body>
 
 <h1>My Quizzes</h1>
 
-<h2>Active Quizzes</h2>
-<ul id="active-list"></ul>
+<ul id="quizList"></ul>
 
-<h2>Archived Quizzes</h2>
-<ul id="archived-list"></ul>
-
-<div class="back-container">
-  <button class="neon-btn" onclick="window.location.href='create.html'">
-    Back to Create ➜
-  </button>
-</div>
+<button onclick="window.location.href='lobby.html'">Back to Lobby</button>
 
 <script>
-function loadQuizzes() {
-  const active = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
-  const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
+const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+const quizList = document.getElementById("quizList");
 
-  const activeList = document.getElementById("active-list");
-  const archivedList = document.getElementById("archived-list");
+Object.keys(quizzes).forEach(name => {
+  const li = document.createElement("li");
+  li.textContent = name + " ";
 
-  activeList.innerHTML = "";
-  archivedList.innerHTML = "";
+  const playBtn = document.createElement("button");
+  playBtn.textContent = "Play";
+  playBtn.onclick = () => {
+    sessionStorage.setItem("currentQuiz", JSON.stringify(quizzes[name]));
+    window.location.href = "game.html";
+  };
 
-  // Active quizzes
-  Object.keys(active).forEach(name => {
-    const li = document.createElement("li");
-    const title = document.createElement("span");
-    title.className = "quiz-title";
-    title.textContent = name;
-
-    const btnGroup = document.createElement("div");
-    btnGroup.className = "btn-group";
-
-    const play = document.createElement("button");
-    play.className = "neon-btn";
-    play.textContent = "Play ▶";
-    play.onclick = () => {
-      sessionStorage.setItem("currentQuiz", JSON.stringify(active[name]));
-      window.location.href = "game.html";
-    };
-
-    const archive = document.createElement("button");
-    archive.className = "neon-btn";
-    archive.textContent = "Archive 📦";
-    archive.onclick = () => {
-      const archivedData = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
-      archivedData[name] = active[name];
-      localStorage.setItem("archivedQuizzes", JSON.stringify(archivedData));
-      delete active[name];
-      localStorage.setItem("myQuizzes", JSON.stringify(active));
-      loadQuizzes();
-    };
-
-    const del = document.createElement("button");
-    del.className = "neon-btn"; // <— now Delete looks like the others
-    del.textContent = "Delete ❌";
-    del.onclick = () => {
-      if(confirm(`Delete "${name}" permanently?`)) {
-        delete active[name];
-        localStorage.setItem("myQuizzes", JSON.stringify(active));
-        loadQuizzes();
-      }
-    };
-
-    btnGroup.appendChild(play);
-    btnGroup.appendChild(archive);
-    btnGroup.appendChild(del);
-
-    li.appendChild(title);
-    li.appendChild(btnGroup);
-    activeList.appendChild(li);
-  });
-
-  // Archived quizzes
-  Object.keys(archived).forEach(name => {
-    const li = document.createElement("li");
-    const title = document.createElement("span");
-    title.className = "quiz-title";
-    title.textContent = name;
-
-    const btnGroup = document.createElement("div");
-    btnGroup.className = "btn-group";
-
-    const play = document.createElement("button");
-    play.className = "neon-btn";
-    play.textContent = "Play ▶";
-    play.onclick = () => {
-      sessionStorage.setItem("currentQuiz", JSON.stringify(archived[name]));
-      window.location.href = "game.html";
-    };
-
-    const unarchive = document.createElement("button");
-    unarchive.className = "neon-btn";
-    unarchive.textContent = "Unarchive ↩";
-    unarchive.onclick = () => {
-      const activeData = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
-      activeData[name] = archived[name];
-      localStorage.setItem("myQuizzes", JSON.stringify(activeData));
-      delete archived[name];
-      localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
-      loadQuizzes();
-    };
-
-    const del = document.createElement("button");
-    del.className = "neon-btn"; // <— same as other buttons
-    del.textContent = "Delete ❌";
-    del.onclick = () => {
-      if(confirm(`Delete "${name}" permanently?`)) {
-        delete archived[name];
-        localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
-        loadQuizzes();
-      }
-    };
-
-    btnGroup.appendChild(play);
-    btnGroup.appendChild(unarchive);
-    btnGroup.appendChild(del);
-
-    li.appendChild(title);
-    li.appendChild(btnGroup);
-    archivedList.appendChild(li);
-  });
-}
-
-loadQuizzes();
+  li.appendChild(playBtn);
+  quizList.appendChild(li);
+});
 </script>
 
 </body>
