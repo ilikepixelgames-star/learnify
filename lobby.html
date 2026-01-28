@@ -2,48 +2,70 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Learnify Lobby</title>
+<title>Learnify Lobby - Singleplayer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   body {
-    font-family: Arial, sans-serif;
     text-align: center;
-    margin-top: 50px;
+    font-family: Arial, sans-serif;
+    margin-top: 100px;
+    background: #000;
+    color: #fff;
   }
+
+  h1 {
+    margin-bottom: 40px;
+  }
+
   button {
-    padding: 12px 25px;
+    padding: 20px 40px;
     font-size: 18px;
-    margin: 10px;
+    margin: 20px;
+    border-radius: 12px;
+    border: none;
     cursor: pointer;
+    background: linear-gradient(90deg, #1e90ff, #ff1493);
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 0 10px #1e90ff, 0 0 20px #ff1493;
+    transition: 0.3s ease-in-out;
+  }
+
+  button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #1e90ff, 0 0 30px #ff1493;
   }
 </style>
 </head>
 <body>
 
-<h1>🎓 Learnify Lobby</h1>
-<p>Choose what you want to do</p>
+<h1>Learnify - Singleplayer Lobby</h1>
 
-<button onclick="goCreate()">Create Quiz</button>
-<button onclick="goMyQuizzes()">My Quizzes</button>
-<button onclick="playCurrent()">Play Current Quiz</button>
+<p>Choose an option:</p>
+
+<button id="play-btn">Play Current Quiz</button><br>
+<button id="create-btn">Create Your Own Questions</button><br>
+<button id="my-quizzes-btn">My Quizzes</button>
 
 <script>
-function goCreate() {
-  window.location.href = "create.html";
-}
+const playBtn = document.getElementById("play-btn");
+const createBtn = document.getElementById("create-btn");
+const myQuizzesBtn = document.getElementById("my-quizzes-btn");
 
-function goMyQuizzes() {
-  window.location.href = "my-quizzes.html";
-}
+// Go to solo game
+playBtn.addEventListener("click", () => {
+    window.location.href = "game.html";
+});
 
-function playCurrent() {
-  const quiz = sessionStorage.getItem("currentQuiz");
-  if (!quiz) {
-    alert("No quiz loaded. Create or select one first.");
-    return;
-  }
-  window.location.href = "game.html";
-}
+// Go to create quiz page
+createBtn.addEventListener("click", () => {
+    window.location.href = "create.html";
+});
+
+// Go to saved quizzes
+myQuizzesBtn.addEventListener("click", () => {
+    window.location.href = "my-quizzes.html";
+});
 </script>
 
 </body>
