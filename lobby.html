@@ -1,34 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Learnify Lobby</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 60px;
-    }
-    button {
-      padding: 14px 28px;
-      margin: 15px;
-      font-size: 18px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Learnify Lobby</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+  }
+  button {
+    padding: 12px 25px;
+    font-size: 18px;
+    margin: 10px;
+    cursor: pointer;
+  }
+</style>
 </head>
 <body>
 
-  <h1>Learnify</h1>
+<h1>🎓 Learnify Lobby</h1>
+<p>Choose what you want to do</p>
 
-  <button onclick="window.location.href='create.html'">
-    Create Quiz
-  </button>
+<button onclick="goCreate()">Create Quiz</button>
+<button onclick="goMyQuizzes()">My Quizzes</button>
+<button onclick="playCurrent()">Play Current Quiz</button>
 
-  <button onclick="window.location.href='my-quizzes.html'">
-    My Quizzes
-  </button>
+<script>
+function goCreate() {
+  window.location.href = "create.html";
+}
+
+function goMyQuizzes() {
+  window.location.href = "my-quizzes.html";
+}
+
+function playCurrent() {
+  const quiz = sessionStorage.getItem("currentQuiz");
+  if (!quiz) {
+    alert("No quiz loaded. Create or select one first.");
+    return;
+  }
+  window.location.href = "game.html";
+}
+</script>
 
 </body>
 </html>
