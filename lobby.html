@@ -2,92 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Game Lobby - Learnify</title>
+  <title>Learnify Lobby</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      text-align: center;
       font-family: Arial, sans-serif;
-      margin-top: 50px;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      font-size: 18px;
-      margin: 5px 0;
+      text-align: center;
+      margin-top: 60px;
     }
     button {
-      padding: 10px 20px;
-      font-size: 16px;
-      margin: 10px;
+      padding: 14px 28px;
+      margin: 15px;
+      font-size: 18px;
       cursor: pointer;
-    }
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
-  <h1>Game Lobby</h1>
-  <p>Your game code is: <strong id="code"></strong></p>
-  
-  <h3>Players:</h3>
-  <ul id="player-list">
-    <li>You</li>
-  </ul>
-  
-  <p id="status">Waiting for players...</p>
-  
-  <button id="start-btn" disabled>Start Game</button>
-  <button id="create-btn">Create Your Own Questions</button>
-  <!-- NEW BUTTON: Play Game directly -->
-  <button id="play-btn">🎮 Play Game</button>
 
-  <script>
-    // Display game code from URL
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code') || 'ABC123';
-    document.getElementById('code').textContent = code;
+  <h1>Learnify</h1>
 
-    const fakePlayers = ["Alice", "Bob", "Charlie", "Dana"];
-    const playerList = document.getElementById('player-list');
-    const status = document.getElementById('status');
-    const startBtn = document.getElementById('start-btn');
-    const createBtn = document.getElementById('create-btn');
-    const playBtn = document.getElementById('play-btn');
+  <button onclick="window.location.href='create.html'">
+    Create Quiz
+  </button>
 
-    // Add fake players one by one
-    let index = 0;
-    const interval = setInterval(() => {
-      if (index < fakePlayers.length) {
-        const li = document.createElement('li');
-        li.textContent = fakePlayers[index];
-        playerList.appendChild(li);
-        index++;
-      } else {
-        clearInterval(interval);
-        status.textContent = "All players joined!";
-        startBtn.disabled = false;
-      }
-    }, 1000);
+  <button onclick="window.location.href='my-quizzes.html'">
+    My Quizzes
+  </button>
 
-    // Start game button
-    startBtn.addEventListener('click', () => {
-      window.location.href = 'game.html?code=' + encodeURIComponent(code);
-    });
-
-    // Create your own questions button
-    createBtn.addEventListener('click', () => {
-      window.location.href = 'create.html';
-    });
-
-    // Play game button (NEW)
-    playBtn.addEventListener('click', () => {
-      window.location.href = 'game.html';
-    });
-  </script>
 </body>
 </html>
