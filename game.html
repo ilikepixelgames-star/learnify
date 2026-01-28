@@ -1,75 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Learnify Game</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 6px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Learnify Lobby</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+  }
+  button {
+    padding: 12px 25px;
+    font-size: 18px;
+    margin: 10px;
+    cursor: pointer;
+  }
+</style>
 </head>
 <body>
 
-<h2 id="title"></h2>
-<p id="question"></p>
-<div id="answers"></div>
-<p id="feedback"></p>
+<h1>🎓 Learnify Lobby</h1>
+<p>Choose what you want to do</p>
 
-<button id="nextBtn" style="display:none;">Next</button>
+<button onclick="goCreate()">Create Quiz</button>
+<button onclick="goMyQuizzes()">My Quizzes</button>
+<button onclick="playCurrent()">Play Current Quiz</button>
 
 <script>
-const questions = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
-
-if (questions.length === 0) {
-  alert("No quiz loaded.");
+function goCreate() {
   window.location.href = "create.html";
 }
 
-let index = 0;
-
-function loadQuestion() {
-  const q = questions[index];
-  title.textContent = "Question " + (index + 1);
-  question.textContent = q.q;
-  answers.innerHTML = "";
-  feedback.textContent = "";
-  nextBtn.style.display = "none";
-
-  q.answers.forEach((ans, i) => {
-    const btn = document.createElement("button");
-    btn.textContent = ans;
-    btn.onclick = () => {
-      feedback.textContent = i === q.correct ? "Correct!" : "Wrong!";
-      nextBtn.style.display = "inline-block";
-    };
-    answers.appendChild(btn);
-  });
+function goMyQuizzes() {
+  window.location.href = "my-quizzes.html";
 }
 
-nextBtn.onclick = () => {
-  index++;
-  if (index < questions.length) {
-    loadQuestion();
-  } else {
-    title.textContent = "Quiz Finished";
-    question.textContent = "";
-    answers.innerHTML = "";
-    feedback.textContent = "";
-    nextBtn.style.display = "none";
+function playCurrent() {
+  const quiz = sessionStorage.getItem("currentQuiz");
+  if (!quiz) {
+    alert("No quiz loaded. Create or select one first.");
+    return;
   }
-};
-
-loadQuestion();
+  window.location.href = "game.html";
+}
 </script>
 
 </body>
