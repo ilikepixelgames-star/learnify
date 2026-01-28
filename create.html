@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Create Your Own Questions</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -45,8 +46,10 @@
   button::after {
     content: '';
     position: absolute;
-    top: 0; left: -75%;
-    width: 50%; height: 100%;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
     background: rgba(255,255,255,0.2);
     transform: skewX(-25deg);
     transition: all 0.5s;
@@ -56,7 +59,6 @@
     left: 125%;
   }
 
-  /* Fancy red Delete button */
   .delete-btn {
     background: red;
     box-shadow: 0 0 22px rgba(255,0,0,1), 0 0 46px rgba(255,50,50,0.9);
@@ -78,16 +80,19 @@
   }
 </style>
 </head>
+
 <body>
 
 <h1>Create Your Own Questions</h1>
 
 <input type="text" id="quiz-name" placeholder="Quiz Name"><br>
 <input type="text" id="question" placeholder="Question"><br>
+
 <input type="text" id="answer1" placeholder="Answer 1">
 <input type="text" id="answer2" placeholder="Answer 2">
 <input type="text" id="answer3" placeholder="Answer 3">
 <input type="text" id="answer4" placeholder="Answer 4"><br>
+
 <input type="number" id="correct" placeholder="Correct answer (1-4)" min="1" max="4"><br>
 
 <button id="add-btn">Add Question</button>
@@ -96,6 +101,7 @@
 <button id="my-quizzes-btn">My Quizzes</button>
 <button id="archive-btn">Archive Current Quiz</button>
 <button id="delete-btn" class="delete-btn">Delete Current Quiz</button>
+<button id="lobby-btn">Back to Lobby</button>
 
 <h2>Questions Added:</h2>
 <ul id="questions-list"></ul>
@@ -116,15 +122,16 @@ const saveBtn = document.getElementById("save-btn");
 const playBtn = document.getElementById("play-btn");
 const archiveBtn = document.getElementById("archive-btn");
 const deleteBtn = document.getElementById("delete-btn");
+const lobbyBtn = document.getElementById("lobby-btn");
 const myQuizzesBtn = document.getElementById("my-quizzes-btn");
 
 const list = document.getElementById("questions-list");
 
 function updateList() {
   list.innerHTML = "";
-  questions.forEach((q,i) => {
+  questions.forEach((q, i) => {
     const li = document.createElement("li");
-    li.textContent = `${i+1}. ${q.q} (Correct: ${q.answers[q.correct]})`;
+    li.textContent = (i + 1) + ". " + q.q + " (Correct: " + q.answers[q.correct] + ")";
     list.appendChild(li);
   });
 }
@@ -137,73 +144,94 @@ addBtn.addEventListener("click", () => {
   const a4 = a4Input.value.trim();
   const correct = parseInt(correctInput.value) - 1;
 
-  if(!q || !a1 || !a2 || !a3 || !a4 || isNaN(correct) || correct<0 || correct>3){
+  if (!q || !a1 || !a2 || !a3 || !a4 || isNaN(correct) || correct < 0 || correct > 3) {
     alert("Please fill all fields correctly!");
     return;
   }
 
-  questions.push({q, answers:[a1,a2,a3,a4], correct});
+  questions.push({ q, answers: [a1, a2, a3, a4], correct });
   sessionStorage.setItem("currentQuiz", JSON.stringify(questions));
   updateList();
 
-  qInput.value = a1Input.value = a2Input.value = a3Input.value = a4Input.value = correctInput.value = "";
+  qInput.value = "";
+  a1Input.value = "";
+  a2Input.value = "";
+  a3Input.value = "";
+  a4Input.value = "";
+  correctInput.value = "";
 });
 
 saveBtn.addEventListener("click", () => {
   const name = quizNameInput.value.trim() || "Untitled Quiz";
-  if(questions.length===0){ alert("Add at least one question!"); return; }
+  if (questions.length === 0) {
+    alert("Add at least one question!");
+    return;
+  }
 
   const saved = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
   saved[name] = questions;
   localStorage.setItem("myQuizzes", JSON.stringify(saved));
 
   sessionStorage.removeItem("currentQuiz");
-  questions=[];
+  questions = [];
   updateList();
-  quizNameInput.value="";
-  alert(`Quiz "${name}" saved!`);
+  quizNameInput.value = "";
+  alert('Quiz "' + name + '" saved!');
 });
 
 archiveBtn.addEventListener("click", () => {
   const name = quizNameInput.value.trim() || "Untitled Quiz";
-  if(questions.length===0){ alert("Add at least one question!"); return; }
+  if (questions.length === 0) {
+    alert("Add at least one question!");
+    return;
+  }
 
   const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
   archived[name] = questions;
   localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
 
-  const saved = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
-  if(saved[name]) delete saved[name];
-  localStorage.setItem("myQuizzes", JSON.stringify(saved));
-
-  questions=[];
+  questions = [];
   sessionStorage.removeItem("currentQuiz");
   updateList();
-  quizNameInput.value="";
-  alert(`Quiz "${name}" archived!`);
+  quizNameInput.value = "";
+  alert('Quiz "' + name + '" archived!');
 });
 
 deleteBtn.addEventListener("click", () => {
   const name = quizNameInput.value.trim();
-  if(!name){ alert("Enter the quiz name to delete!"); return; }
-  if(confirm(`Delete quiz "${name}" permanently?`)){
+  if (!name) {
+    alert("Enter the quiz name to delete!");
+    return;
+  }
+
+  if (confirm('Delete quiz "' + name + '" permanently?')) {
     const saved = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
-    if(saved[name]) delete saved[name];
+    delete saved[name];
     localStorage.setItem("myQuizzes", JSON.stringify(saved));
-    questions=[];
+
+    questions = [];
     sessionStorage.removeItem("currentQuiz");
     updateList();
-    quizNameInput.value="";
-    alert(`Quiz "${name}" deleted!`);
+    quizNameInput.value = "";
+    alert('Quiz "' + name + '" deleted!');
   }
 });
 
 playBtn.addEventListener("click", () => {
-  if(questions.length===0){ alert("Add at least one question!"); return; }
-  window.location.href="game.html";
+  if (questions.length === 0) {
+    alert("Add at least one question!");
+    return;
+  }
+  window.location.href = "game.html";
 });
 
-myQuizzesBtn.addEventListener("click", () => { window.location.href="my-quizzes.html"; });
+myQuizzesBtn.addEventListener("click", () => {
+  window.location.href = "my-quizzes.html";
+});
+
+lobbyBtn.addEventListener("click", () => {
+  window.location.href = "lobby.html";
+});
 
 updateList();
 </script>
