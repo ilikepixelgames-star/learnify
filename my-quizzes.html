@@ -4,31 +4,65 @@
 <meta charset="UTF-8">
 <title>My Quizzes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
   body {
     font-family: Arial;
     text-align: center;
     margin-top: 30px;
+    background: #0f0f1a;
+    color: white;
   }
-  button {
-    padding: 6px 15px;
-    margin: 3px;
-    cursor: pointer;
+
+  h1, h2 {
+    margin-bottom: 10px;
   }
-  h2 {
-    margin-top: 20px;
-  }
+
   ul {
     list-style: none;
     padding: 0;
     display: inline-block;
     text-align: left;
   }
+
   li {
-    margin-bottom: 5px;
+    margin-bottom: 12px;
+  }
+
+  /* 🔥 FANCY BUTTON DESIGN */
+  button {
+    padding: 10px 22px;
+    margin: 4px;
+    font-size: 15px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #7f5cff, #4dd2ff);
+    color: white;
+    box-shadow: 0 0 12px rgba(127,92,255,0.6);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  button:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 18px rgba(77,210,255,0.9);
+  }
+
+  button:active {
+    transform: scale(0.97);
+  }
+
+  .danger {
+    background: linear-gradient(135deg, #ff4d4d, #ff1a1a);
+    box-shadow: 0 0 12px rgba(255,77,77,0.7);
+  }
+
+  .danger:hover {
+    box-shadow: 0 0 18px rgba(255,77,77,1);
   }
 </style>
 </head>
+
 <body>
 
 <h1>My Quizzes</h1>
@@ -39,7 +73,8 @@
 <h2>Archived Quizzes</h2>
 <ul id="archived-list"></ul>
 
-<button onclick="window.location.href='create.html'">Back to Create</button>
+<br>
+<button onclick="window.location.href='create.html'">⬅ Back to Create</button>
 
 <script>
 function loadQuizzes() {
@@ -55,4 +90,61 @@ function loadQuizzes() {
   /* ACTIVE QUIZZES */
   Object.keys(active).forEach(name => {
     const li = document.createElement("li");
-    li.textContent = name + "
+    li.textContent = name + " ";
+
+    const play = document.createElement("button");
+    play.textContent = "Play";
+    play.onclick = () => {
+      sessionStorage.setItem("currentQuiz", JSON.stringify(active[name]));
+      window.location.href = "game.html";
+    };
+
+    const archive = document.createElement("button");
+    archive.textContent = "Archive";
+    archive.onclick = () => {
+      archived[name] = active[name];
+      delete active[name];
+      localStorage.setItem("myQuizzes", JSON.stringify(active));
+      localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
+      loadQuizzes();
+    };
+
+    li.appendChild(play);
+    li.appendChild(archive);
+    activeList.appendChild(li);
+  });
+
+  /* ARCHIVED QUIZZES */
+  Object.keys(archived).forEach(name => {
+    const li = document.createElement("li");
+    li.textContent = name + " ";
+
+    const play = document.createElement("button");
+    play.textContent = "Play";
+    play.onclick = () => {
+      sessionStorage.setItem("currentQuiz", JSON.stringify(archived[name]));
+      window.location.href = "game.html";
+    };
+
+    const del = document.createElement("button");
+    del.textContent = "Delete";
+    del.className = "danger";
+    del.onclick = () => {
+      if (confirm(`Delete "${name}" forever?`)) {
+        delete archived[name];
+        localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
+        loadQuizzes();
+      }
+    };
+
+    li.appendChild(play);
+    li.appendChild(del);
+    archivedList.appendChild(li);
+  });
+}
+
+loadQuizzes();
+</script>
+
+</body>
+</html>
