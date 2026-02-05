@@ -8,43 +8,42 @@
     body {
       font-family: Arial;
       text-align: center;
-      margin-top: 60px;
+      margin-top: 50px;
     }
+
     button {
       padding: 12px 24px;
-      font-size: 18px;
       margin: 10px;
+      font-size: 16px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-<h1>Learnify</h1>
-<p>Select what you want to do</p>
+  <h1>🎮 Game Lobby</h1>
+  <p>Ready to play your quiz?</p>
 
-<button onclick="goCreate()">Create Quiz</button><br>
-<button onclick="goMyQuizzes()">My Quizzes</button><br>
-<button onclick="playCurrent()">Play Current Quiz</button>
+  <button id="play-btn">Play Quiz</button>
+  <button id="back-btn">Back to Create</button>
 
-<script>
-  function goCreate() {
-    window.location.href = "create.html";
-  }
+  <script>
+    const playBtn = document.getElementById("play-btn");
+    const backBtn = document.getElementById("back-btn");
 
-  function goMyQuizzes() {
-    window.location.href = "my-quizzes.html";
-  }
+    playBtn.addEventListener("click", () => {
+      const quiz = sessionStorage.getItem("currentQuiz");
+      if (!quiz) {
+        alert("No quiz loaded! Go back and create one.");
+        return;
+      }
+      window.location.href = "game.html";
+    });
 
-  function playCurrent() {
-    const quiz = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
-    if (quiz.length === 0) {
-      alert("No quiz loaded. Create or load a quiz first.");
-      return;
-    }
-    window.location.href = "game.html";
-  }
-</script>
+    backBtn.addEventListener("click", () => {
+      window.location.href = "create.html";
+    });
+  </script>
 
 </body>
 </html>
