@@ -1,57 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Quizzes</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 40px;
-    }
-    button {
-      padding: 8px 16px;
-      margin: 5px;
-      font-size: 15px;
-      cursor: pointer;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      margin-bottom: 10px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>My Quizzes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: Arial;
+    text-align: center;
+    margin-top: 30px;
+  }
+  button {
+    padding: 6px 15px;
+    margin: 3px;
+    cursor: pointer;
+  }
+  h2 {
+    margin-top: 20px;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    display: inline-block;
+    text-align: left;
+  }
+  li {
+    margin-bottom: 5px;
+  }
+</style>
 </head>
 <body>
 
 <h1>My Quizzes</h1>
 
-<ul id="quizList"></ul>
+<h2>Active Quizzes</h2>
+<ul id="active-list"></ul>
 
-<button onclick="window.location.href='lobby.html'">Back to Lobby</button>
+<h2>Archived Quizzes</h2>
+<ul id="archived-list"></ul>
+
+<button onclick="window.location.href='create.html'">Back to Create</button>
 
 <script>
-const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
-const quizList = document.getElementById("quizList");
+function loadQuizzes() {
+  const active = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+  const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
 
-Object.keys(quizzes).forEach(name => {
-  const li = document.createElement("li");
-  li.textContent = name + " ";
+  const activeList = document.getElementById("active-list");
+  const archivedList = document.getElementById("archived-list");
 
-  const playBtn = document.createElement("button");
-  playBtn.textContent = "Play";
-  playBtn.onclick = () => {
-    sessionStorage.setItem("currentQuiz", JSON.stringify(quizzes[name]));
-    window.location.href = "game.html";
-  };
+  activeList.innerHTML = "";
+  archivedList.innerHTML = "";
 
-  li.appendChild(playBtn);
-  quizList.appendChild(li);
-});
-</script>
-
-</body>
-</html>
+  /* ACTIVE QUIZZES */
+  Object.keys(active).forEach(name => {
+    const li = document.createElement("li");
+    li.textContent = name + "
