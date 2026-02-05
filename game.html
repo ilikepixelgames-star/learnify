@@ -6,83 +6,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       text-align: center;
       margin-top: 50px;
     }
     button {
-      padding: 12px 25px;
-      margin: 8px;
+      padding: 10px 20px;
       font-size: 16px;
+      margin: 8px;
       cursor: pointer;
     }
-    #next-btn, #end-buttons {
+    #next-btn {
       display: none;
-    }
-    #answers button {
-      display: block;
-      margin: 10px auto;
-      width: 60%;
     }
   </style>
 </head>
 <body>
 
-<h1 id="q-title"></h1>
-<p id="q-text"></p>
+<h1 id="question-title"></h1>
+<p id="question-text"></p>
+
 <div id="answers"></div>
+
 <p id="feedback"></p>
 
 <button id="next-btn">Next Question</button>
-
-<div id="end-buttons">
-  <button onclick="goLobby()">Back to Lobby</button>
-  <button onclick="restart()">Play Again</button>
-</div>
+<button onclick="backToLobby()">Back to Lobby</button>
 
 <script>
   let questions = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
 
   if (questions.length === 0) {
-    alert("No quiz found. Returning to Create page.");
-    window.location.href = "create.html";
+    alert("No quiz loaded. Returning to lobby.");
+    window.location.href = "lobby.html";
   }
 
   let index = 0;
   let score = 0;
 
-  const qTitle = document.getElementById("q-title");
-  const qText = document.getElementById("q-text");
+  const titleEl = document.getElementById("question-title");
+  const textEl = document.getElementById("question-text");
   const answersDiv = document.getElementById("answers");
-  const feedback = document.getElementById("feedback");
+  const feedbackEl = document.getElementById("feedback");
   const nextBtn = document.getElementById("next-btn");
-  const endButtons = document.getElementById("end-buttons");
 
   function loadQuestion() {
     const q = questions[index];
-    qTitle.textContent = `Question ${index + 1}`;
-    qText.textContent = q.q;
+    titleEl.textContent = "Question " + (index + 1);
+    textEl.textContent = q.q;
+
     answersDiv.innerHTML = "";
-    feedback.textContent = "";
+    feedbackEl.textContent = "";
     nextBtn.style.display = "none";
-    endButtons.style.display = "none";
 
     q.answers.forEach((ans, i) => {
       const btn = document.createElement("button");
       btn.textContent = ans;
-      btn.onclick = () => checkAnswer(i);
+      btn.onclick = () => {
+        if (i === q.correct) {
+          feedbackEl.textContent = "Correct!";
+          score++;
+        } else {
+          feedbackEl.textContent = "Wrong!";
+        }
+        nextBtn.style.display = "inline-block";
+      };
       answersDiv.appendChild(btn);
     });
-  }
-
-  function checkAnswer(i) {
-    if (i === questions[index].correct) {
-      feedback.textContent = "✅ Correct!";
-      score++;
-    } else {
-      feedback.textContent = "❌ Wrong!";
-    }
-    nextBtn.style.display = "inline-block";
   }
 
   nextBtn.onclick = () => {
@@ -90,26 +80,16 @@
     if (index < questions.length) {
       loadQuestion();
     } else {
-      showEnd();
+      titleEl.textContent = "Quiz Complete!";
+      textEl.textContent =
+        "Your score: " + score + " / " + questions.length;
+      answersDiv.innerHTML = "";
+      feedbackEl.textContent = "";
+      nextBtn.style.display = "none";
     }
   };
 
-  function showEnd() {
-    qTitle.textContent = "🎉 Quiz Complete!";
-    qText.textContent = `Score: ${score} / ${questions.length}`;
-    answersDiv.innerHTML = "";
-    feedback.textContent = "";
-    nextBtn.style.display = "none";
-    endButtons.style.display = "block";
-  }
-
-  function restart() {
-    index = 0;
-    score = 0;
-    loadQuestion();
-  }
-
-  function goLobby() {
+  function backToLobby() {
     window.location.href = "lobby.html";
   }
 
