@@ -10,8 +10,8 @@
       font-family: Arial;
       text-align: center;
       margin-top: 30px;
-      background:#0b0b12;
-      color:white;
+      background: #0b0b12;
+      color: white;
     }
 
     input {
@@ -28,34 +28,46 @@
 
     li { margin-bottom: 5px; }
 
-    /* 🔥 NEON BUTTON STYLE */
+    /* 🔥 MATCHED NEON BUTTON STYLE (MY QUIZZES) */
     button {
-      padding: 10px 20px;
-      margin: 6px;
+      padding: 12px 26px;
+      margin: 8px;
       font-size: 16px;
       cursor: pointer;
-      border-radius: 10px;
-      border: 2px solid #00f7ff;
-      background: transparent;
+      border-radius: 14px;
+      background: #05050a;
       color: #00f7ff;
-      box-shadow: 0 0 10px #00f7ff;
+      border: 2px solid #00f7ff;
+      box-shadow:
+        0 0 8px #00f7ff,
+        0 0 16px #00f7ff,
+        inset 0 0 8px rgba(0,247,255,0.4);
       transition: 0.2s ease;
     }
 
     button:hover {
-      box-shadow: 0 0 20px #00f7ff;
-      transform: scale(1.05);
+      transform: scale(1.06);
+      box-shadow:
+        0 0 14px #00f7ff,
+        0 0 28px #00f7ff,
+        inset 0 0 10px rgba(0,247,255,0.6);
     }
 
-    /* Archive button stays red but neon */
+    /* 🔴 Archive button — same neon logic, red */
     button.archive {
-      border-color: #ff004c;
       color: #ff004c;
-      box-shadow: 0 0 10px #ff004c;
+      border-color: #ff004c;
+      box-shadow:
+        0 0 8px #ff004c,
+        0 0 16px #ff004c,
+        inset 0 0 8px rgba(255,0,76,0.4);
     }
 
     button.archive:hover {
-      box-shadow: 0 0 20px #ff004c;
+      box-shadow:
+        0 0 14px #ff004c,
+        0 0 28px #ff004c,
+        inset 0 0 10px rgba(255,0,76,0.6);
     }
   </style>
 </head>
