@@ -10,13 +10,12 @@
     font-family: Arial;
     text-align: center;
     margin-top: 30px;
-    background: #0f0f1a;
+    background: #0b0b12;
     color: white;
   }
 
-  h1, h2 {
-    margin-bottom: 10px;
-  }
+  h1 { font-size: 38px; }
+  h2 { margin-top: 30px; }
 
   ul {
     list-style: none;
@@ -29,36 +28,63 @@
     margin-bottom: 12px;
   }
 
-  /* 🔥 FANCY BUTTON DESIGN */
+  /* 🔥 Neon buttons */
   button {
     padding: 10px 22px;
-    margin: 4px;
+    margin: 5px;
     font-size: 15px;
-    border: none;
-    border-radius: 12px;
     cursor: pointer;
-    background: linear-gradient(135deg, #7f5cff, #4dd2ff);
-    color: white;
-    box-shadow: 0 0 12px rgba(127,92,255,0.6);
-    transition: transform 0.15s, box-shadow 0.15s;
+    border-radius: 14px;
+    background: #05050a;
+    color: #00f7ff;
+    border: 2px solid #00f7ff;
+    box-shadow:
+      0 0 8px #00f7ff,
+      0 0 16px #00f7ff,
+      inset 0 0 8px rgba(0,247,255,0.4);
+    transition: 0.2s ease;
   }
 
   button:hover {
     transform: scale(1.06);
-    box-shadow: 0 0 18px rgba(77,210,255,0.9);
+    box-shadow:
+      0 0 14px #00f7ff,
+      0 0 28px #00f7ff,
+      inset 0 0 10px rgba(0,247,255,0.6);
   }
 
-  button:active {
-    transform: scale(0.97);
+  /* Red delete */
+  button.delete {
+    color: #ff004c;
+    border-color: #ff004c;
+    box-shadow:
+      0 0 8px #ff004c,
+      0 0 16px #ff004c,
+      inset 0 0 8px rgba(255,0,76,0.4);
   }
 
-  .danger {
-    background: linear-gradient(135deg, #ff4d4d, #ff1a1a);
-    box-shadow: 0 0 12px rgba(255,77,77,0.7);
+  button.delete:hover {
+    box-shadow:
+      0 0 14px #ff004c,
+      0 0 28px #ff004c,
+      inset 0 0 10px rgba(255,0,76,0.6);
   }
 
-  .danger:hover {
-    box-shadow: 0 0 18px rgba(255,77,77,1);
+  /* Green unarchive */
+  button.unarchive {
+    color: #00ff99;
+    border-color: #00ff99;
+    box-shadow:
+      0 0 8px #00ff99,
+      0 0 16px #00ff99,
+      inset 0 0 8px rgba(0,255,153,0.4);
+  }
+
+  button.unarchive:hover {
+    box-shadow:
+      0 0 14px #00ff99,
+      0 0 28px #00ff99,
+      inset 0 0 10px rgba(0,255,153,0.6);
   }
 </style>
 </head>
@@ -74,10 +100,11 @@
 <ul id="archived-list"></ul>
 
 <br>
-<button onclick="window.location.href='create.html'">⬅ Back to Create</button>
+<button onclick="window.location.href='create.html'">Back to Create</button>
+<button onclick="window.location.href='lobby.html'">Back to Lobby</button>
 
 <script>
-function loadQuizzes() {
+function loadQuizzes(){
   const active = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
   const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
 
@@ -103,9 +130,9 @@ function loadQuizzes() {
     archive.textContent = "Archive";
     archive.onclick = () => {
       archived[name] = active[name];
+      localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
       delete active[name];
       localStorage.setItem("myQuizzes", JSON.stringify(active));
-      localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
       loadQuizzes();
     };
 
@@ -126,11 +153,22 @@ function loadQuizzes() {
       window.location.href = "game.html";
     };
 
+    const unarchive = document.createElement("button");
+    unarchive.textContent = "Unarchive";
+    unarchive.className = "unarchive";
+    unarchive.onclick = () => {
+      active[name] = archived[name];
+      localStorage.setItem("myQuizzes", JSON.stringify(active));
+      delete archived[name];
+      localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
+      loadQuizzes();
+    };
+
     const del = document.createElement("button");
     del.textContent = "Delete";
-    del.className = "danger";
+    del.className = "delete";
     del.onclick = () => {
-      if (confirm(`Delete "${name}" forever?`)) {
+      if(confirm(`Delete "${name}" forever?`)){
         delete archived[name];
         localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
         loadQuizzes();
@@ -138,6 +176,7 @@ function loadQuizzes() {
     };
 
     li.appendChild(play);
+    li.appendChild(unarchive);
     li.appendChild(del);
     archivedList.appendChild(li);
   });
