@@ -25,19 +25,37 @@
   <p>Ready to play your quiz?</p>
 
   <button id="play-btn">Play Quiz</button>
+  <button id="play-current-btn">Play Current Quiz</button>
+  <button id="delete-current-btn">Delete Current Quiz</button>
   <button id="back-btn">Back to Create</button>
 
   <script>
     const playBtn = document.getElementById("play-btn");
+    const playCurrentBtn = document.getElementById("play-current-btn");
+    const deleteCurrentBtn = document.getElementById("delete-current-btn");
     const backBtn = document.getElementById("back-btn");
 
-    playBtn.addEventListener("click", () => {
+    function playQuiz() {
       const quiz = sessionStorage.getItem("currentQuiz");
       if (!quiz) {
         alert("No quiz loaded! Go back and create one.");
         return;
       }
       window.location.href = "game.html";
+    }
+
+    playBtn.addEventListener("click", playQuiz);
+    playCurrentBtn.addEventListener("click", playQuiz);
+
+    deleteCurrentBtn.addEventListener("click", () => {
+      if (!sessionStorage.getItem("currentQuiz")) {
+        alert("No current quiz to delete.");
+        return;
+      }
+      if (confirm("Delete the current quiz from this session?")) {
+        sessionStorage.removeItem("currentQuiz");
+        alert("Current quiz deleted.");
+      }
     });
 
     backBtn.addEventListener("click", () => {
