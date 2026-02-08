@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Learnify Sandbox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial; text-align: center; background:#111; color:#fff; padding:20px; }
+    h1 { color:#0ff; margin-bottom:20px; }
+    input, button { padding:10px; margin:5px; font-size:16px; border:none; border-radius:8px; outline:none; }
+    button { cursor:pointer; background:#0ff; color:#111; font-weight:bold; transition:0.2s; }
+    button:hover { background:#0aa; }
+    ul { list-style:none; padding:0; max-width:400px; margin:20px auto; text-align:left; }
+    li { background:#222; margin-bottom:10px; padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; }
+    li button.delete { background:red; color:#fff; }
+    li button.delete:hover { background:darkred; }
+  </style>
+</head>
+<body>
+  <h1>Learnify Sandbox</h1>
+  <input type="text" id="new-question" placeholder="Type a question">
+  <button onclick="addQuestion()">Add Question</button>
+  <ul id="questions-list"></ul>
+
+  <script>
+    function addQuestion() {
+      const input = document.getElementById('new-question');
+      const text = input.value.trim();
+      if (!text) return;
+      const li = document.createElement('li');
+      li.textContent = text;
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.classList.add('delete');
+      deleteBtn.onclick = () => li.remove();
+      li.appendChild(deleteBtn);
+      document.getElementById('questions-list').appendChild(li);
+      input.value = '';
+    }
+  </script>
+</body>
+</html>
