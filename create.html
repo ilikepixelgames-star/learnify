@@ -28,7 +28,7 @@
 
     li { margin-bottom: 5px; }
 
-    /* 🔥 MATCHED NEON BUTTON STYLE (MY QUIZZES) */
+    /* 🔥 Neon button style (same as My Quizzes) */
     button {
       padding: 12px 26px;
       margin: 8px;
@@ -53,7 +53,7 @@
         inset 0 0 10px rgba(0,247,255,0.6);
     }
 
-    /* 🔴 Archive button — same neon logic, red */
+    /* 🔴 Archive button */
     button.archive {
       color: #ff004c;
       border-color: #ff004c;
@@ -92,6 +92,9 @@
 <button id="my-quizzes-btn">My Quizzes</button>
 <button id="archive-btn" class="archive">Archive Current Quiz</button>
 
+<!-- ✅ NEW BUTTON -->
+<button id="back-lobby-btn">Back to Lobby</button>
+
 <h2>Questions Added:</h2>
 <ul id="questions-list"></ul>
 
@@ -105,11 +108,14 @@ const a2Input = document.getElementById("answer2");
 const a3Input = document.getElementById("answer3");
 const a4Input = document.getElementById("answer4");
 const correctInput = document.getElementById("correct");
+
 const addBtn = document.getElementById("add-btn");
 const saveBtn = document.getElementById("save-btn");
 const playBtn = document.getElementById("play-btn");
 const archiveBtn = document.getElementById("archive-btn");
 const myQuizzesBtn = document.getElementById("my-quizzes-btn");
+const backLobbyBtn = document.getElementById("back-lobby-btn");
+
 const list = document.getElementById("questions-list");
 
 function updateList() {
@@ -129,36 +135,37 @@ addBtn.addEventListener("click", () => {
   const a4 = a4Input.value.trim();
   const correct = parseInt(correctInput.value) - 1;
 
-  if(!q || !a1 || !a2 || !a3 || !a4 || isNaN(correct) || correct<0 || correct>3){
+  if(!q || !a1 || !a2 || !a3 || !a4 || isNaN(correct) || correct < 0 || correct > 3){
     alert("Please fill all fields correctly!");
     return;
   }
 
-  questions.push({q,answers:[a1,a2,a3,a4],correct});
+  questions.push({ q, answers:[a1,a2,a3,a4], correct });
   sessionStorage.setItem("currentQuiz", JSON.stringify(questions));
   updateList();
 
-  qInput.value = a1Input.value = a2Input.value = a3Input.value = a4Input.value = correctInput.value = "";
+  qInput.value = a1Input.value = a2Input.value =
+  a3Input.value = a4Input.value = correctInput.value = "";
 });
 
 saveBtn.addEventListener("click", () => {
   const name = quizNameInput.value.trim() || "Untitled Quiz";
-  if(questions.length===0){ alert("Add at least one question!"); return; }
+  if(questions.length === 0){ alert("Add at least one question!"); return; }
 
   const saved = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
   saved[name] = questions;
   localStorage.setItem("myQuizzes", JSON.stringify(saved));
 
   sessionStorage.removeItem("currentQuiz");
-  questions=[];
+  questions = [];
   updateList();
-  quizNameInput.value="";
+  quizNameInput.value = "";
   alert(`Quiz "${name}" saved!`);
 });
 
 archiveBtn.addEventListener("click", () => {
   const name = quizNameInput.value.trim() || "Untitled Quiz";
-  if(questions.length===0){ alert("Add at least one question!"); return; }
+  if(questions.length === 0){ alert("Add at least one question!"); return; }
 
   const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
   archived[name] = questions;
@@ -168,20 +175,25 @@ archiveBtn.addEventListener("click", () => {
   if(saved[name]) delete saved[name];
   localStorage.setItem("myQuizzes", JSON.stringify(saved));
 
-  questions=[];
+  questions = [];
   sessionStorage.removeItem("currentQuiz");
   updateList();
-  quizNameInput.value="";
+  quizNameInput.value = "";
   alert(`Quiz "${name}" archived!`);
 });
 
 playBtn.addEventListener("click", () => {
-  if(questions.length===0){ alert("Add at least one question!"); return; }
-  window.location.href="game.html";
+  if(questions.length === 0){ alert("Add at least one question!"); return; }
+  window.location.href = "game.html";
 });
 
 myQuizzesBtn.addEventListener("click", () => {
-  window.location.href="my-quizzes.html";
+  window.location.href = "my-quizzes.html";
+});
+
+/* ✅ BACK TO LOBBY */
+backLobbyBtn.addEventListener("click", () => {
+  window.location.href = "lobby.html";
 });
 
 updateList();
