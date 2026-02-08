@@ -4,58 +4,46 @@
   <meta charset="UTF-8">
   <title>Learnify Lobby</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #0b0b12;
-      color: white;
+      background-color: #111;
+      color: #fff;
       text-align: center;
-      margin-top: 70px;
+      padding: 50px;
     }
 
     h1 {
-      font-size: 48px;
+      color: #0ff;
       margin-bottom: 40px;
-      color: #7df9ff;
-      text-shadow: 0 0 12px #7df9ff;
+      font-size: 36px;
     }
 
-    button {
-      padding: 18px 40px;
-      margin: 14px;
+    .button {
+      display: inline-block;
+      padding: 15px 30px;
+      margin: 10px;
       font-size: 20px;
-      cursor: pointer;
+      font-weight: bold;
+      color: #111;
+      background: #0ff;
+      border: none;
       border-radius: 12px;
-      border: 2px solid #00f7ff;
-      background: transparent;
-      color: #00f7ff;
-      box-shadow: 0 0 12px #00f7ff;
-      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      transition: 0.2s;
+      text-decoration: none;
     }
 
-    button:hover {
-      transform: scale(1.07);
-      box-shadow: 0 0 22px #00f7ff;
+    .button:hover {
+      background: #0aa;
     }
   </style>
 </head>
 <body>
+  <h1>Learnify Lobby</h1>
 
-  <h1>🎓 Learnify</h1>
-
-  <button id="create-btn">Create a Quiz</button><br>
-  <button id="my-quizzes-btn">My Quizzes</button>
-
-  <script>
-    document.getElementById("create-btn").addEventListener("click", () => {
-      window.location.href = "create.html";
-    });
-
-    document.getElementById("my-quizzes-btn").addEventListener("click", () => {
-      window.location.href = "my-quizzes.html";
-    });
-  </script>
+  <!-- Button to go to sandbox/game page -->
+  <a href="sandbox.html" class="button">Go to Sandbox</a>
 
 </body>
 </html>
