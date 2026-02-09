@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Lobby</title>
+  <title>Learnify Lobby</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       background: #0b0b12;
       color: white;
       text-align: center;
-      margin-top: 40px;
+      margin-top: 50px;
     }
 
     h1 {
-      font-size: 2.2em;
-      margin-bottom: 20px;
+      font-size: 2.5em;
+      margin-bottom: 30px;
     }
 
     button {
@@ -43,39 +43,43 @@
         inset 0 0 10px rgba(0,247,255,0.6);
     }
 
-    #lobby-buttons {
-      margin-top: 30px;
+    #buttons-container {
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
 
-<h1>Online / Multiplayer Lobby</h1>
-<p>Welcome! This is your lobby. Buttons are non-functional for now.</p>
+<h1>Learnify Lobby</h1>
+<p>Welcome! Choose an option below to get started.</p>
 
-<div id="lobby-buttons">
-  <!-- Merged Multiplayer / Online buttons -->
-  <button id="start-btn">Start Game</button>
-  <button id="invite-btn">Invite Players</button>
-  <button id="settings-btn">Lobby Settings</button>
+<div id="buttons-container">
+  <button id="play-btn">Play Quiz</button>
+  <button id="create-btn">Create Quiz</button>
+  <button id="my-quizzes-btn">My Quizzes</button>
+  <button id="settings-btn">Settings</button>
 </div>
 
 <script>
-  // Buttons are non-functional placeholders
-  const startBtn = document.getElementById("start-btn");
-  const inviteBtn = document.getElementById("invite-btn");
+  const playBtn = document.getElementById("play-btn");
+  const createBtn = document.getElementById("create-btn");
+  const myQuizzesBtn = document.getElementById("my-quizzes-btn");
   const settingsBtn = document.getElementById("settings-btn");
 
-  startBtn.addEventListener("click", () => {
-    alert("Start Game button clicked (placeholder)");
+  playBtn.addEventListener("click", () => {
+    window.location.href = "game.html";
   });
 
-  inviteBtn.addEventListener("click", () => {
-    alert("Invite Players button clicked (placeholder)");
+  createBtn.addEventListener("click", () => {
+    window.location.href = "create.html";
+  });
+
+  myQuizzesBtn.addEventListener("click", () => {
+    window.location.href = "my-quizzes.html";
   });
 
   settingsBtn.addEventListener("click", () => {
-    alert("Lobby Settings button clicked (placeholder)");
+    alert("Settings coming soon!");
   });
 </script>
 
