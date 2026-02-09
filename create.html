@@ -89,14 +89,11 @@
 <button id="add-btn">Add Question</button>
 <button id="save-btn">Save Quiz</button>
 <button id="play-btn">Play Current Quiz</button>
-
-<!-- ✅ NEW BUTTONS (placeholders only) -->
-<button id="play-multiplayer-btn">Play Multiplayer</button>
-<button id="online-btn">Online</button>
-
 <button id="my-quizzes-btn">My Quizzes</button>
 <button id="archive-btn" class="archive">Archive Current Quiz</button>
-<button id="back-lobby-btn">Back to Lobby</button>
+
+<!-- ✅ Online / Multiplayer button -->
+<button id="online-btn">Play Online</button>
 
 <h2>Questions Added:</h2>
 <ul id="questions-list"></ul>
@@ -117,10 +114,8 @@ const saveBtn = document.getElementById("save-btn");
 const playBtn = document.getElementById("play-btn");
 const archiveBtn = document.getElementById("archive-btn");
 const myQuizzesBtn = document.getElementById("my-quizzes-btn");
-const backLobbyBtn = document.getElementById("back-lobby-btn");
 
-/* ✅ New buttons */
-const playMultiplayerBtn = document.getElementById("play-multiplayer-btn");
+/* Online / Multiplayer button */
 const onlineBtn = document.getElementById("online-btn");
 
 const list = document.getElementById("questions-list");
@@ -198,17 +193,9 @@ myQuizzesBtn.addEventListener("click", () => {
   window.location.href = "my-quizzes.html";
 });
 
-backLobbyBtn.addEventListener("click", () => {
-  window.location.href = "lobby.html";
-});
-
-/* 🚧 Placeholder logic (safe, does nothing important) */
-playMultiplayerBtn.addEventListener("click", () => {
-  alert("Multiplayer coming soon!");
-});
-
+/* ✅ Online / Multiplayer button logic */
 onlineBtn.addEventListener("click", () => {
-  alert("Online mode coming soon!");
+  window.location.href = "lobby.html"; // goes to a separate lobby
 });
 
 updateList();
