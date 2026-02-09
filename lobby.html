@@ -51,7 +51,7 @@
 <body>
 
 <h1>Learnify Lobby</h1>
-<p>Welcome! Choose an option below to get started.</p>
+<p>Welcome! Choose an option below.</p>
 
 <div id="buttons-container">
   <button id="play-btn">Play Quiz</button>
@@ -62,32 +62,32 @@
 </div>
 
 <script>
-  const playBtn = document.getElementById("play-btn");
-  const createBtn = document.getElementById("create-btn");
-  const myQuizzesBtn = document.getElementById("my-quizzes-btn");
-  const onlineBtn = document.getElementById("online-btn");
-  const settingsBtn = document.getElementById("settings-btn");
+const playBtn = document.getElementById("play-btn");
+const createBtn = document.getElementById("create-btn");
+const myQuizzesBtn = document.getElementById("my-quizzes-btn");
+const onlineBtn = document.getElementById("online-btn");
+const settingsBtn = document.getElementById("settings-btn");
 
-  playBtn.addEventListener("click", () => {
-    window.location.href = "game.html";
-  });
+playBtn.addEventListener("click", () => {
+  window.location.href = "game.html";
+});
 
-  createBtn.addEventListener("click", () => {
-    window.location.href = "create.html";
-  });
+createBtn.addEventListener("click", () => {
+  window.location.href = "create.html";
+});
 
-  myQuizzesBtn.addEventListener("click", () => {
-    window.location.href = "my-quizzes.html";
-  });
+myQuizzesBtn.addEventListener("click", () => {
+  window.location.href = "my-quizzes.html";
+});
 
-  /* 🔹 Merged Online / Multiplayer button placeholder */
-  onlineBtn.addEventListener("click", () => {
-    alert("Online / Multiplayer feature coming soon!");
-  });
+/* 🔹 Online / Multiplayer placeholder */
+onlineBtn.addEventListener("click", () => {
+  alert("Online / Multiplayer coming soon!");
+});
 
-  settingsBtn.addEventListener("click", () => {
-    alert("Settings coming soon!");
-  });
+settingsBtn.addEventListener("click", () => {
+  alert("Settings coming soon!");
+});
 </script>
 
 </body>
