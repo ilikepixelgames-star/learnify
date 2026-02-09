@@ -7,55 +7,65 @@
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #0b0b12;
-      color: white;
-      text-align: center;
-      margin-top: 70px;
+      background:#0b0b12;
+      color:white;
+      font-family:Arial;
+      text-align:center;
+      padding-top:30px;
     }
 
-    h1 {
-      font-size: 48px;
-      margin-bottom: 40px;
-      color: #7df9ff;
-      text-shadow: 0 0 12px #7df9ff;
+    h1 { color:#00f7ff; }
+
+    .lobby-box {
+      border:2px solid #00f7ff;
+      border-radius:14px;
+      padding:20px;
+      width:300px;
+      margin:20px auto;
     }
 
     button {
-      padding: 18px 40px;
-      margin: 14px;
-      font-size: 20px;
-      cursor: pointer;
-      border-radius: 12px;
-      border: 2px solid #00f7ff;
-      background: transparent;
-      color: #00f7ff;
-      box-shadow: 0 0 12px #00f7ff;
-      transition: transform 0.2s, box-shadow 0.2s;
+      margin:8px;
+      padding:12px 26px;
+      border-radius:14px;
+      border:2px solid #00f7ff;
+      background:#05050a;
+      color:#00f7ff;
+      cursor:pointer;
+      box-shadow:0 0 8px #00f7ff;
     }
 
-    button:hover {
-      transform: scale(1.07);
-      box-shadow: 0 0 22px #00f7ff;
-    }
+    ul { list-style:none; padding:0; }
   </style>
 </head>
+
 <body>
 
-  <h1>🎓 Learnify</h1>
+<h1>Online Lobby</h1>
 
-  <button id="create-btn">Create a Quiz</button><br>
-  <button id="my-quizzes-btn">My Quizzes</button>
+<div class="lobby-box">
+  <h3>Players</h3>
+  <ul id="players">
+    <li>You (Host)</li>
+  </ul>
 
-  <script>
-    document.getElementById("create-btn").addEventListener("click", () => {
-      window.location.href = "create.html";
-    });
+  <button id="ready-btn">Ready</button>
+  <button id="start-btn">Start Game</button>
+</div>
 
-    document.getElementById("my-quizzes-btn").addEventListener("click", () => {
-      window.location.href = "my-quizzes.html";
-    });
-  </script>
+<button onclick="window.location.href='sandbox.html'">Back</button>
+
+<script>
+const players = document.getElementById("players");
+
+document.getElementById("ready-btn").onclick = () => {
+  alert("You are ready! (fake for now)");
+};
+
+document.getElementById("start-btn").onclick = () => {
+  window.location.href = "game.html";
+};
+</script>
 
 </body>
 </html>
