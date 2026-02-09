@@ -2,128 +2,217 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Create Quiz – Learnify</title>
+  <title>Create Your Own Questions</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #0b0b0b;
-      color: #ffffff;
+      font-family: Arial;
       text-align: center;
-      padding-top: 30px;
-    }
-
-    h1 {
-      color: #00ffff;
-      margin-bottom: 20px;
+      margin-top: 30px;
+      background: #0b0b12;
+      color: white;
     }
 
     input {
-      padding: 10px;
+      padding: 8px;
+      margin: 5px;
       font-size: 16px;
-      width: 260px;
-      border-radius: 8px;
-      border: 2px solid #00ffff;
-      background: #111;
-      color: white;
-      outline: none;
     }
 
-    input::placeholder {
-      color: #aaa;
+    #questions-list {
+      margin-top: 20px;
+      text-align: left;
+      display: inline-block;
     }
 
+    li { margin-bottom: 5px; }
+
+    /* 🔥 Neon button style */
     button {
-      padding: 10px 18px;
-      margin: 6px;
+      padding: 12px 26px;
+      margin: 8px;
       font-size: 16px;
-      font-weight: bold;
-      border-radius: 10px;
-      border: none;
       cursor: pointer;
-      background: #00ffff;
-      color: #000;
+      border-radius: 14px;
+      background: #05050a;
+      color: #00f7ff;
+      border: 2px solid #00f7ff;
+      box-shadow:
+        0 0 8px #00f7ff,
+        0 0 16px #00f7ff,
+        inset 0 0 8px rgba(0,247,255,0.4);
       transition: 0.2s ease;
     }
 
     button:hover {
-      background: #00bbbb;
+      transform: scale(1.06);
+      box-shadow:
+        0 0 14px #00f7ff,
+        0 0 28px #00f7ff,
+        inset 0 0 10px rgba(0,247,255,0.6);
     }
 
-    #questions-list {
-      margin-top: 25px;
-      padding: 0;
-      list-style: none;
-      display: inline-block;
-      width: 100%;
-      max-width: 420px;
-      text-align: left;
+    /* 🔴 Archive button */
+    button.archive {
+      color: #ff004c;
+      border-color: #ff004c;
+      box-shadow:
+        0 0 8px #ff004c,
+        0 0 16px #ff004c,
+        inset 0 0 8px rgba(255,0,76,0.4);
     }
 
-    li {
-      background: #111;
-      border: 2px solid #00ffff;
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .delete-btn {
-      background: #ff004c;
-      color: white;
-      font-size: 14px;
-    }
-
-    .delete-btn:hover {
-      background: #cc003d;
-    }
-
-    .mode-buttons {
-      margin-top: 30px;
+    button.archive:hover {
+      box-shadow:
+        0 0 14px #ff004c,
+        0 0 28px #ff004c,
+        inset 0 0 10px rgba(255,0,76,0.6);
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Create Your Quiz</h1>
+<h1>Create Your Own Questions</h1>
 
-  <input type="text" id="questionInput" placeholder="Enter a question">
-  <br>
-  <button onclick="addQuestion()">Add Question</button>
+<input type="text" id="quiz-name" placeholder="Quiz Name"><br>
+<input type="text" id="question" placeholder="Question"><br>
 
-  <ul id="questions-list"></ul>
+<input type="text" id="answer1" placeholder="Answer 1">
+<input type="text" id="answer2" placeholder="Answer 2">
+<input type="text" id="answer3" placeholder="Answer 3">
+<input type="text" id="answer4" placeholder="Answer 4"><br>
 
-  <!-- Mode buttons (no functionality yet) -->
-  <div class="mode-buttons">
-    <button>Play Multiplayer</button>
-    <button>Online</button>
-  </div>
+<input type="number" id="correct" placeholder="Correct answer (1-4)" min="1" max="4"><br>
 
-  <script>
-    function addQuestion() {
-      const input = document.getElementById("questionInput");
-      const text = input.value.trim();
-      if (!text) return;
+<button id="add-btn">Add Question</button>
+<button id="save-btn">Save Quiz</button>
+<button id="play-btn">Play Current Quiz</button>
 
-      const li = document.createElement("li");
-      li.textContent = text;
+<!-- ✅ NEW BUTTONS (placeholders only) -->
+<button id="play-multiplayer-btn">Play Multiplayer</button>
+<button id="online-btn">Online</button>
 
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "Delete";
-      deleteBtn.className = "delete-btn";
-      deleteBtn.onclick = () => li.remove();
+<button id="my-quizzes-btn">My Quizzes</button>
+<button id="archive-btn" class="archive">Archive Current Quiz</button>
+<button id="back-lobby-btn">Back to Lobby</button>
 
-      li.appendChild(deleteBtn);
-      document.getElementById("questions-list").appendChild(li);
+<h2>Questions Added:</h2>
+<ul id="questions-list"></ul>
 
-      input.value = "";
-    }
-  </script>
+<script>
+let questions = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
+
+const quizNameInput = document.getElementById("quiz-name");
+const qInput = document.getElementById("question");
+const a1Input = document.getElementById("answer1");
+const a2Input = document.getElementById("answer2");
+const a3Input = document.getElementById("answer3");
+const a4Input = document.getElementById("answer4");
+const correctInput = document.getElementById("correct");
+
+const addBtn = document.getElementById("add-btn");
+const saveBtn = document.getElementById("save-btn");
+const playBtn = document.getElementById("play-btn");
+const archiveBtn = document.getElementById("archive-btn");
+const myQuizzesBtn = document.getElementById("my-quizzes-btn");
+const backLobbyBtn = document.getElementById("back-lobby-btn");
+
+/* ✅ New buttons */
+const playMultiplayerBtn = document.getElementById("play-multiplayer-btn");
+const onlineBtn = document.getElementById("online-btn");
+
+const list = document.getElementById("questions-list");
+
+function updateList() {
+  list.innerHTML = "";
+  questions.forEach((q,i) => {
+    const li = document.createElement("li");
+    li.textContent = `${i+1}. ${q.q} (Correct: ${q.answers[q.correct]})`;
+    list.appendChild(li);
+  });
+}
+
+addBtn.addEventListener("click", () => {
+  const q = qInput.value.trim();
+  const a1 = a1Input.value.trim();
+  const a2 = a2Input.value.trim();
+  const a3 = a3Input.value.trim();
+  const a4 = a4Input.value.trim();
+  const correct = parseInt(correctInput.value) - 1;
+
+  if(!q || !a1 || !a2 || !a3 || !a4 || isNaN(correct) || correct < 0 || correct > 3){
+    alert("Please fill all fields correctly!");
+    return;
+  }
+
+  questions.push({ q, answers:[a1,a2,a3,a4], correct });
+  sessionStorage.setItem("currentQuiz", JSON.stringify(questions));
+  updateList();
+
+  qInput.value = a1Input.value = a2Input.value =
+  a3Input.value = a4Input.value = correctInput.value = "";
+});
+
+saveBtn.addEventListener("click", () => {
+  const name = quizNameInput.value.trim() || "Untitled Quiz";
+  if(questions.length === 0){ alert("Add at least one question!"); return; }
+
+  const saved = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+  saved[name] = questions;
+  localStorage.setItem("myQuizzes", JSON.stringify(saved));
+
+  sessionStorage.removeItem("currentQuiz");
+  questions = [];
+  updateList();
+  quizNameInput.value = "";
+  alert(`Quiz "${name}" saved!`);
+});
+
+archiveBtn.addEventListener("click", () => {
+  const name = quizNameInput.value.trim() || "Untitled Quiz";
+  if(questions.length === 0){ alert("Add at least one question!"); return; }
+
+  const archived = JSON.parse(localStorage.getItem("archivedQuizzes") || "{}");
+  archived[name] = questions;
+  localStorage.setItem("archivedQuizzes", JSON.stringify(archived));
+
+  const saved = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+  if(saved[name]) delete saved[name];
+  localStorage.setItem("myQuizzes", JSON.stringify(saved));
+
+  questions = [];
+  sessionStorage.removeItem("currentQuiz");
+  updateList();
+  quizNameInput.value = "";
+  alert(`Quiz "${name}" archived!`);
+});
+
+playBtn.addEventListener("click", () => {
+  if(questions.length === 0){ alert("Add at least one question!"); return; }
+  window.location.href = "game.html";
+});
+
+myQuizzesBtn.addEventListener("click", () => {
+  window.location.href = "my-quizzes.html";
+});
+
+backLobbyBtn.addEventListener("click", () => {
+  window.location.href = "lobby.html";
+});
+
+/* 🚧 Placeholder logic (safe, does nothing important) */
+playMultiplayerBtn.addEventListener("click", () => {
+  alert("Multiplayer coming soon!");
+});
+
+onlineBtn.addEventListener("click", () => {
+  alert("Online mode coming soon!");
+});
+
+updateList();
+</script>
 
 </body>
 </html>
