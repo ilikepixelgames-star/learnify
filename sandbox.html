@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Sandbox & Lobby Side-by-Side</title>
+<title>Sandbox & Multiplayer Lobby</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -12,20 +12,29 @@ body {
   color: white;
   margin: 0;
   padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
 }
 
-/* Split screen layout */
+/* Split container */
 .container {
   display: flex;
+  justify-content: center;
+  gap: 50px;
   flex-wrap: wrap;
+  padding: 20px;
 }
 
-/* Left: Create Quiz / Sandbox */
+/* Panels */
 .left, .right {
-  flex: 1;
-  min-width: 350px;
+  background: #0b0b12;
+  border: 2px solid #00f7ff;
+  border-radius: 16px;
   padding: 20px;
-  box-sizing: border-box;
+  min-width: 350px;
+  box-shadow: 0 0 12px #00f7ff, 0 0 24px #00f7ff;
 }
 
 /* Inputs & lists */
@@ -33,6 +42,7 @@ input {
   padding: 8px;
   margin: 5px;
   font-size: 16px;
+  width: 90%;
 }
 #questions-list {
   margin-top: 20px;
@@ -63,6 +73,8 @@ button.archive {
   border-color:#ff004c;
   box-shadow:0 0 8px #ff004c,0 0 16px #ff004c, inset 0 0 8px rgba(255,0,76,0.4);
 }
+h1 { margin-bottom: 10px; }
+p { opacity: 0.85; }
 </style>
 </head>
 
@@ -70,7 +82,7 @@ button.archive {
 
 <div class="container">
 
-  <!-- LEFT: Sandbox Create Quiz -->
+  <!-- LEFT: Create Quiz -->
   <div class="left">
     <h1>Sandbox Multiplayer</h1>
 
@@ -95,15 +107,15 @@ button.archive {
     <ul id="questions-list"></ul>
   </div>
 
-  <!-- RIGHT: Lobby -->
+  <!-- RIGHT: Sandbox Multiplayer Lobby -->
   <div class="right">
-    <h1>Learnify Lobby</h1>
-    <p>Choose what you want to do:</p>
+    <h1>Multiplayer Lobby</h1>
+    <p>Host or Join a Game</p>
 
-    <button id="play-lobby-btn">Play Quiz</button><br>
-    <button id="create-lobby-btn">Create Quiz</button><br>
-    <button id="my-quizzes-lobby-btn">My Quizzes</button><br>
-    <button id="online-lobby-btn">Online / Multiplayer</button>
+    <button id="host-btn">Host Game</button><br>
+    <button id="join-btn">Join Game</button><br>
+    <button id="players-btn">Players Joined</button><br>
+    <button id="exit-btn">Exit Lobby</button>
   </div>
 
 </div>
@@ -141,7 +153,6 @@ q("add-btn").onclick=()=>{
   sessionStorage.setItem("sandboxQuiz",JSON.stringify(questions));
   updateList();
 
-  // Clear inputs
   q("question").value="";
   q("answer1").value="";
   q("answer2").value="";
@@ -178,15 +189,16 @@ q("archive-btn").onclick=()=>{
 
 q("back-lobby-btn").onclick=()=>{
   sessionStorage.removeItem("sandboxQuiz");
-  alert("Back to Lobby clicked!");
+  alert("Back to main lobby clicked!");
 };
 
-/* ======= RIGHT: Lobby ======= */
-q("play-lobby-btn").onclick=()=>alert("Go to game.html");
-q("create-lobby-btn").onclick=()=>alert("Go to create.html");
-q("my-quizzes-lobby-btn").onclick=()=>alert("Go to my-quizzes.html");
-q("online-lobby-btn").onclick=()=>alert("Go to sandbox.html");
-
+/* ======= RIGHT: Sandbox Multiplayer Lobby ======= */
+q("host-btn").onclick=()=>alert("Host Game clicked (sandbox).");
+q("join-btn").onclick=()=>alert("Join Game clicked (sandbox).");
+q("players-btn").onclick=()=>alert("Players Joined clicked (sandbox).");
+q("exit-btn").onclick=()=>{
+  alert("Exiting Lobby (sandbox).");
+};
 updateList();
 </script>
 
