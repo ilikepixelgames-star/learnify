@@ -91,8 +91,9 @@
 <button id="play-btn">Play Current Quiz</button>
 <button id="my-quizzes-btn">My Quizzes</button>
 <button id="archive-btn" class="archive">Archive Current Quiz</button>
-<!-- ✅ Back to Lobby Button -->
 <button id="back-lobby-btn">Back to Lobby</button>
+<!-- ✅ Online / Multiplayer -->
+<button id="online-btn">Play Online / Multiplayer</button>
 
 <h2>Questions Added:</h2>
 <ul id="questions-list"></ul>
@@ -114,6 +115,7 @@ const playBtn = document.getElementById("play-btn");
 const archiveBtn = document.getElementById("archive-btn");
 const myQuizzesBtn = document.getElementById("my-quizzes-btn");
 const backLobbyBtn = document.getElementById("back-lobby-btn");
+const onlineBtn = document.getElementById("online-btn");
 
 const list = document.getElementById("questions-list");
 
@@ -190,9 +192,13 @@ myQuizzesBtn.addEventListener("click", () => {
   window.location.href = "my-quizzes.html";
 });
 
-/* ✅ Back to Lobby button */
 backLobbyBtn.addEventListener("click", () => {
   window.location.href = "lobby.html";
+});
+
+/* 🔹 Online / Multiplayer placeholder */
+onlineBtn.addEventListener("click", () => {
+  alert("Online / Multiplayer coming soon!");
 });
 
 updateList();
