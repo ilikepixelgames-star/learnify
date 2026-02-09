@@ -35,7 +35,7 @@ button:hover { transform: scale(1.05); }
 
 <h1>Learnify Multiplayer</h1>
 
-<!-- BACK TO LOBBY BUTTON -->
+<!-- BACK TO LOBBY BUTTON (present but not fixed yet) -->
 <div id="back-container" style="margin:20px;">
   <button id="back-lobby-btn">Back to Main Lobby</button>
 </div>
@@ -91,32 +91,10 @@ let myName = "";
 let answered = false;
 let syncInterval = null;
 
-/* BACK TO LOBBY BUTTON */
+/* BACK TO LOBBY BUTTON (present) */
 document.getElementById("back-lobby-btn").onclick = () => {
-  // Stop sync loop
-  if(syncInterval){
-    clearInterval(syncInterval);
-    syncInterval = null;
-  }
-
-  // Clear game state
-  localStorage.removeItem(KEY);
-
-  // Hide all other screens
-  host.classList.add("hidden");
-  player.classList.add("hidden");
-  leaderboard.classList.add("hidden");
-
-  // Show home screen
-  home.classList.remove("hidden");
-
-  // Reset variables
-  myName = "";
-  answered = false;
-
-  // Clear inputs
-  document.getElementById("name-input").value = "";
-  document.getElementById("code-input").value = "";
+  // For now, just alert
+  alert("Back to Lobby functionality will be added later.");
 };
 
 /* HOST BUTTON */
@@ -147,7 +125,7 @@ document.getElementById("join-btn").onclick = () => {
   const game = load();
   if(!myName || !game || game.code != code){ alert("Invalid name or code"); return; }
 
-  if(!game.players[myName]) game.players[myName] = 0;
+  if(!game.players[myName]) game.players[myName] = 0; // ✅ point system
   save(game);
 
   home.classList.add("hidden");
@@ -202,7 +180,7 @@ function startSync() {
           answered = true;
           if(i === q.correct){
             const g = load();
-            g.players[myName] += 100;
+            g.players[myName] += 100; // ✅ add points
             save(g);
           }
         };
