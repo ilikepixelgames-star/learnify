@@ -18,53 +18,63 @@ body {
   margin-top: 20px;
   text-align: left;
   display: inline-block;
+  min-width: 300px;
 }
-li { margin-bottom: 5px; }
+li { 
+  margin-bottom: 5px; 
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #00f7ff;
+  box-shadow: 0 0 4px #00f7ff, inset 0 0 2px rgba(0,247,255,0.4);
+  transition: 0.2s ease;
+}
+li:hover {
+  background: #05050a;
+  box-shadow: 0 0 12px #00f7ff, inset 0 0 4px rgba(0,247,255,0.6);
+}
 
 button {
   padding: 12px 26px;
-  margin: 8px;
+  margin: 12px 6px;
   font-size: 16px;
   cursor: pointer;
   border-radius: 14px;
   background: #05050a;
   color: #00f7ff;
   border: 2px solid #00f7ff;
-  box-shadow:
-    0 0 8px #00f7ff,
-    0 0 16px #00f7ff,
-    inset 0 0 8px rgba(0,247,255,0.4);
+  box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff, inset 0 0 8px rgba(0,247,255,0.4);
   transition: 0.2s ease;
 }
 button:hover {
   transform: scale(1.06);
-  box-shadow:
-    0 0 14px #00f7ff,
-    0 0 28px #00f7ff,
-    inset 0 0 10px rgba(0,247,255,0.6);
+  box-shadow: 0 0 14px #00f7ff, 0 0 28px #00f7ff, inset 0 0 10px rgba(0,247,255,0.6);
 }
 </style>
 </head>
 
 <body>
 
-<h1>My Sandbox Quizzes</h1>
+<h1>My Quizzes</h1>
 
 <ul id="quizzes-list">
   <li>No quizzes yet!</li>
 </ul>
 
-<button id="back-lobby-btn">Back to Lobby</button>
+<button id="back-create-btn">Back to Create</button>
+<button id="use-quiz-btn">Use Quiz to Play</button>
 
 <script>
-// Separate key for sandbox quizzes
+// Key for sandbox quizzes
 const SANDBOX_KEY = "sandboxQuizzes";
 
-// Load quizzes (if any)
+// Load quizzes
 let quizzes = JSON.parse(localStorage.getItem(SANDBOX_KEY) || "[]");
+let selectedIndex = null;
 
 const list = document.getElementById("quizzes-list");
-const backBtn = document.getElementById("back-lobby-btn");
+const backBtn = document.getElementById("back-create-btn");
+const useBtn = document.getElementById("use-quiz-btn");
 
 function updateList(){
   list.innerHTML = "";
@@ -72,19 +82,49 @@ function updateList(){
     const li = document.createElement("li");
     li.textContent = "No quizzes yet!";
     list.appendChild(li);
+    selectedIndex = null;
   } else {
     quizzes.forEach((q,i)=>{
       const li = document.createElement("li");
-      li.textContent = `${i+1}. ${q.name} (${q.questions.length} questions)`;
+      li.textContent = `${q.name} (${q.questions.length} questions)`;
+      li.onclick = () => {
+        selectedIndex = i;
+        highlightSelected();
+      };
       list.appendChild(li);
     });
   }
 }
 
-// Currently non-functional back button
+// Highlight the selected quiz
+function highlightSelected(){
+  Array.from(list.children).forEach((li,index)=>{
+    if(index === selectedIndex){
+      li.style.background = "#00f7ff";
+      li.style.color = "#05050a";
+    } else {
+      li.style.background = "";
+      li.style.color = "#00f7ff";
+    }
+  });
+}
+
+// Back to create page (sandbox)
 backBtn.onclick = () => {
-  console.log("Back to Lobby clicked (sandbox)");
-};
+  window.location.href = "sandbox.html"; // change if needed
+}
+
+// Use the selected quiz
+useBtn.onclick = () => {
+  if(selectedIndex === null){
+    alert("Select a quiz first!");
+    return;
+  }
+  // Store selected quiz in sessionStorage for multiplayer
+  sessionStorage.setItem("sandboxSelectedQuiz", JSON.stringify(quizzes[selectedIndex]));
+  alert(`Quiz "${quizzes[selectedIndex].name}" selected for multiplayer!`);
+  // Later: start multiplayer host/game using this quiz
+}
 
 updateList();
 </script>
