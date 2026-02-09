@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Host Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial;
+  background: #0b0b12;
+  color: white;
+  text-align: center;
+  margin-top: 60px;
+}
+button {
+  padding: 14px 34px;
+  margin: 12px;
+  font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Host Game</h1>
+<p>Game Code:</p>
+
+<h2 id="game-code">----</h2>
+
+<button id="start-btn">Start Game</button>
+<br><br>
+<button onclick="location.href='sandbox.html'">Back</button>
+
+<script>
+const code = Math.floor(1000 + Math.random() * 9000);
+document.getElementById("game-code").textContent = code;
+
+const gameData = {
+  started: false,
+  questionIndex: 0,
+  players: [],
+  questions: [
+    {
+      q: "What is 2 + 2?",
+      answers: ["1", "2", "3", "4"],
+      correct: 3
+    },
+    {
+      q: "What color is the sky?",
+      answers: ["Green", "Blue", "Red", "Yellow"],
+      correct: 1
+    }
+  ]
+};
+
+localStorage.setItem("sandbox_game_" + code, JSON.stringify(gameData));
+
+document.getElementById("start-btn").onclick = () => {
+  gameData.started = true;
+  localStorage.setItem("sandbox_game_" + code, JSON.stringify(gameData));
+  location.href = "sandbox-game.html?code=" + code;
+};
+</script>
+
+</body>
+</html>
