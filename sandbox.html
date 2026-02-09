@@ -2,43 +2,104 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Sandbox Lobby</title>
+<title>Learnify Multiplayer Sandbox</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
-  font-family: Arial;
-  background: #0b0b12;
+  background: #050505;
   color: white;
+  font-family: Arial;
   text-align: center;
-  margin-top: 60px;
+  padding-top: 40px;
 }
-button {
-  padding: 14px 34px;
-  margin: 14px;
+
+button, input {
+  padding: 12px;
+  margin: 8px;
   font-size: 18px;
-  border-radius: 14px;
-  border: 2px solid #00f7ff;
-  background: #05050a;
-  color: #00f7ff;
-  cursor: pointer;
-  box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff;
 }
-button:hover { transform: scale(1.06); }
+
+button {
+  background: #ff00ff;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 15px #ff00ff;
+  cursor: pointer;
+}
+
+button:hover {
+  box-shadow: 0 0 25px #ff00ff;
+}
+
+.hidden {
+  display: none;
+}
+
+.code {
+  font-size: 36px;
+  letter-spacing: 4px;
+  color: #00ffff;
+}
 </style>
 </head>
 
 <body>
 
-<h1>Sandbox Multiplayer</h1>
-<p>This mode is isolated from the main Learnify site.</p>
+<h1>Learnify Multiplayer</h1>
 
-<button onclick="location.href='sandbox-host.html'">Host Game</button>
-<button onclick="location.href='sandbox-join.html'">Join Game</button>
+<div id="menu">
+  <button onclick="hostGame()">Host Game</button>
+  <br>
+  <input id="joinCode" placeholder="Game Code">
+  <br>
+  <button onclick="joinGame()">Join Game</button>
+</div>
+
+<div id="lobby" class="hidden">
+  <h2>Game Code</h2>
+  <div class="code" id="gameCode"></div>
+  <p>Waiting for players…</p>
+  <button onclick="startGame()">Start Game</button>
+</div>
+
+<div id="game" class="hidden">
+  <h2 id="question">What is 2 + 2?</h2>
+  <br>
+  <button onclick="answer(4)">4</button>
+  <button onclick="answer(3)">3</button>
+</div>
 
 <br><br>
+<button onclick="location.href='lobby.html'">⬅ Exit Sandbox</button>
 
-<button onclick="location.href='lobby.html'">Back to Main Lobby</button>
+<script>
+let code = "";
+
+function hostGame() {
+  code = Math.floor(100000 + Math.random() * 900000);
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("lobby").classList.remove("hidden");
+  document.getElementById("gameCode").innerText = code;
+}
+
+function joinGame() {
+  const entered = document.getElementById("joinCode").value;
+  if (entered) {
+    document.getElementById("menu").classList.add("hidden");
+    document.getElementById("game").classList.remove("hidden");
+  }
+}
+
+function startGame() {
+  document.getElementById("lobby").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+}
+
+function answer(ans) {
+  alert(ans === 4 ? "Correct!" : "Wrong!");
+}
+</script>
 
 </body>
 </html>
