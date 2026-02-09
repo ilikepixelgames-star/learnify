@@ -2,204 +2,163 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Learnify Multiplayer Sandbox</title>
+<title>Sandbox Multiplayer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
   font-family: Arial;
-  background: #0b0b12;
-  color: white;
   text-align: center;
   margin-top: 30px;
+  background: #0b0b12;
+  color: white;
 }
+input {
+  padding: 8px;
+  margin: 5px;
+  font-size: 16px;
+}
+#questions-list {
+  margin-top: 20px;
+  text-align: left;
+  display: inline-block;
+}
+li { margin-bottom: 5px; }
+
 button {
-  padding: 14px 30px;
-  margin: 10px;
-  font-size: 18px;
+  padding: 12px 26px;
+  margin: 8px;
+  font-size: 16px;
+  cursor: pointer;
   border-radius: 14px;
-  border: 2px solid #00f7ff;
   background: #05050a;
   color: #00f7ff;
-  cursor: pointer;
-  box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff;
+  border: 2px solid #00f7ff;
+  box-shadow:
+    0 0 8px #00f7ff,
+    0 0 16px #00f7ff,
+    inset 0 0 8px rgba(0,247,255,0.4);
+  transition: 0.2s ease;
 }
-button:hover { transform: scale(1.05); }
-.answer { width: 80%; max-width: 400px; margin:5px; }
-.hidden { display: none; }
-.code { font-size: 2em; letter-spacing: 6px; color: #00f7ff; margin-bottom:20px; }
+button:hover {
+  transform: scale(1.06);
+  box-shadow:
+    0 0 14px #00f7ff,
+    0 0 28px #00f7ff,
+    inset 0 0 10px rgba(0,247,255,0.6);
+}
+button.archive {
+  color:#ff004c;
+  border-color:#ff004c;
+  box-shadow:
+    0 0 8px #ff004c,
+    0 0 16px #ff004c,
+    inset 0 0 8px rgba(255,0,76,0.4);
+}
 </style>
 </head>
 
 <body>
 
-<h1>Learnify Multiplayer</h1>
+<h1>Sandbox Multiplayer</h1>
 
-<!-- BACK TO LOBBY BUTTON (present but not fixed yet) -->
-<div id="back-container" style="margin:20px;">
-  <button id="back-lobby-btn">Back to Main Lobby</button>
-</div>
+<input type="text" id="quiz-name" placeholder="Quiz Name"><br>
+<input type="text" id="question" placeholder="Question"><br>
 
-<!-- HOME SCREEN -->
-<div id="home">
-  <button id="host-btn">Host Game</button><br><br>
-  <input id="name-input" placeholder="Your name"><br>
-  <input id="code-input" placeholder="Game code"><br>
-  <button id="join-btn">Join Game</button>
-</div>
+<input type="text" id="answer1" placeholder="Answer 1">
+<input type="text" id="answer2" placeholder="Answer 2">
+<input type="text" id="answer3" placeholder="Answer 3">
+<input type="text" id="answer4" placeholder="Answer 4"><br>
 
-<!-- HOST SCREEN -->
-<div id="host" class="hidden">
-  <h2>Game Code</h2>
-  <div class="code" id="host-code"></div>
-  <h3 id="host-question">Waiting to start…</h3>
-  <button id="start-btn">Start Game</button>
-  <button id="next-btn" class="hidden">Next Question</button>
-</div>
+<input type="number" id="correct" placeholder="Correct answer (1-4)" min="1" max="4"><br>
 
-<!-- PLAYER SCREEN -->
-<div id="player" class="hidden">
-  <h2 id="player-question">Waiting for host…</h2>
-  <div id="answers"></div>
-</div>
+<button id="add-btn">Add Question</button>
+<button id="save-btn">Save Quiz</button>
+<button id="play-btn">Play Current Quiz</button>
+<button id="my-quizzes-btn">My Quizzes</button>
+<button id="archive-btn" class="archive">Archive Current Quiz</button>
+<button id="back-lobby-btn">Back to Lobby</button>
 
-<!-- LEADERBOARD -->
-<div id="leaderboard" class="hidden">
-  <h2>Leaderboard</h2>
-  <div id="scores"></div>
-</div>
+<h2>Questions Added:</h2>
+<ul id="questions-list"></ul>
 
 <script>
-const KEY = "learnify_sandbox_game";
+let questions = JSON.parse(sessionStorage.getItem("sandboxQuiz") || "[]");
 
-/* UTILS */
-function save(data){ localStorage.setItem(KEY, JSON.stringify(data)); }
-function load(){ return JSON.parse(localStorage.getItem(KEY) || "null"); }
+const q = id => document.getElementById(id);
 
-/* ELEMENTS */
-const home = document.getElementById("home");
-const host = document.getElementById("host");
-const player = document.getElementById("player");
-const leaderboard = document.getElementById("leaderboard");
-
-const hostQ = document.getElementById("host-question");
-const playerQ = document.getElementById("player-question");
-const answersDiv = document.getElementById("answers");
-const scoresDiv = document.getElementById("scores");
-
-let myName = "";
-let answered = false;
-let syncInterval = null;
-
-/* BACK TO LOBBY BUTTON (present) */
-document.getElementById("back-lobby-btn").onclick = () => {
-  // For now, just alert
-  alert("Back to Lobby functionality will be added later.");
-};
-
-/* HOST BUTTON */
-document.getElementById("host-btn").onclick = () => {
-  const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
-  const names = Object.keys(quizzes);
-  if(names.length === 0){ alert("You must save a quiz in Create Quiz before hosting."); return; }
-
-  const quizName = names[0];
-  const game = {
-    code: Math.floor(100000 + Math.random()*900000),
-    quiz: quizzes[quizName],
-    index: -1,
-    players: {}
-  };
-  save(game);
-
-  home.classList.add("hidden");
-  host.classList.remove("hidden");
-  document.getElementById("host-code").textContent = game.code;
-  startSync();
-};
-
-/* JOIN BUTTON */
-document.getElementById("join-btn").onclick = () => {
-  myName = document.getElementById("name-input").value.trim();
-  const code = document.getElementById("code-input").value.trim();
-  const game = load();
-  if(!myName || !game || game.code != code){ alert("Invalid name or code"); return; }
-
-  if(!game.players[myName]) game.players[myName] = 0; // ✅ point system
-  save(game);
-
-  home.classList.add("hidden");
-  player.classList.remove("hidden");
-  startSync();
-};
-
-/* START GAME */
-document.getElementById("start-btn").onclick = () => {
-  const game = load();
-  game.index = 0;
-  save(game);
-  document.getElementById("start-btn").classList.add("hidden");
-  document.getElementById("next-btn").classList.remove("hidden");
-  answered = false;
-};
-
-/* NEXT QUESTION */
-document.getElementById("next-btn").onclick = () => {
-  const game = load();
-  game.index++;
-  answered = false;
-  if(game.index >= game.quiz.length){
-    leaderboard.classList.remove("hidden");
-    host.classList.add("hidden");
-    player.classList.add("hidden");
-  }
-  save(game);
-};
-
-/* SYNC LOOP */
-function startSync() {
-  if(syncInterval) clearInterval(syncInterval);
-  syncInterval = setInterval(()=>{
-    const game = load();
-    if(!game || game.index < 0) return;
-
-    const q = game.quiz[game.index];
-    if(!q) return;
-
-    hostQ.textContent = q.q;
-    playerQ.textContent = q.q;
-
-    // Player answers
-    if(!answered && !player.classList.contains("hidden")){
-      answersDiv.innerHTML = "";
-      q.answers.forEach((a,i)=>{
-        const btn = document.createElement("button");
-        btn.textContent = a;
-        btn.className = "answer";
-        btn.onclick = () => {
-          answered = true;
-          if(i === q.correct){
-            const g = load();
-            g.players[myName] += 100; // ✅ add points
-            save(g);
-          }
-        };
-        answersDiv.appendChild(btn);
-      });
-    }
-
-    // Leaderboard
-    scoresDiv.innerHTML = "";
-    Object.entries(game.players)
-      .sort((a,b)=>b[1]-a[1])
-      .forEach(p=>{
-        const d=document.createElement("div");
-        d.textContent=`${p[0]} — ${p[1]} pts`;
-        scoresDiv.appendChild(d);
-      });
-
-  }, 500);
+function updateList(){
+  q("questions-list").innerHTML="";
+  questions.forEach((x,i)=>{
+    const li=document.createElement("li");
+    li.textContent=`${i+1}. ${x.q}`;
+    q("questions-list").appendChild(li);
+  });
 }
+
+q("add-btn").onclick=()=>{
+  const question=q("question").value.trim();
+  const answers=[
+    q("answer1").value.trim(),
+    q("answer2").value.trim(),
+    q("answer3").value.trim(),
+    q("answer4").value.trim()
+  ];
+  const correct=parseInt(q("correct").value)-1;
+
+  if(!question||answers.some(a=>!a)||correct<0||correct>3){
+    alert("Fill all fields correctly");
+    return;
+  }
+
+  questions.push({q:question,answers,correct});
+  sessionStorage.setItem("sandboxQuiz",JSON.stringify(questions));
+  updateList();
+
+  // Clear inputs
+  q("question").value="";
+  q("answer1").value="";
+  q("answer2").value="";
+  q("answer3").value="";
+  q("answer4").value="";
+  q("correct").value="";
+};
+
+q("save-btn").onclick=()=>{
+  const name=q("quiz-name").value||"Untitled Quiz";
+  const saved=JSON.parse(localStorage.getItem("sandboxQuizzes")||"{}");
+  saved[name]=questions;
+  localStorage.setItem("sandboxQuizzes",JSON.stringify(saved));
+  alert("Saved!");
+};
+
+q("play-btn").onclick=()=>{
+  if(questions.length===0){ alert("Add questions first!"); return; }
+  alert("Game would start here (sandbox). Points system can be added).");
+};
+
+q("my-quizzes-btn").onclick=()=>{
+  const saved=JSON.parse(localStorage.getItem("sandboxQuizzes")||"{}");
+  alert("Saved Quizzes:\n" + Object.keys(saved).join("\n"));
+};
+
+q("archive-btn").onclick=()=>{
+  const name=q("quiz-name").value||"Untitled Quiz";
+  const archived=JSON.parse(localStorage.getItem("sandboxArchived")||"{}");
+  archived[name]=questions;
+  localStorage.setItem("sandboxArchived",JSON.stringify(archived));
+  alert("Archived!");
+};
+
+// ✅ BACK TO LOBBY FUNCTIONAL
+q("back-lobby-btn").onclick=()=>{
+  // Clear sandbox session
+  sessionStorage.removeItem("sandboxQuiz");
+  // Go back to main lobby
+  location.href="lobby.html";
+};
+
+updateList();
 </script>
 
 </body>
