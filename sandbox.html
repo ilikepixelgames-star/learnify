@@ -89,25 +89,29 @@ const scoresDiv = document.getElementById("scores");
 
 let myName = "";
 let answered = false;
+let syncInterval;
 
 /* BACK TO LOBBY BUTTON */
 document.getElementById("back-lobby-btn").onclick = () => {
-  // 1. Clear the current sandbox game if any
+  // 1. Clear sandbox game
   localStorage.removeItem(KEY);
 
-  // 2. Hide all other screens
+  // 2. Stop sync loop
+  if(syncInterval) clearInterval(syncInterval);
+
+  // 3. Hide all screens
   host.classList.add("hidden");
   player.classList.add("hidden");
   leaderboard.classList.add("hidden");
 
-  // 3. Show home screen
+  // 4. Show home
   home.classList.remove("hidden");
 
-  // 4. Reset player state
+  // 5. Reset state
   myName = "";
   answered = false;
 
-  // 5. Clear input fields
+  // 6. Clear inputs
   document.getElementById("name-input").value = "";
   document.getElementById("code-input").value = "";
 };
@@ -116,11 +120,7 @@ document.getElementById("back-lobby-btn").onclick = () => {
 document.getElementById("host-btn").onclick = () => {
   const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
   const names = Object.keys(quizzes);
-
-  if(names.length === 0){
-    alert("You must save a quiz in Create Quiz before hosting.");
-    return;
-  }
+  if(names.length === 0){ alert("You must save a quiz in Create Quiz before hosting."); return; }
 
   const quizName = names[0];
   const game = {
@@ -129,11 +129,12 @@ document.getElementById("host-btn").onclick = () => {
     index: -1,
     players: {}
   };
-
   save(game);
+
   home.classList.add("hidden");
   host.classList.remove("hidden");
   document.getElementById("host-code").textContent = game.code;
+  startSync();
 };
 
 /* JOIN BUTTON */
@@ -141,17 +142,14 @@ document.getElementById("join-btn").onclick = () => {
   myName = document.getElementById("name-input").value.trim();
   const code = document.getElementById("code-input").value.trim();
   const game = load();
-
-  if(!myName || !game || game.code != code){
-    alert("Invalid name or code");
-    return;
-  }
+  if(!myName || !game || game.code != code){ alert("Invalid name or code"); return; }
 
   if(!game.players[myName]) game.players[myName] = 0;
   save(game);
 
   home.classList.add("hidden");
   player.classList.remove("hidden");
+  startSync();
 };
 
 /* START GAME */
@@ -178,47 +176,48 @@ document.getElementById("next-btn").onclick = () => {
 };
 
 /* SYNC LOOP */
-setInterval(() => {
-  const game = load();
-  if(!game || game.index < 0) return;
+function startSync() {
+  if(syncInterval) clearInterval(syncInterval);
+  syncInterval = setInterval(()=>{
+    const game = load();
+    if(!game || game.index < 0) return;
 
-  const q = game.quiz[game.index];
-  if(!q) return;
+    const q = game.quiz[game.index];
+    if(!q) return;
 
-  // Update question text
-  hostQ.textContent = q.q;
-  playerQ.textContent = q.q;
+    hostQ.textContent = q.q;
+    playerQ.textContent = q.q;
 
-  // Player answer buttons
-  if(!answered && !player.classList.contains("hidden")){
-    answersDiv.innerHTML = "";
-    q.answers.forEach((a,i)=>{
-      const btn = document.createElement("button");
-      btn.textContent = a;
-      btn.className = "answer";
-      btn.onclick = () => {
-        answered = true;
-        if(i === q.correct){
-          const g = load();
-          g.players[myName] += 100;
-          save(g);
-        }
-      };
-      answersDiv.appendChild(btn);
-    });
-  }
+    // Player answers
+    if(!answered && !player.classList.contains("hidden")){
+      answersDiv.innerHTML = "";
+      q.answers.forEach((a,i)=>{
+        const btn = document.createElement("button");
+        btn.textContent = a;
+        btn.className = "answer";
+        btn.onclick = () => {
+          answered = true;
+          if(i === q.correct){
+            const g = load();
+            g.players[myName] += 100;
+            save(g);
+          }
+        };
+        answersDiv.appendChild(btn);
+      });
+    }
 
-  // Leaderboard
-  scoresDiv.innerHTML = "";
-  Object.entries(game.players)
-    .sort((a,b)=>b[1]-a[1])
-    .forEach(p=>{
-      const d=document.createElement("div");
-      d.textContent=`${p[0]} — ${p[1]} pts`;
-      scoresDiv.appendChild(d);
-    });
-
-}, 500);
+    // Leaderboard
+    scoresDiv.innerHTML = "";
+    Object.entries(game.players)
+      .sort((a,b)=>b[1]-a[1])
+      .forEach(p=>{
+        const d=document.createElement("div");
+        d.textContent=`${p[0]} — ${p[1]} pts`;
+        scoresDiv.appendChild(d);
+      });
+  }, 500);
+}
 </script>
 
 </body>
