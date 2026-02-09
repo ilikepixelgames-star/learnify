@@ -23,14 +23,11 @@ li {
   border: 2px solid #00f7ff;
   border-radius: 14px;
   box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff, inset 0 0 8px rgba(0,247,255,0.2);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 button {
   padding: 10px 22px;
-  margin-left: 8px;
+  margin-top: 20px;
   font-size: 14px;
   border-radius: 14px;
   background: #05050a;
@@ -44,71 +41,23 @@ button:hover {
   transform: scale(1.05);
   box-shadow: 0 0 12px #00f7ff, 0 0 24px #00f7ff, inset 0 0 8px rgba(0,247,255,0.6);
 }
-button.archive {
-  color:#ff004c;
-  border-color:#ff004c;
-  box-shadow:0 0 8px #ff004c,0 0 16px #ff004c, inset 0 0 8px rgba(255,0,76,0.4);
-}
 </style>
 </head>
 
 <body>
 
 <h1>My Sandbox Quizzes</h1>
-<ul id="quizzes-list"></ul>
+<ul>
+  <li>No quizzes yet!</li>
+</ul>
+
 <button id="back-lobby-btn">Back to Lobby</button>
 
 <script>
-const list = document.getElementById("quizzes-list");
-
-// Load sandbox quizzes from localStorage
-const quizzes = JSON.parse(localStorage.getItem("sandboxQuizzes") || "{}");
-
-function renderQuizzes() {
-  list.innerHTML = "";
-  const names = Object.keys(quizzes);
-  if(names.length === 0) {
-    const li = document.createElement("li");
-    li.textContent = "No quizzes yet!";
-    list.appendChild(li);
-    return;
-  }
-
-  names.forEach(name => {
-    const li = document.createElement("li");
-    li.textContent = name;
-
-    const playBtn = document.createElement("button");
-    playBtn.textContent = "Play";
-    playBtn.onclick = () => {
-      sessionStorage.setItem("sandboxQuiz", JSON.stringify(quizzes[name]));
-      alert(`Would start sandbox game: "${name}"`);
-    };
-
-    const archiveBtn = document.createElement("button");
-    archiveBtn.textContent = "Archive";
-    archiveBtn.className = "archive";
-    archiveBtn.onclick = () => {
-      const archived = JSON.parse(localStorage.getItem("sandboxArchived")||"{}");
-      archived[name] = quizzes[name];
-      localStorage.setItem("sandboxArchived", JSON.stringify(archived));
-      delete quizzes[name];
-      localStorage.setItem("sandboxQuizzes", JSON.stringify(quizzes));
-      renderQuizzes();
-      alert(`"${name}" archived!`);
-    };
-
-    li.appendChild(playBtn);
-    li.appendChild(archiveBtn);
-    list.appendChild(li);
-  });
-}
-
-renderQuizzes();
-
-// Back to Sandbox Lobby
+// Back to Lobby button currently non-functional
 document.getElementById("back-lobby-btn").onclick = () => {
-  window.location.href = "sandbox.html";
+  // For now nothing happens
+  console.log("Back to Lobby clicked (non-functional)");
 };
 </script>
 
