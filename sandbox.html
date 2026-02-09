@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Sandbox & Multiplayer Lobby</title>
+<title>My Sandbox Quizzes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -10,183 +10,106 @@ body {
   font-family: Arial, sans-serif;
   background: #0b0b12;
   color: white;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
+  text-align: center;
+  margin: 30px;
 }
 
-.container {
-  display: flex;
-  justify-content: center;
-  gap: 50px;
-  flex-wrap: wrap;
-  padding: 20px;
-}
+h1 { margin-bottom: 20px; }
 
-.left, .right {
-  background: #0b0b12;
+ul { list-style: none; padding: 0; }
+li {
+  margin: 12px 0;
+  padding: 12px 20px;
   border: 2px solid #00f7ff;
-  border-radius: 16px;
-  padding: 20px;
-  min-width: 350px;
-  box-shadow: 0 0 12px #00f7ff, 0 0 24px #00f7ff;
+  border-radius: 14px;
+  box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff, inset 0 0 8px rgba(0,247,255,0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
-input {
-  padding: 8px;
-  margin: 5px;
-  font-size: 16px;
-  width: 90%;
-}
-#questions-list {
-  margin-top: 20px;
-  text-align: left;
-  display: inline-block;
-}
-li { margin-bottom: 5px; }
 
 button {
-  padding: 12px 26px;
-  margin: 8px;
-  font-size: 16px;
-  cursor: pointer;
+  padding: 10px 22px;
+  margin-left: 8px;
+  font-size: 14px;
   border-radius: 14px;
   background: #05050a;
   color: #00f7ff;
   border: 2px solid #00f7ff;
-  box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff, inset 0 0 8px rgba(0,247,255,0.4);
+  cursor: pointer;
+  box-shadow: 0 0 6px #00f7ff, 0 0 12px #00f7ff, inset 0 0 6px rgba(0,247,255,0.4);
   transition: 0.2s ease;
 }
 button:hover {
-  transform: scale(1.06);
-  box-shadow: 0 0 14px #00f7ff, 0 0 28px #00f7ff, inset 0 0 10px rgba(0,247,255,0.6);
+  transform: scale(1.05);
+  box-shadow: 0 0 12px #00f7ff, 0 0 24px #00f7ff, inset 0 0 8px rgba(0,247,255,0.6);
 }
 button.archive {
   color:#ff004c;
   border-color:#ff004c;
   box-shadow:0 0 8px #ff004c,0 0 16px #ff004c, inset 0 0 8px rgba(255,0,76,0.4);
 }
-h1 { margin-bottom: 10px; }
-p { opacity: 0.85; }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
-  <!-- LEFT: Sandbox Create Quiz -->
-  <div class="left">
-    <h1>Sandbox Multiplayer</h1>
-
-    <input type="text" id="quiz-name" placeholder="Quiz Name"><br>
-    <input type="text" id="question" placeholder="Question"><br>
-
-    <input type="text" id="answer1" placeholder="Answer 1">
-    <input type="text" id="answer2" placeholder="Answer 2">
-    <input type="text" id="answer3" placeholder="Answer 3">
-    <input type="text" id="answer4" placeholder="Answer 4"><br>
-
-    <input type="number" id="correct" placeholder="Correct answer (1-4)" min="1" max="4"><br>
-
-    <button id="add-btn">Add Question</button>
-    <button id="save-btn">Save Quiz</button>
-    <button id="my-quizzes-btn">My Quizzes</button>
-    <button id="archive-btn" class="archive">Archive Current Quiz</button>
-    <button id="back-lobby-btn">Back to Lobby</button>
-
-    <h2>Questions Added:</h2>
-    <ul id="questions-list"></ul>
-  </div>
-
-  <!-- RIGHT: Sandbox Multiplayer Lobby -->
-  <div class="right">
-    <h1>Multiplayer Lobby</h1>
-    <p>Host or Join a Game</p>
-
-    <button id="host-btn">Host Game</button><br>
-    <button id="join-btn">Join Game</button><br>
-    <button id="players-btn">Players Joined</button><br>
-  </div>
-
-</div>
+<h1>My Sandbox Quizzes</h1>
+<ul id="quizzes-list"></ul>
+<button id="back-lobby-btn">Back to Lobby</button>
 
 <script>
-/* ======= LEFT: Sandbox Create Quiz ======= */
-let questions = JSON.parse(sessionStorage.getItem("sandboxQuiz") || "[]");
-const q = id => document.getElementById(id);
+const list = document.getElementById("quizzes-list");
 
-function updateList(){
-  q("questions-list").innerHTML="";
-  questions.forEach((x,i)=>{
-    const li=document.createElement("li");
-    li.textContent=`${i+1}. ${x.q}`;
-    q("questions-list").appendChild(li);
-  });
-}
+// Load sandbox quizzes from localStorage
+const quizzes = JSON.parse(localStorage.getItem("sandboxQuizzes") || "{}");
 
-q("add-btn").onclick=()=>{
-  const question=q("question").value.trim();
-  const answers=[
-    q("answer1").value.trim(),
-    q("answer2").value.trim(),
-    q("answer3").value.trim(),
-    q("answer4").value.trim()
-  ];
-  const correct=parseInt(q("correct").value)-1;
-
-  if(!question||answers.some(a=>!a)||correct<0||correct>3){
-    alert("Fill all fields correctly");
+function renderQuizzes() {
+  list.innerHTML = "";
+  const names = Object.keys(quizzes);
+  if(names.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = "No quizzes yet!";
+    list.appendChild(li);
     return;
   }
 
-  questions.push({q:question,answers,correct});
-  sessionStorage.setItem("sandboxQuiz",JSON.stringify(questions));
-  updateList();
+  names.forEach(name => {
+    const li = document.createElement("li");
+    li.textContent = name;
 
-  q("question").value="";
-  q("answer1").value="";
-  q("answer2").value="";
-  q("answer3").value="";
-  q("answer4").value="";
-  q("correct").value="";
+    const playBtn = document.createElement("button");
+    playBtn.textContent = "Play";
+    playBtn.onclick = () => {
+      sessionStorage.setItem("sandboxQuiz", JSON.stringify(quizzes[name]));
+      alert(`Would start sandbox game: "${name}"`);
+    };
+
+    const archiveBtn = document.createElement("button");
+    archiveBtn.textContent = "Archive";
+    archiveBtn.className = "archive";
+    archiveBtn.onclick = () => {
+      const archived = JSON.parse(localStorage.getItem("sandboxArchived")||"{}");
+      archived[name] = quizzes[name];
+      localStorage.setItem("sandboxArchived", JSON.stringify(archived));
+      delete quizzes[name];
+      localStorage.setItem("sandboxQuizzes", JSON.stringify(quizzes));
+      renderQuizzes();
+      alert(`"${name}" archived!`);
+    };
+
+    li.appendChild(playBtn);
+    li.appendChild(archiveBtn);
+    list.appendChild(li);
+  });
+}
+
+renderQuizzes();
+
+// Back to Sandbox Lobby
+document.getElementById("back-lobby-btn").onclick = () => {
+  window.location.href = "sandbox.html";
 };
-
-q("save-btn").onclick=()=>{
-  const name=q("quiz-name").value||"Untitled Quiz";
-  const saved=JSON.parse(localStorage.getItem("sandboxQuizzes")||"{}");
-  saved[name]=questions;
-  localStorage.setItem("sandboxQuizzes",JSON.stringify(saved));
-  alert("Saved!");
-};
-
-q("my-quizzes-btn").onclick=()=>{
-  const saved=JSON.parse(localStorage.getItem("sandboxQuizzes")||"{}");
-  alert("Saved Quizzes:\n" + Object.keys(saved).join("\n"));
-};
-
-q("archive-btn").onclick=()=>{
-  const name=q("quiz-name").value||"Untitled Quiz";
-  const archived=JSON.parse(localStorage.getItem("sandboxArchived")||"{}");
-  archived[name]=questions;
-  localStorage.setItem("sandboxArchived",JSON.stringify(archived));
-  alert("Archived!");
-};
-
-q("back-lobby-btn").onclick=()=>{
-  sessionStorage.removeItem("sandboxQuiz");
-  window.location.href="lobby.html"; // Now actually goes back to main lobby
-};
-
-/* ======= RIGHT: Sandbox Multiplayer Lobby ======= */
-q("host-btn").onclick=()=>alert("Host Game clicked (sandbox).");
-q("join-btn").onclick=()=>alert("Join Game clicked (sandbox).");
-q("players-btn").onclick=()=>alert("Players Joined clicked (sandbox).");
-
-updateList();
 </script>
 
 </body>
