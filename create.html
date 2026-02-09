@@ -2,60 +2,139 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Create Your Own Quiz</title>
+<title>Create Your Own Questions</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
   font-family: Arial;
-  background: #0a0a0a;
-  color: white;
   text-align: center;
   margin-top: 30px;
+  background: #0b0b12;
+  color: white;
 }
-
-input, button {
+input {
   padding: 8px;
-  margin: 6px;
+  margin: 5px;
   font-size: 16px;
 }
+#questions-list {
+  margin-top: 20px;
+  text-align: left;
+  display: inline-block;
+}
+li { margin-bottom: 5px; }
 
 button {
-  background: #00ffff;
-  color: black;
-  border: none;
-  border-radius: 6px;
-  box-shadow: 0 0 10px #00ffff;
+  padding: 12px 26px;
+  margin: 8px;
+  font-size: 16px;
   cursor: pointer;
+  border-radius: 14px;
+  background: #05050a;
+  color: #00f7ff;
+  border: 2px solid #00f7ff;
+  box-shadow:
+    0 0 8px #00f7ff,
+    0 0 16px #00f7ff,
+    inset 0 0 8px rgba(0,247,255,0.4);
+  transition: 0.2s ease;
+}
+button:hover {
+  transform: scale(1.06);
+  box-shadow:
+    0 0 14px #00f7ff,
+    0 0 28px #00f7ff,
+    inset 0 0 10px rgba(0,247,255,0.6);
 }
 
-button:hover {
-  box-shadow: 0 0 18px #00ffff;
+button.archive {
+  color:#ff004c;
+  border-color:#ff004c;
+  box-shadow:
+    0 0 8px #ff004c,
+    0 0 16px #ff004c,
+    inset 0 0 8px rgba(255,0,76,0.4);
 }
 </style>
 </head>
 
 <body>
 
-<h2>Create Your Own Quiz</h2>
+<h1>Create Your Own Questions</h1>
 
-<input placeholder="Question">
-<br>
-<input placeholder="Answer">
-<br>
-<button>Add Question</button>
+<input type="text" id="quiz-name" placeholder="Quiz Name"><br>
+<input type="text" id="question" placeholder="Question"><br>
 
-<hr>
+<input type="text" id="answer1" placeholder="Answer 1">
+<input type="text" id="answer2" placeholder="Answer 2">
+<input type="text" id="answer3" placeholder="Answer 3">
+<input type="text" id="answer4" placeholder="Answer 4"><br>
 
-<button onclick="location.href='sandbox.html'">
-Play Online / Multiplayer
-</button>
+<input type="number" id="correct" placeholder="Correct answer (1-4)" min="1" max="4"><br>
 
-<br><br>
+<button id="add-btn">Add Question</button>
+<button id="save-btn">Save Quiz</button>
+<button id="play-btn">Play Current Quiz</button>
+<button id="my-quizzes-btn">My Quizzes</button>
+<button id="archive-btn" class="archive">Archive Current Quiz</button>
+<button id="back-lobby-btn">Back to Lobby</button>
 
-<button onclick="location.href='lobby.html'">
-⬅ Back to Lobby
-</button>
+<!-- ✅ MERGED BUTTON -->
+<button id="online-btn">Online / Multiplayer</button>
+
+<h2>Questions Added:</h2>
+<ul id="questions-list"></ul>
+
+<script>
+let questions = JSON.parse(sessionStorage.getItem("currentQuiz") || "[]");
+
+const q = id => document.getElementById(id);
+
+function updateList(){
+  q("questions-list").innerHTML="";
+  questions.forEach((x,i)=>{
+    const li=document.createElement("li");
+    li.textContent=`${i+1}. ${x.q}`;
+    q("questions-list").appendChild(li);
+  });
+}
+
+q("add-btn").onclick=()=>{
+  const question=q("question").value.trim();
+  const answers=[
+    q("answer1").value.trim(),
+    q("answer2").value.trim(),
+    q("answer3").value.trim(),
+    q("answer4").value.trim()
+  ];
+  const correct=parseInt(q("correct").value)-1;
+
+  if(!question||answers.some(a=>!a)||correct<0||correct>3){
+    alert("Fill all fields correctly");
+    return;
+  }
+
+  questions.push({q:question,answers,correct});
+  sessionStorage.setItem("currentQuiz",JSON.stringify(questions));
+  updateList();
+};
+
+q("save-btn").onclick=()=>{
+  const name=q("quiz-name").value||"Untitled Quiz";
+  const saved=JSON.parse(localStorage.getItem("myQuizzes")||"{}");
+  saved[name]=questions;
+  localStorage.setItem("myQuizzes",JSON.stringify(saved));
+  alert("Saved!");
+};
+
+q("play-btn").onclick=()=>location.href="game.html";
+q("my-quizzes-btn").onclick=()=>location.href="my-quizzes.html";
+q("back-lobby-btn").onclick=()=>location.href="lobby.html";
+q("online-btn").onclick=()=>location.href="sandbox.html";
+
+updateList();
+</script>
 
 </body>
 </html>
