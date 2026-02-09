@@ -91,6 +91,8 @@
 <button id="play-btn">Play Current Quiz</button>
 <button id="my-quizzes-btn">My Quizzes</button>
 <button id="archive-btn" class="archive">Archive Current Quiz</button>
+<!-- ✅ Back to Lobby Button -->
+<button id="back-lobby-btn">Back to Lobby</button>
 
 <h2>Questions Added:</h2>
 <ul id="questions-list"></ul>
@@ -111,6 +113,7 @@ const saveBtn = document.getElementById("save-btn");
 const playBtn = document.getElementById("play-btn");
 const archiveBtn = document.getElementById("archive-btn");
 const myQuizzesBtn = document.getElementById("my-quizzes-btn");
+const backLobbyBtn = document.getElementById("back-lobby-btn");
 
 const list = document.getElementById("questions-list");
 
@@ -185,6 +188,11 @@ playBtn.addEventListener("click", () => {
 
 myQuizzesBtn.addEventListener("click", () => {
   window.location.href = "my-quizzes.html";
+});
+
+/* ✅ Back to Lobby button */
+backLobbyBtn.addEventListener("click", () => {
+  window.location.href = "lobby.html";
 });
 
 updateList();
