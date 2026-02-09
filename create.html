@@ -92,7 +92,7 @@
 <button id="my-quizzes-btn">My Quizzes</button>
 <button id="archive-btn" class="archive">Archive Current Quiz</button>
 
-<!-- Merged multiplayer/online button (no redirection) -->
+<!-- ✅ Merged Multiplayer / Online button -->
 <button id="online-btn">Play Online / Multiplayer</button>
 
 <h2>Questions Added:</h2>
@@ -114,8 +114,6 @@ const saveBtn = document.getElementById("save-btn");
 const playBtn = document.getElementById("play-btn");
 const archiveBtn = document.getElementById("archive-btn");
 const myQuizzesBtn = document.getElementById("my-quizzes-btn");
-
-/* Merged multiplayer/online button */
 const onlineBtn = document.getElementById("online-btn");
 
 const list = document.getElementById("questions-list");
@@ -193,9 +191,9 @@ myQuizzesBtn.addEventListener("click", () => {
   window.location.href = "my-quizzes.html";
 });
 
-/* ✅ ONLINE / MULTIPLAYER BUTTON PLACEHOLDER */
+/* ✅ Merged Multiplayer / Online button goes to lobby.html */
 onlineBtn.addEventListener("click", () => {
-  alert("This feature is now integrated directly in Create Quiz. No separate lobby exists.");
+  window.location.href = "lobby.html";
 });
 
 updateList();
