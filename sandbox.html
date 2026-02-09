@@ -199,7 +199,16 @@ setInterval(() => {
       scoresDiv.appendChild(d);
     });
 }, 500);
+document.getElementById("back-lobby-btn").onclick = () => {
+  // clear sandbox game if host was active
+  localStorage.removeItem(KEY);
+  location.reload();
+};
 </script>
 
+<!-- BACK TO LOBBY BUTTON -->
+<div id="back-container" style="margin:20px;">
+  <button id="back-lobby-btn">Back to Main Lobby</button>
+</div>
 </body>
 </html>
