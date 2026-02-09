@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sandbox Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial;
+  background: #0b0b12;
+  color: white;
+  text-align: center;
+  margin-top: 50px;
+}
+button {
+  padding: 14px 30px;
+  margin: 10px;
+  font-size: 18px;
+  width: 80%;
+  max-width: 400px;
+}
+</style>
+</head>
+
+<body>
+
+<h1 id="question">Waiting...</h1>
+<div id="answers"></div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const code = params.get("code");
+const key = "sandbox_game_" + code;
+
+function render() {
+  const game = JSON.parse(localStorage.getItem(key));
+  if (!game || !game.started) return;
+
+  const q = game.questions[game.questionIndex];
+  document.getElementById("question").textContent = q.q;
+
+  const answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML = "";
+
+  q.answers.forEach((a, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = a;
+    btn.onclick = () => answer(i);
+    answersDiv.appendChild(btn);
+  });
+}
+
+function answer(i) {
+  const game = JSON.parse(localStorage.getItem(key));
+  if (i === game.questions[game.questionIndex].correct) {
+    alert("Correct!");
+  } else {
+    alert("Wrong!");
+  }
+
+  game.questionIndex++;
+  localStorage.setItem(key, JSON.stringify(game));
+
+  if (game.questionIndex >= game.questions.length) {
+    alert("Game Over!");
+    location.href = "sandbox.html";
+  } else {
+    render();
+  }
+}
+
+setInterval(render, 500);
+</script>
+
+</body>
+</html>
