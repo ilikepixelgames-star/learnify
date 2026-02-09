@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sandbox My Quizzes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  margin-top: 30px;
+  background: #0b0b12;
+  color: white;
+}
+
+#quizzes-list {
+  margin-top: 20px;
+  text-align: left;
+  display: inline-block;
+}
+li { margin-bottom: 5px; }
+
+button {
+  padding: 12px 26px;
+  margin: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 14px;
+  background: #05050a;
+  color: #00f7ff;
+  border: 2px solid #00f7ff;
+  box-shadow:
+    0 0 8px #00f7ff,
+    0 0 16px #00f7ff,
+    inset 0 0 8px rgba(0,247,255,0.4);
+  transition: 0.2s ease;
+}
+button:hover {
+  transform: scale(1.06);
+  box-shadow:
+    0 0 14px #00f7ff,
+    0 0 28px #00f7ff,
+    inset 0 0 10px rgba(0,247,255,0.6);
+}
+</style>
+</head>
+
+<body>
+
+<h1>My Sandbox Quizzes</h1>
+
+<ul id="quizzes-list">
+  <li>No quizzes yet!</li>
+</ul>
+
+<button id="back-lobby-btn">Back to Lobby</button>
+
+<script>
+// Separate key for sandbox quizzes
+const SANDBOX_KEY = "sandboxQuizzes";
+
+// Load quizzes (if any)
+let quizzes = JSON.parse(localStorage.getItem(SANDBOX_KEY) || "[]");
+
+const list = document.getElementById("quizzes-list");
+const backBtn = document.getElementById("back-lobby-btn");
+
+function updateList(){
+  list.innerHTML = "";
+  if(quizzes.length === 0){
+    const li = document.createElement("li");
+    li.textContent = "No quizzes yet!";
+    list.appendChild(li);
+  } else {
+    quizzes.forEach((q,i)=>{
+      const li = document.createElement("li");
+      li.textContent = `${i+1}. ${q.name} (${q.questions.length} questions)`;
+      list.appendChild(li);
+    });
+  }
+}
+
+// Currently non-functional back button
+backBtn.onclick = () => {
+  console.log("Back to Lobby clicked (sandbox)");
+};
+
+updateList();
+</script>
+
+</body>
+</html>
