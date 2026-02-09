@@ -1,44 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Learnify Lobby</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Learnify Lobby</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #0a0a0a;
-  color: white;
-  text-align: center;
-  margin-top: 50px;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b0b12;
+      color: white;
+      text-align: center;
+      margin-top: 60px;
+    }
 
-button {
-  padding: 14px 26px;
-  margin: 12px;
-  font-size: 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background: #00ffff;
-  color: black;
-  box-shadow: 0 0 12px #00ffff;
-}
+    h1 {
+      font-size: 2.8em;
+      margin-bottom: 10px;
+    }
 
-button:hover {
-  box-shadow: 0 0 20px #00ffff;
-}
-</style>
+    p {
+      opacity: 0.85;
+      margin-bottom: 40px;
+    }
+
+    button {
+      padding: 14px 34px;
+      margin: 12px;
+      font-size: 18px;
+      border-radius: 14px;
+      border: 2px solid #00f7ff;
+      background: #05050a;
+      color: #00f7ff;
+      cursor: pointer;
+      box-shadow:
+        0 0 8px #00f7ff,
+        0 0 16px #00f7ff,
+        inset 0 0 8px rgba(0,247,255,0.4);
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.06);
+      box-shadow:
+        0 0 14px #00f7ff,
+        0 0 28px #00f7ff,
+        inset 0 0 10px rgba(0,247,255,0.6);
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>Learnify</h1>
+  <h1>Learnify</h1>
+  <p>Choose what you want to do</p>
 
-<button onclick="location.href='create.html'">Create Quiz</button>
-<br>
-<button onclick="location.href='sandbox.html'">Play Online / Multiplayer</button>
+  <div>
+    <button onclick="location.href='game.html'">Play Quiz</button>
+    <button onclick="location.href='create.html'">Create Quiz</button>
+    <button onclick="location.href='my-quizzes.html'">My Quizzes</button>
+
+    <!-- ✅ MERGED BUTTON -->
+    <button onclick="location.href='sandbox.html'">
+      Online / Multiplayer
+    </button>
+  </div>
 
 </body>
 </html>
