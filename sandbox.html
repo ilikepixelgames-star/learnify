@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Learnify Multiplayer</title>
+<title>Learnify Multiplayer Sandbox</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -13,7 +13,6 @@ body {
   text-align: center;
   margin-top: 30px;
 }
-
 button {
   padding: 14px 30px;
   margin: 10px;
@@ -25,21 +24,10 @@ button {
   cursor: pointer;
   box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff;
 }
-
 button:hover { transform: scale(1.05); }
-
-.answer {
-  width: 80%;
-  max-width: 400px;
-}
-
+.answer { width: 80%; max-width: 400px; }
 .hidden { display: none; }
-
-.code {
-  font-size: 2em;
-  letter-spacing: 6px;
-  color: #00f7ff;
-}
+.code { font-size: 2em; letter-spacing: 6px; color: #00f7ff; }
 </style>
 </head>
 
@@ -62,12 +50,14 @@ button:hover { transform: scale(1.05); }
   <h3 id="host-question">Waiting to start…</h3>
   <button id="start-btn">Start Game</button>
   <button id="next-btn" class="hidden">Next Question</button>
+  <button id="host-back-btn">Back to Main Lobby</button>
 </div>
 
 <!-- PLAYER -->
 <div id="player" class="hidden">
   <h2 id="player-question">Waiting for host…</h2>
   <div id="answers"></div>
+  <button id="player-back-btn">Back to Main Lobby</button>
 </div>
 
 <!-- LEADERBOARD -->
@@ -77,14 +67,13 @@ button:hover { transform: scale(1.05); }
 </div>
 
 <script>
-/* SANDBOX STORAGE */
 const KEY = "learnify_sandbox_game";
 
+/* UTILS */
 function save(data){ localStorage.setItem(KEY, JSON.stringify(data)); }
 function load(){ return JSON.parse(localStorage.getItem(KEY) || "null"); }
 
-/* ELEMENTS */
-const home = homeDiv = document.getElementById("home");
+const home = document.getElementById("home");
 const host = document.getElementById("host");
 const player = document.getElementById("player");
 const leaderboard = document.getElementById("leaderboard");
@@ -97,12 +86,17 @@ const scoresDiv = document.getElementById("scores");
 let myName = "";
 let answered = false;
 
-/* HOST GAME */
+/* HOST BUTTON */
 document.getElementById("host-btn").onclick = () => {
   const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
-  const quizName = Object.keys(quizzes)[0];
-  if(!quizName){ alert("No quiz found"); return; }
+  const names = Object.keys(quizzes);
 
+  if(names.length === 0){
+    alert("You must save a quiz in Create Quiz before hosting.");
+    return;
+  }
+
+  const quizName = names[0];
   const game = {
     code: Math.floor(100000 + Math.random()*900000),
     quiz: quizzes[quizName],
@@ -116,25 +110,25 @@ document.getElementById("host-btn").onclick = () => {
   document.getElementById("host-code").textContent = game.code;
 };
 
-/* JOIN */
+/* JOIN BUTTON */
 document.getElementById("join-btn").onclick = () => {
   myName = document.getElementById("name-input").value.trim();
   const code = document.getElementById("code-input").value.trim();
   const game = load();
 
   if(!myName || !game || game.code != code){
-    alert("Invalid");
+    alert("Invalid name or code");
     return;
   }
 
-  game.players[myName] = 0;
+  if(!game.players[myName]) game.players[myName] = 0;
   save(game);
 
   home.classList.add("hidden");
   player.classList.remove("hidden");
 };
 
-/* START */
+/* START GAME */
 document.getElementById("start-btn").onclick = () => {
   const game = load();
   game.index = 0;
@@ -143,14 +137,26 @@ document.getElementById("start-btn").onclick = () => {
   document.getElementById("next-btn").classList.remove("hidden");
 };
 
-/* NEXT */
+/* NEXT QUESTION */
 document.getElementById("next-btn").onclick = () => {
   const game = load();
   game.index++;
+  answered = false;
   if(game.index >= game.quiz.length){
     leaderboard.classList.remove("hidden");
+    host.classList.add("hidden");
+    player.classList.add("hidden");
   }
   save(game);
+};
+
+/* BACK BUTTONS */
+document.getElementById("host-back-btn").onclick = () => {
+  localStorage.removeItem(KEY);
+  location.reload();
+};
+document.getElementById("player-back-btn").onclick = () => {
+  location.reload();
 };
 
 /* SYNC LOOP */
@@ -164,7 +170,8 @@ setInterval(() => {
   hostQ.textContent = q.q;
   playerQ.textContent = q.q;
 
-  if(!answered){
+  // Player answers
+  if(!answered && !player.classList.contains("hidden")){
     answersDiv.innerHTML = "";
     q.answers.forEach((a,i)=>{
       const btn = document.createElement("button");
@@ -173,13 +180,26 @@ setInterval(() => {
       btn.onclick = () => {
         answered = true;
         if(i === q.correct){
-          game.players[myName] += 100;
-          save(game);
+          const g = load();
+          g.players[myName] += 100;
+          save(g);
         }
       };
       answersDiv.appendChild(btn);
     });
   }
 
+  // Leaderboard
   scoresDiv.innerHTML = "";
   Object.entries(game.players)
+    .sort((a,b)=>b[1]-a[1])
+    .forEach(p=>{
+      const d=document.createElement("div");
+      d.textContent=`${p[0]} — ${p[1]} pts`;
+      scoresDiv.appendChild(d);
+    });
+}, 500);
+</script>
+
+</body>
+</html>
