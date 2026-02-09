@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Sandbox Lobby</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       font-family: Arial;
@@ -12,6 +13,17 @@
       text-align: center;
       margin-top: 60px;
     }
+
+    h1 {
+      font-size: 2.4em;
+      margin-bottom: 10px;
+    }
+
+    p {
+      opacity: 0.8;
+      margin-bottom: 40px;
+    }
+
     button {
       padding: 14px 34px;
       margin: 12px;
@@ -25,18 +37,32 @@
         0 0 8px #00f7ff,
         0 0 16px #00f7ff,
         inset 0 0 8px rgba(0,247,255,0.4);
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.06);
+      box-shadow:
+        0 0 14px #00f7ff,
+        0 0 28px #00f7ff,
+        inset 0 0 10px rgba(0,247,255,0.6);
     }
   </style>
 </head>
+
 <body>
 
   <h1>Sandbox Lobby</h1>
-  <p>This area is isolated from the main site</p>
+  <p>This area is isolated from the main Learnify site.</p>
 
-  <button onclick="alert('Host coming soon')">Host Game</button>
-  <button onclick="alert('Join coming soon')">Join Game</button>
+  <button onclick="alert('Host game coming soon')">Host Game</button>
+  <button onclick="alert('Join game coming soon')">Join Game</button>
+
   <br><br>
-  <button onclick="window.location.href='lobby.html'">Back to Main Lobby</button>
+
+  <button onclick="window.location.href='lobby.html'">
+    Back to Main Lobby
+  </button>
 
 </body>
 </html>
