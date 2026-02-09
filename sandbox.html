@@ -35,6 +35,11 @@ button:hover { transform: scale(1.05); }
 
 <h1>Learnify Multiplayer</h1>
 
+<!-- BACK TO LOBBY BUTTON -->
+<div id="back-container" style="margin:20px;">
+  <button id="back-lobby-btn">Back to Main Lobby</button>
+</div>
+
 <!-- HOME -->
 <div id="home">
   <button id="host-btn">Host Game</button><br><br>
@@ -50,14 +55,12 @@ button:hover { transform: scale(1.05); }
   <h3 id="host-question">Waiting to start…</h3>
   <button id="start-btn">Start Game</button>
   <button id="next-btn" class="hidden">Next Question</button>
-  <button id="host-back-btn">Back to Main Lobby</button>
 </div>
 
 <!-- PLAYER -->
 <div id="player" class="hidden">
   <h2 id="player-question">Waiting for host…</h2>
   <div id="answers"></div>
-  <button id="player-back-btn">Back to Main Lobby</button>
 </div>
 
 <!-- LEADERBOARD -->
@@ -73,6 +76,7 @@ const KEY = "learnify_sandbox_game";
 function save(data){ localStorage.setItem(KEY, JSON.stringify(data)); }
 function load(){ return JSON.parse(localStorage.getItem(KEY) || "null"); }
 
+/* ELEMENTS */
 const home = document.getElementById("home");
 const host = document.getElementById("host");
 const player = document.getElementById("player");
@@ -85,6 +89,28 @@ const scoresDiv = document.getElementById("scores");
 
 let myName = "";
 let answered = false;
+
+/* BACK TO LOBBY BUTTON */
+document.getElementById("back-lobby-btn").onclick = () => {
+  // 1. Clear the current sandbox game if any
+  localStorage.removeItem(KEY);
+
+  // 2. Hide all other screens
+  host.classList.add("hidden");
+  player.classList.add("hidden");
+  leaderboard.classList.add("hidden");
+
+  // 3. Show home screen
+  home.classList.remove("hidden");
+
+  // 4. Reset player state
+  myName = "";
+  answered = false;
+
+  // 5. Clear input fields
+  document.getElementById("name-input").value = "";
+  document.getElementById("code-input").value = "";
+};
 
 /* HOST BUTTON */
 document.getElementById("host-btn").onclick = () => {
@@ -135,6 +161,7 @@ document.getElementById("start-btn").onclick = () => {
   save(game);
   document.getElementById("start-btn").classList.add("hidden");
   document.getElementById("next-btn").classList.remove("hidden");
+  answered = false;
 };
 
 /* NEXT QUESTION */
@@ -150,15 +177,6 @@ document.getElementById("next-btn").onclick = () => {
   save(game);
 };
 
-/* BACK BUTTONS */
-document.getElementById("host-back-btn").onclick = () => {
-  localStorage.removeItem(KEY);
-  location.reload();
-};
-document.getElementById("player-back-btn").onclick = () => {
-  location.reload();
-};
-
 /* SYNC LOOP */
 setInterval(() => {
   const game = load();
@@ -167,10 +185,11 @@ setInterval(() => {
   const q = game.quiz[game.index];
   if(!q) return;
 
+  // Update question text
   hostQ.textContent = q.q;
   playerQ.textContent = q.q;
 
-  // Player answers
+  // Player answer buttons
   if(!answered && !player.classList.contains("hidden")){
     answersDiv.innerHTML = "";
     q.answers.forEach((a,i)=>{
@@ -198,17 +217,9 @@ setInterval(() => {
       d.textContent=`${p[0]} — ${p[1]} pts`;
       scoresDiv.appendChild(d);
     });
+
 }, 500);
-document.getElementById("back-lobby-btn").onclick = () => {
-  // clear sandbox game if host was active
-  localStorage.removeItem(KEY);
-  location.reload();
-};
 </script>
 
-<!-- BACK TO LOBBY BUTTON -->
-<div id="back-container" style="margin:20px;">
-  <button id="back-lobby-btn">Back to Main Lobby</button>
-</div>
 </body>
 </html>
