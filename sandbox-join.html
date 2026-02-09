@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Join Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial;
+  background: #0b0b12;
+  color: white;
+  text-align: center;
+  margin-top: 60px;
+}
+input {
+  padding: 10px;
+  font-size: 18px;
+  margin: 6px;
+}
+button {
+  padding: 12px 28px;
+  font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Join Game</h1>
+
+<input id="code" placeholder="Game Code">
+<br>
+<input id="name" placeholder="Your Name">
+<br><br>
+
+<button onclick="join()">Join</button>
+
+<script>
+function join() {
+  const code = document.getElementById("code").value;
+  const name = document.getElementById("name").value;
+
+  const key = "sandbox_game_" + code;
+  const game = JSON.parse(localStorage.getItem(key));
+
+  if (!game) {
+    alert("Game not found");
+    return;
+  }
+
+  game.players.push({ name, score: 0 });
+  localStorage.setItem(key, JSON.stringify(game));
+
+  location.href = "sandbox-game.html?code=" + code;
+}
+</script>
+
+</body>
+</html>
