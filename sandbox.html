@@ -25,9 +25,9 @@ button {
   box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff;
 }
 button:hover { transform: scale(1.05); }
-.answer { width: 80%; max-width: 400px; }
+.answer { width: 80%; max-width: 400px; margin:5px; }
 .hidden { display: none; }
-.code { font-size: 2em; letter-spacing: 6px; color: #00f7ff; }
+.code { font-size: 2em; letter-spacing: 6px; color: #00f7ff; margin-bottom:20px; }
 </style>
 </head>
 
@@ -40,7 +40,7 @@ button:hover { transform: scale(1.05); }
   <button id="back-lobby-btn">Back to Main Lobby</button>
 </div>
 
-<!-- HOME -->
+<!-- HOME SCREEN -->
 <div id="home">
   <button id="host-btn">Host Game</button><br><br>
   <input id="name-input" placeholder="Your name"><br>
@@ -48,7 +48,7 @@ button:hover { transform: scale(1.05); }
   <button id="join-btn">Join Game</button>
 </div>
 
-<!-- HOST -->
+<!-- HOST SCREEN -->
 <div id="host" class="hidden">
   <h2>Game Code</h2>
   <div class="code" id="host-code"></div>
@@ -57,7 +57,7 @@ button:hover { transform: scale(1.05); }
   <button id="next-btn" class="hidden">Next Question</button>
 </div>
 
-<!-- PLAYER -->
+<!-- PLAYER SCREEN -->
 <div id="player" class="hidden">
   <h2 id="player-question">Waiting for host…</h2>
   <div id="answers"></div>
@@ -89,29 +89,32 @@ const scoresDiv = document.getElementById("scores");
 
 let myName = "";
 let answered = false;
-let syncInterval;
+let syncInterval = null;
 
 /* BACK TO LOBBY BUTTON */
 document.getElementById("back-lobby-btn").onclick = () => {
-  // 1. Clear sandbox game
+  // Stop sync loop
+  if(syncInterval){
+    clearInterval(syncInterval);
+    syncInterval = null;
+  }
+
+  // Clear game state
   localStorage.removeItem(KEY);
 
-  // 2. Stop sync loop
-  if(syncInterval) clearInterval(syncInterval);
-
-  // 3. Hide all screens
+  // Hide all other screens
   host.classList.add("hidden");
   player.classList.add("hidden");
   leaderboard.classList.add("hidden");
 
-  // 4. Show home
+  // Show home screen
   home.classList.remove("hidden");
 
-  // 5. Reset state
+  // Reset variables
   myName = "";
   answered = false;
 
-  // 6. Clear inputs
+  // Clear inputs
   document.getElementById("name-input").value = "";
   document.getElementById("code-input").value = "";
 };
@@ -216,6 +219,7 @@ function startSync() {
         d.textContent=`${p[0]} — ${p[1]} pts`;
         scoresDiv.appendChild(d);
       });
+
   }, 500);
 }
 </script>
