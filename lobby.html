@@ -57,6 +57,7 @@
   <button id="play-btn">Play Quiz</button>
   <button id="create-btn">Create Quiz</button>
   <button id="my-quizzes-btn">My Quizzes</button>
+  <button id="online-btn">Play Online / Multiplayer</button>
   <button id="settings-btn">Settings</button>
 </div>
 
@@ -64,6 +65,7 @@
   const playBtn = document.getElementById("play-btn");
   const createBtn = document.getElementById("create-btn");
   const myQuizzesBtn = document.getElementById("my-quizzes-btn");
+  const onlineBtn = document.getElementById("online-btn");
   const settingsBtn = document.getElementById("settings-btn");
 
   playBtn.addEventListener("click", () => {
@@ -76,6 +78,11 @@
 
   myQuizzesBtn.addEventListener("click", () => {
     window.location.href = "my-quizzes.html";
+  });
+
+  /* 🔹 Merged Online / Multiplayer button placeholder */
+  onlineBtn.addEventListener("click", () => {
+    alert("Online / Multiplayer feature coming soon!");
   });
 
   settingsBtn.addEventListener("click", () => {
