@@ -18,7 +18,6 @@ body {
   min-height: 100vh;
 }
 
-/* Split container */
 .container {
   display: flex;
   justify-content: center;
@@ -27,7 +26,6 @@ body {
   padding: 20px;
 }
 
-/* Panels */
 .left, .right {
   background: #0b0b12;
   border: 2px solid #00f7ff;
@@ -37,7 +35,6 @@ body {
   box-shadow: 0 0 12px #00f7ff, 0 0 24px #00f7ff;
 }
 
-/* Inputs & lists */
 input {
   padding: 8px;
   margin: 5px;
@@ -51,7 +48,6 @@ input {
 }
 li { margin-bottom: 5px; }
 
-/* Buttons */
 button {
   padding: 12px 26px;
   margin: 8px;
@@ -82,7 +78,7 @@ p { opacity: 0.85; }
 
 <div class="container">
 
-  <!-- LEFT: Create Quiz -->
+  <!-- LEFT: Sandbox Create Quiz -->
   <div class="left">
     <h1>Sandbox Multiplayer</h1>
 
@@ -98,7 +94,6 @@ p { opacity: 0.85; }
 
     <button id="add-btn">Add Question</button>
     <button id="save-btn">Save Quiz</button>
-    <button id="play-btn">Play Current Quiz</button>
     <button id="my-quizzes-btn">My Quizzes</button>
     <button id="archive-btn" class="archive">Archive Current Quiz</button>
     <button id="back-lobby-btn">Back to Lobby</button>
@@ -115,7 +110,6 @@ p { opacity: 0.85; }
     <button id="host-btn">Host Game</button><br>
     <button id="join-btn">Join Game</button><br>
     <button id="players-btn">Players Joined</button><br>
-    <button id="exit-btn">Exit Lobby</button>
   </div>
 
 </div>
@@ -169,11 +163,6 @@ q("save-btn").onclick=()=>{
   alert("Saved!");
 };
 
-q("play-btn").onclick=()=>{
-  if(questions.length===0){ alert("Add questions first!"); return; }
-  alert("Game would start here (sandbox).");
-};
-
 q("my-quizzes-btn").onclick=()=>{
   const saved=JSON.parse(localStorage.getItem("sandboxQuizzes")||"{}");
   alert("Saved Quizzes:\n" + Object.keys(saved).join("\n"));
@@ -189,16 +178,14 @@ q("archive-btn").onclick=()=>{
 
 q("back-lobby-btn").onclick=()=>{
   sessionStorage.removeItem("sandboxQuiz");
-  alert("Back to main lobby clicked!");
+  window.location.href="lobby.html"; // Now actually goes back to main lobby
 };
 
 /* ======= RIGHT: Sandbox Multiplayer Lobby ======= */
 q("host-btn").onclick=()=>alert("Host Game clicked (sandbox).");
 q("join-btn").onclick=()=>alert("Join Game clicked (sandbox).");
 q("players-btn").onclick=()=>alert("Players Joined clicked (sandbox).");
-q("exit-btn").onclick=()=>{
-  alert("Exiting Lobby (sandbox).");
-};
+
 updateList();
 </script>
 
