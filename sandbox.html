@@ -1,68 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Sandbox Lobby</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Sandbox Lobby</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #0b0b12;
-      color: white;
-      text-align: center;
-      margin-top: 60px;
-    }
-
-    h1 {
-      font-size: 2.4em;
-      margin-bottom: 10px;
-    }
-
-    p {
-      opacity: 0.8;
-      margin-bottom: 40px;
-    }
-
-    button {
-      padding: 14px 34px;
-      margin: 12px;
-      font-size: 18px;
-      border-radius: 14px;
-      border: 2px solid #00f7ff;
-      background: #05050a;
-      color: #00f7ff;
-      cursor: pointer;
-      box-shadow:
-        0 0 8px #00f7ff,
-        0 0 16px #00f7ff,
-        inset 0 0 8px rgba(0,247,255,0.4);
-      transition: 0.2s ease;
-    }
-
-    button:hover {
-      transform: scale(1.06);
-      box-shadow:
-        0 0 14px #00f7ff,
-        0 0 28px #00f7ff,
-        inset 0 0 10px rgba(0,247,255,0.6);
-    }
-  </style>
+<style>
+body {
+  font-family: Arial;
+  background: #0b0b12;
+  color: white;
+  text-align: center;
+  margin-top: 60px;
+}
+button {
+  padding: 14px 34px;
+  margin: 14px;
+  font-size: 18px;
+  border-radius: 14px;
+  border: 2px solid #00f7ff;
+  background: #05050a;
+  color: #00f7ff;
+  cursor: pointer;
+  box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff;
+}
+button:hover { transform: scale(1.06); }
+</style>
 </head>
 
 <body>
 
-  <h1>Sandbox Lobby</h1>
-  <p>This area is isolated from the main Learnify site.</p>
+<h1>Sandbox Multiplayer</h1>
+<p>This mode is isolated from the main Learnify site.</p>
 
-  <button onclick="alert('Host game coming soon')">Host Game</button>
-  <button onclick="alert('Join game coming soon')">Join Game</button>
+<button onclick="location.href='sandbox-host.html'">Host Game</button>
+<button onclick="location.href='sandbox-join.html'">Join Game</button>
 
-  <br><br>
+<br><br>
 
-  <button onclick="window.location.href='lobby.html'">
-    Back to Main Lobby
-  </button>
+<button onclick="location.href='lobby.html'">Back to Main Lobby</button>
 
 </body>
 </html>
