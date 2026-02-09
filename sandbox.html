@@ -1,197 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Learnify Multiplayer Sandbox</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Learnify Multiplayer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #0b0b12;
-      color: white;
-      text-align: center;
-      margin-top: 50px;
-    }
+<style>
+body {
+  font-family: Arial;
+  background: #0b0b12;
+  color: white;
+  text-align: center;
+  margin-top: 30px;
+}
 
-    h1 {
-      margin-bottom: 10px;
-    }
+button {
+  padding: 14px 30px;
+  margin: 10px;
+  font-size: 18px;
+  border-radius: 14px;
+  border: 2px solid #00f7ff;
+  background: #05050a;
+  color: #00f7ff;
+  cursor: pointer;
+  box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff;
+}
 
-    input {
-      padding: 10px;
-      margin: 6px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-    }
+button:hover { transform: scale(1.05); }
 
-    button {
-      padding: 12px 30px;
-      margin: 10px;
-      font-size: 17px;
-      cursor: pointer;
-      border-radius: 14px;
-      background: #05050a;
-      color: #00f7ff;
-      border: 2px solid #00f7ff;
-      box-shadow:
-        0 0 8px #00f7ff,
-        0 0 16px #00f7ff,
-        inset 0 0 8px rgba(0,247,255,0.4);
-      transition: 0.2s ease;
-    }
+.answer {
+  width: 80%;
+  max-width: 400px;
+}
 
-    button:hover {
-      transform: scale(1.06);
-      box-shadow:
-        0 0 14px #00f7ff,
-        0 0 28px #00f7ff,
-        inset 0 0 10px rgba(0,247,255,0.6);
-    }
+.hidden { display: none; }
 
-    .hidden {
-      display: none;
-    }
-
-    #players {
-      margin-top: 20px;
-    }
-
-    .player {
-      padding: 6px;
-      opacity: 0.9;
-    }
-
-    .code {
-      font-size: 2em;
-      letter-spacing: 6px;
-      color: #00f7ff;
-      margin: 15px 0;
-    }
-  </style>
+.code {
+  font-size: 2em;
+  letter-spacing: 6px;
+  color: #00f7ff;
+}
+</style>
 </head>
 
 <body>
 
 <h1>Learnify Multiplayer</h1>
-<p>Kahoot-style sandbox (local testing)</p>
 
 <!-- HOME -->
 <div id="home">
-  <button id="host-btn">Host Game</button><br>
-  <input id="join-name" placeholder="Your name"><br>
-  <input id="join-code" placeholder="Game code"><br>
+  <button id="host-btn">Host Game</button><br><br>
+  <input id="name-input" placeholder="Your name"><br>
+  <input id="code-input" placeholder="Game code"><br>
   <button id="join-btn">Join Game</button>
 </div>
 
-<!-- HOST LOBBY -->
-<div id="host-lobby" class="hidden">
-  <h2>Host Lobby</h2>
-  <p>Game Code</p>
-  <div class="code" id="game-code"></div>
-
-  <h3>Players Joined</h3>
-  <div id="players"></div>
-
-  <button id="back-btn">Exit Lobby</button>
+<!-- HOST -->
+<div id="host" class="hidden">
+  <h2>Game Code</h2>
+  <div class="code" id="host-code"></div>
+  <h3 id="host-question">Waiting to start…</h3>
+  <button id="start-btn">Start Game</button>
+  <button id="next-btn" class="hidden">Next Question</button>
 </div>
 
-<!-- PLAYER LOBBY -->
-<div id="player-lobby" class="hidden">
-  <h2>Waiting for host…</h2>
-  <p>You joined game</p>
-  <div class="code" id="joined-code"></div>
-  <button id="leave-btn">Leave</button>
+<!-- PLAYER -->
+<div id="player" class="hidden">
+  <h2 id="player-question">Waiting for host…</h2>
+  <div id="answers"></div>
+</div>
+
+<!-- LEADERBOARD -->
+<div id="leaderboard" class="hidden">
+  <h2>Leaderboard</h2>
+  <div id="scores"></div>
 </div>
 
 <script>
-/* 🔐 SANDBOX-ONLY STORAGE */
-const STORE_KEY = "learnify_sandbox_lobby";
+/* SANDBOX STORAGE */
+const KEY = "learnify_sandbox_game";
 
-const home = document.getElementById("home");
-const hostLobby = document.getElementById("host-lobby");
-const playerLobby = document.getElementById("player-lobby");
+function save(data){ localStorage.setItem(KEY, JSON.stringify(data)); }
+function load(){ return JSON.parse(localStorage.getItem(KEY) || "null"); }
 
-const gameCodeEl = document.getElementById("game-code");
-const playersEl = document.getElementById("players");
-const joinedCodeEl = document.getElementById("joined-code");
+/* ELEMENTS */
+const home = homeDiv = document.getElementById("home");
+const host = document.getElementById("host");
+const player = document.getElementById("player");
+const leaderboard = document.getElementById("leaderboard");
 
-/* Utils */
-function randomCode() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
+const hostQ = document.getElementById("host-question");
+const playerQ = document.getElementById("player-question");
+const answersDiv = document.getElementById("answers");
+const scoresDiv = document.getElementById("scores");
 
-function loadLobby() {
-  return JSON.parse(localStorage.getItem(STORE_KEY) || "null");
-}
+let myName = "";
+let answered = false;
 
-function saveLobby(data) {
-  localStorage.setItem(STORE_KEY, JSON.stringify(data));
-}
-
-function clearLobby() {
-  localStorage.removeItem(STORE_KEY);
-}
-
-/* HOST */
+/* HOST GAME */
 document.getElementById("host-btn").onclick = () => {
-  const code = randomCode();
-  const lobby = { code, players: [] };
-  saveLobby(lobby);
+  const quizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+  const quizName = Object.keys(quizzes)[0];
+  if(!quizName){ alert("No quiz found"); return; }
 
+  const game = {
+    code: Math.floor(100000 + Math.random()*900000),
+    quiz: quizzes[quizName],
+    index: -1,
+    players: {}
+  };
+
+  save(game);
   home.classList.add("hidden");
-  hostLobby.classList.remove("hidden");
-  gameCodeEl.textContent = code;
-  renderPlayers();
+  host.classList.remove("hidden");
+  document.getElementById("host-code").textContent = game.code;
 };
 
 /* JOIN */
 document.getElementById("join-btn").onclick = () => {
-  const name = document.getElementById("join-name").value.trim();
-  const code = document.getElementById("join-code").value.trim();
-  const lobby = loadLobby();
+  myName = document.getElementById("name-input").value.trim();
+  const code = document.getElementById("code-input").value.trim();
+  const game = load();
 
-  if (!name || !code || !lobby || lobby.code !== code) {
-    alert("Invalid name or code");
+  if(!myName || !game || game.code != code){
+    alert("Invalid");
     return;
   }
 
-  lobby.players.push(name);
-  saveLobby(lobby);
+  game.players[myName] = 0;
+  save(game);
 
   home.classList.add("hidden");
-  playerLobby.classList.remove("hidden");
-  joinedCodeEl.textContent = code;
+  player.classList.remove("hidden");
 };
 
-/* BACK / LEAVE */
-document.getElementById("back-btn").onclick = () => {
-  clearLobby();
-  location.reload();
+/* START */
+document.getElementById("start-btn").onclick = () => {
+  const game = load();
+  game.index = 0;
+  save(game);
+  document.getElementById("start-btn").classList.add("hidden");
+  document.getElementById("next-btn").classList.remove("hidden");
 };
 
-document.getElementById("leave-btn").onclick = () => {
-  location.reload();
+/* NEXT */
+document.getElementById("next-btn").onclick = () => {
+  const game = load();
+  game.index++;
+  if(game.index >= game.quiz.length){
+    leaderboard.classList.remove("hidden");
+  }
+  save(game);
 };
 
-/* LIVE UPDATE (same-device tabs) */
-function renderPlayers() {
-  const lobby = loadLobby();
-  if (!lobby) return;
+/* SYNC LOOP */
+setInterval(() => {
+  const game = load();
+  if(!game || game.index < 0) return;
 
-  playersEl.innerHTML = "";
-  lobby.players.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "player";
-    div.textContent = p;
-    playersEl.appendChild(div);
-  });
-}
+  const q = game.quiz[game.index];
+  if(!q) return;
 
-setInterval(renderPlayers, 500);
-</script>
+  hostQ.textContent = q.q;
+  playerQ.textContent = q.q;
 
-</body>
-</html>
+  if(!answered){
+    answersDiv.innerHTML = "";
+    q.answers.forEach((a,i)=>{
+      const btn = document.createElement("button");
+      btn.textContent = a;
+      btn.className = "answer";
+      btn.onclick = () => {
+        answered = true;
+        if(i === q.correct){
+          game.players[myName] += 100;
+          save(game);
+        }
+      };
+      answersDiv.appendChild(btn);
+    });
+  }
+
+  scoresDiv.innerHTML = "";
+  Object.entries(game.players)
