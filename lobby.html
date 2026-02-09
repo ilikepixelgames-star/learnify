@@ -2,69 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Learnify Lobby</title>
+  <title>Lobby</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
-      background:#0b0b12;
-      color:white;
-      font-family:Arial;
-      text-align:center;
-      padding-top:30px;
+      font-family: Arial;
+      background: #0b0b12;
+      color: white;
+      text-align: center;
+      margin-top: 40px;
     }
 
-    h1 { color:#00f7ff; }
-
-    .lobby-box {
-      border:2px solid #00f7ff;
-      border-radius:14px;
-      padding:20px;
-      width:300px;
-      margin:20px auto;
+    h1 {
+      font-size: 2.2em;
+      margin-bottom: 20px;
     }
 
     button {
-      margin:8px;
-      padding:12px 26px;
-      border-radius:14px;
-      border:2px solid #00f7ff;
-      background:#05050a;
-      color:#00f7ff;
-      cursor:pointer;
-      box-shadow:0 0 8px #00f7ff;
+      padding: 14px 32px;
+      margin: 12px;
+      font-size: 18px;
+      border-radius: 14px;
+      border: 2px solid #00f7ff;
+      background: #05050a;
+      color: #00f7ff;
+      cursor: pointer;
+      box-shadow:
+        0 0 8px #00f7ff,
+        0 0 16px #00f7ff,
+        inset 0 0 8px rgba(0,247,255,0.4);
+      transition: 0.2s ease;
     }
 
-    ul { list-style:none; padding:0; }
+    button:hover {
+      transform: scale(1.06);
+      box-shadow:
+        0 0 14px #00f7ff,
+        0 0 28px #00f7ff,
+        inset 0 0 10px rgba(0,247,255,0.6);
+    }
+
+    #lobby-buttons {
+      margin-top: 30px;
+    }
   </style>
 </head>
-
 <body>
 
-<h1>Online Lobby</h1>
+<h1>Online / Multiplayer Lobby</h1>
+<p>Welcome! This is your lobby. Buttons are non-functional for now.</p>
 
-<div class="lobby-box">
-  <h3>Players</h3>
-  <ul id="players">
-    <li>You (Host)</li>
-  </ul>
-
-  <button id="ready-btn">Ready</button>
+<div id="lobby-buttons">
+  <!-- Merged Multiplayer / Online buttons -->
   <button id="start-btn">Start Game</button>
+  <button id="invite-btn">Invite Players</button>
+  <button id="settings-btn">Lobby Settings</button>
 </div>
 
-<button onclick="window.location.href='sandbox.html'">Back</button>
-
 <script>
-const players = document.getElementById("players");
+  // Buttons are non-functional placeholders
+  const startBtn = document.getElementById("start-btn");
+  const inviteBtn = document.getElementById("invite-btn");
+  const settingsBtn = document.getElementById("settings-btn");
 
-document.getElementById("ready-btn").onclick = () => {
-  alert("You are ready! (fake for now)");
-};
+  startBtn.addEventListener("click", () => {
+    alert("Start Game button clicked (placeholder)");
+  });
 
-document.getElementById("start-btn").onclick = () => {
-  window.location.href = "game.html";
-};
+  inviteBtn.addEventListener("click", () => {
+    alert("Invite Players button clicked (placeholder)");
+  });
+
+  settingsBtn.addEventListener("click", () => {
+    alert("Lobby Settings button clicked (placeholder)");
+  });
 </script>
 
 </body>
