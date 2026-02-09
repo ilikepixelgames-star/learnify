@@ -1,173 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Learnify Sandbox</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Sandbox Lobby</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #0b0b12;
-      color: white;
-      text-align: center;
-      margin-top: 30px;
-    }
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #0b0b12;
+    color: white;
+    text-align: center;
+    margin-top: 50px;
+  }
 
-    h1 {
-      color: #00f7ff;
-      margin-bottom: 10px;
-    }
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+  }
 
-    input {
-      padding: 8px;
-      margin: 5px;
-      font-size: 16px;
-    }
+  button {
+    padding: 14px 32px;
+    margin: 12px;
+    font-size: 18px;
+    border-radius: 14px;
+    border: 2px solid #00f7ff;
+    background: #05050a;
+    color: #00f7ff;
+    cursor: pointer;
+    box-shadow:
+      0 0 8px #00f7ff,
+      0 0 16px #00f7ff,
+      inset 0 0 8px rgba(0,247,255,0.4);
+    transition: 0.2s ease;
+  }
 
-    button {
-      padding: 12px 26px;
-      margin: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 14px;
-      background: #05050a;
-      color: #00f7ff;
-      border: 2px solid #00f7ff;
-      box-shadow:
-        0 0 8px #00f7ff,
-        0 0 16px #00f7ff,
-        inset 0 0 8px rgba(0,247,255,0.4);
-      transition: 0.2s ease;
-    }
+  button:hover {
+    transform: scale(1.06);
+    box-shadow:
+      0 0 14px #00f7ff,
+      0 0 28px #00f7ff,
+      inset 0 0 10px rgba(0,247,255,0.6);
+  }
 
-    button:hover {
-      transform: scale(1.06);
-      box-shadow:
-        0 0 14px #00f7ff,
-        0 0 28px #00f7ff,
-        inset 0 0 10px rgba(0,247,255,0.6);
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 20px;
-      display: inline-block;
-      text-align: left;
-      max-width: 500px;
-      width: 100%;
-    }
-
-    li {
-      border: 2px solid #00f7ff;
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-
-    .mode {
-      font-size: 14px;
-      opacity: 0.8;
-      margin-bottom: 15px;
-    }
-  </style>
+  #buttons-container {
+    margin-top: 40px;
+  }
+</style>
 </head>
 
 <body>
 
-<h1>Sandbox Mode</h1>
-<div class="mode" id="mode-label"></div>
+<h1>Sandbox Lobby</h1>
+<p>Everything here is separate from the main site.</p>
 
-<input type="text" id="question" placeholder="Sandbox Question"><br>
-
-<input type="text" id="answer1" placeholder="Answer 1">
-<input type="text" id="answer2" placeholder="Answer 2">
-<input type="text" id="answer3" placeholder="Answer 3">
-<input type="text" id="answer4" placeholder="Answer 4"><br>
-
-<input type="number" id="correct" placeholder="Correct answer (1-4)" min="1" max="4"><br>
-
-<button id="add-btn">Add Question</button>
-<button id="clear-btn">Clear Sandbox</button>
-<button id="back-btn">Back</button>
-
-<ul id="questions-list"></ul>
+<div id="buttons-container">
+  <button id="sandbox-play-btn">Play Quiz</button>
+  <button id="sandbox-create-btn">Create Quiz</button>
+  <button id="sandbox-my-quizzes-btn">My Quizzes</button>
+  <button id="sandbox-settings-btn">Settings</button>
+</div>
 
 <script>
-/* 🔑 Detect mode */
-const params = new URLSearchParams(window.location.search);
-const sandboxMode = params.get("mode") || "unknown";
+  // Use a separate key prefix to sandbox data
+  const SANDBOX_PREFIX = "sandbox_";
 
-/* 🔒 Sandbox-only storage key */
-const SANDBOX_KEY = `sandbox_${sandboxMode}_questions`;
-
-/* UI */
-document.getElementById("mode-label").textContent =
-  sandboxMode === "multiplayer"
-    ? "Multiplayer Sandbox (isolated)"
-    : sandboxMode === "online"
-    ? "Online Sandbox (isolated)"
-    : "Sandbox (isolated)";
-
-/* Always start clean */
-sessionStorage.removeItem(SANDBOX_KEY);
-
-let questions = [];
-
-/* Elements */
-const qInput = document.getElementById("question");
-const a1Input = document.getElementById("answer1");
-const a2Input = document.getElementById("answer2");
-const a3Input = document.getElementById("answer3");
-const a4Input = document.getElementById("answer4");
-const correctInput = document.getElementById("correct");
-const list = document.getElementById("questions-list");
-
-function updateList() {
-  list.innerHTML = "";
-  questions.forEach((q, i) => {
-    const li = document.createElement("li");
-    li.textContent = `${i + 1}. ${q.q} (Correct: ${q.answers[q.correct]})`;
-    list.appendChild(li);
+  // Example navigation logic
+  document.getElementById("sandbox-play-btn").addEventListener("click", () => {
+    // Could go to sandbox game page (separate from main)
+    window.location.href = "sandbox-game.html"; 
   });
-}
 
-/* Add sandbox question */
-document.getElementById("add-btn").addEventListener("click", () => {
-  const q = qInput.value.trim();
-  const answers = [
-    a1Input.value.trim(),
-    a2Input.value.trim(),
-    a3Input.value.trim(),
-    a4Input.value.trim()
-  ];
-  const correct = parseInt(correctInput.value) - 1;
+  document.getElementById("sandbox-create-btn").addEventListener("click", () => {
+    // Could go to sandbox create page
+    window.location.href = "sandbox-create.html"; 
+  });
 
-  if (!q || answers.some(a => !a) || isNaN(correct) || correct < 0 || correct > 3) {
-    alert("Fill all sandbox fields correctly!");
-    return;
-  }
+  document.getElementById("sandbox-my-quizzes-btn").addEventListener("click", () => {
+    window.location.href = "sandbox-my-quizzes.html"; 
+  });
 
-  questions.push({ q, answers, correct });
-  sessionStorage.setItem(SANDBOX_KEY, JSON.stringify(questions));
-  updateList();
+  document.getElementById("sandbox-settings-btn").addEventListener("click", () => {
+    alert("Sandbox settings coming soon!");
+  });
 
-  qInput.value = a1Input.value = a2Input.value =
-  a3Input.value = a4Input.value = correctInput.value = "";
-});
-
-/* Clear sandbox only */
-document.getElementById("clear-btn").addEventListener("click", () => {
-  questions = [];
-  sessionStorage.removeItem(SANDBOX_KEY);
-  updateList();
-});
-
-/* Back navigation */
-document.getElementById("back-btn").addEventListener("click", () => {
-  window.history.back();
-});
+  // Example: You can store data safely here
+  // e.g., sessionStorage.setItem(SANDBOX_PREFIX + "currentQuiz", JSON.stringify([]));
 </script>
 
 </body>
