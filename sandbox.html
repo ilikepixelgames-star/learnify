@@ -45,7 +45,6 @@ input {
 #questions-list {
   margin-top: 20px;
   text-align: left;
-  display: inline-block;
 }
 
 li { margin-bottom: 5px; }
@@ -62,16 +61,16 @@ button {
   box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff;
   transition: 0.2s ease;
 }
-button:hover { transform: scale(1.06); }
+
+button:hover {
+  transform: scale(1.06);
+}
 
 button.archive {
   color:#ff004c;
   border-color:#ff004c;
   box-shadow:0 0 8px #ff004c,0 0 16px #ff004c;
 }
-
-h1 { margin-bottom: 10px; }
-p { opacity: 0.85; }
 </style>
 </head>
 
@@ -79,7 +78,7 @@ p { opacity: 0.85; }
 
 <div class="container">
 
-<!-- LEFT -->
+<!-- LEFT: SANDBOX CREATE -->
 <div class="left">
   <h1>Sandbox Multiplayer</h1>
 
@@ -97,12 +96,12 @@ p { opacity: 0.85; }
   <button id="save-btn">Save Quiz</button>
   <button id="my-quizzes-btn">My Quizzes</button>
   <button id="archive-btn" class="archive">Archive Current Quiz</button>
-  <button id="back-lobby-btn">Back to Lobby</button>
+  <button id="reset-lobby-btn">Reset Lobby</button>
 
   <ul id="questions-list"></ul>
 </div>
 
-<!-- RIGHT -->
+<!-- RIGHT: MULTIPLAYER LOBBY -->
 <div class="right">
   <h1>Multiplayer Lobby</h1>
   <p id="lobby-status">Idle</p>
@@ -117,7 +116,7 @@ p { opacity: 0.85; }
 <script>
 const q = id => document.getElementById(id);
 
-/* ===== Quiz Creation ===== */
+/* ===== SANDBOX QUIZ ===== */
 let questions = JSON.parse(sessionStorage.getItem("sandboxQuiz") || "[]");
 
 function updateList(){
@@ -145,55 +144,58 @@ q("add-btn").onclick=()=>{
 };
 
 q("save-btn").onclick=()=>{
-  if(questions.length === 0){
+  if(!questions.length){
     alert("No questions to save!");
     return;
   }
-  const name = q("quiz-name").value || "Untitled Quiz";
-  const all = JSON.parse(localStorage.getItem("sandboxQuizzes") || "[]");
-  all.push({ name, questions });
-  localStorage.setItem("sandboxQuizzes", JSON.stringify(all));
+  const name=q("quiz-name").value||"Untitled Quiz";
+  const all=JSON.parse(localStorage.getItem("sandboxQuizzes")||"[]");
+  all.push({name,questions});
+  localStorage.setItem("sandboxQuizzes",JSON.stringify(all));
   alert("Quiz saved!");
 };
 
 q("archive-btn").onclick=()=>{
   sessionStorage.removeItem("sandboxQuiz");
-  questions = [];
+  questions=[];
   updateList();
-  alert("Current quiz archived");
+  alert("Quiz archived");
 };
 
 q("my-quizzes-btn").onclick=()=>{
-  location.href = "sandbox-my-quizzes.html";
+  location.href="sandbox-my-quizzes.html";
 };
 
-q("back-lobby-btn").onclick=()=>{
+/* ===== RESET LOBBY (FULLY FUNCTIONAL) ===== */
+q("reset-lobby-btn").onclick=()=>{
   sessionStorage.removeItem("sandboxHost");
   sessionStorage.removeItem("sandboxPlayers");
-  q("lobby-status").textContent = "Idle";
+  sessionStorage.removeItem("sandboxSelectedQuiz");
+  q("lobby-status").textContent="Idle";
+  alert("Lobby reset. Ready for a new game.");
 };
 
-/* ===== Multiplayer ===== */
+/* ===== MULTIPLAYER ===== */
 q("host-btn").onclick=()=>{
-  const quiz = sessionStorage.getItem("sandboxSelectedQuiz");
+  const quiz=sessionStorage.getItem("sandboxSelectedQuiz");
   if(!quiz){
     alert("Select a quiz in My Quizzes first!");
     return;
   }
-  sessionStorage.setItem("sandboxHost", "true");
-  sessionStorage.setItem("sandboxPlayers", JSON.stringify(["You (Host)"]));
-  q("lobby-status").textContent = "Hosting game";
+  sessionStorage.setItem("sandboxHost","true");
+  sessionStorage.setItem("sandboxPlayers",JSON.stringify(["You (Host)"]));
+  q("lobby-status").textContent="Hosting game";
 };
 
 q("join-btn").onclick=()=>{
-  let players = JSON.parse(sessionStorage.getItem("sandboxPlayers") || "[]");
+  let players=JSON.parse(sessionStorage.getItem("sandboxPlayers")||"[]");
   players.push("Guest Player");
-  sessionStorage.setItem("sandboxPlayers", JSON.stringify(players));
-  q("lobby-status").textContent = "Joined game";
+  sessionStorage.setItem("sandboxPlayers",JSON.stringify(players));
+  q("lobby-status").textContent="Joined game";
 };
 
 q("players-btn").onclick=()=>{
-  const players = JSON.parse(sessionStorage.getItem("sandboxPlayers") || "[]");
+  const players=JSON.parse(sessionStorage.getItem("sandboxPlayers")||"[]");
   alert(players.length ? players.join("\n") : "No players yet");
 };
 
