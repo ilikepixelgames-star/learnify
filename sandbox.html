@@ -62,9 +62,7 @@ button {
   transition: 0.2s ease;
 }
 
-button:hover {
-  transform: scale(1.06);
-}
+button:hover { transform: scale(1.06); }
 
 button.archive {
   color:#ff004c;
@@ -78,7 +76,7 @@ button.archive {
 
 <div class="container">
 
-<!-- LEFT: SANDBOX CREATE -->
+<!-- LEFT -->
 <div class="left">
   <h1>Sandbox Multiplayer</h1>
 
@@ -97,11 +95,12 @@ button.archive {
   <button id="my-quizzes-btn">My Quizzes</button>
   <button id="archive-btn" class="archive">Archive Current Quiz</button>
   <button id="reset-lobby-btn">Reset Lobby</button>
+  <button id="back-lobby-btn">Back to Lobby</button>
 
   <ul id="questions-list"></ul>
 </div>
 
-<!-- RIGHT: MULTIPLAYER LOBBY -->
+<!-- RIGHT -->
 <div class="right">
   <h1>Multiplayer Lobby</h1>
   <p id="lobby-status">Idle</p>
@@ -166,13 +165,21 @@ q("my-quizzes-btn").onclick=()=>{
   location.href="sandbox-my-quizzes.html";
 };
 
-/* ===== RESET LOBBY (FULLY FUNCTIONAL) ===== */
+/* ===== RESET LOBBY ===== */
 q("reset-lobby-btn").onclick=()=>{
   sessionStorage.removeItem("sandboxHost");
   sessionStorage.removeItem("sandboxPlayers");
   sessionStorage.removeItem("sandboxSelectedQuiz");
   q("lobby-status").textContent="Idle";
-  alert("Lobby reset. Ready for a new game.");
+  alert("Lobby reset.");
+};
+
+/* ===== BACK TO LOBBY (FULLY FUNCTIONAL) ===== */
+q("back-lobby-btn").onclick=()=>{
+  sessionStorage.removeItem("sandboxHost");
+  sessionStorage.removeItem("sandboxPlayers");
+  sessionStorage.removeItem("sandboxSelectedQuiz");
+  location.href="lobby.html"; // 🔁 CHANGE if your lobby file name is different
 };
 
 /* ===== MULTIPLAYER ===== */
