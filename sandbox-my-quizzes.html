@@ -82,16 +82,17 @@ button.delete {
 
 <script>
 const STORAGE_KEY = "sandboxQuizzes";
+const SELECTED_KEY = "sandboxSelectedQuiz";
 
 let quizzes = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 let selectedIndex = null;
 
 const list = document.getElementById("quizzes-list");
 
-function render(){
+function render() {
   list.innerHTML = "";
 
-  if(quizzes.length === 0){
+  if (quizzes.length === 0) {
     const li = document.createElement("li");
     li.textContent = "No quizzes yet!";
     li.style.cursor = "default";
@@ -102,7 +103,7 @@ function render(){
   quizzes.forEach((quiz, i) => {
     const li = document.createElement("li");
     li.textContent = `${quiz.name} (${quiz.questions.length} questions)`;
-    if(i === selectedIndex) li.classList.add("selected");
+    if (i === selectedIndex) li.classList.add("selected");
     li.onclick = () => {
       selectedIndex = i;
       render();
@@ -111,31 +112,35 @@ function render(){
   });
 }
 
-// Back to sandbox create page
+// Back to create page
 document.getElementById("back-btn").onclick = () => {
   location.href = "sandbox.html";
 };
 
-// Use quiz for multiplayer game
+// Use quiz and GO BACK automatically
 document.getElementById("use-btn").onclick = () => {
-  if(selectedIndex === null){
+  if (selectedIndex === null) {
     alert("Select a quiz first!");
     return;
   }
+
   sessionStorage.setItem(
-    "sandboxSelectedQuiz",
+    SELECTED_KEY,
     JSON.stringify(quizzes[selectedIndex])
   );
-  alert("Quiz selected for multiplayer!");
+
+  alert("Quiz selected! Returning to create page...");
+  location.href = "sandbox.html";
 };
 
-// Delete selected quiz
+// Delete quiz
 document.getElementById("delete-btn").onclick = () => {
-  if(selectedIndex === null){
+  if (selectedIndex === null) {
     alert("Select a quiz to delete!");
     return;
   }
-  if(confirm("Delete this quiz?")){
+
+  if (confirm("Delete this quiz?")) {
     quizzes.splice(selectedIndex, 1);
     selectedIndex = null;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(quizzes));
