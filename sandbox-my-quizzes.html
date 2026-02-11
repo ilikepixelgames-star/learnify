@@ -19,23 +19,23 @@ body {
   text-align: left;
   display: inline-block;
 }
-li { margin-bottom: 5px; }
+li { margin-bottom: 10px; }
 
 button {
-  padding: 12px 26px;
-  margin: 8px;
-  font-size: 16px;
+  padding: 10px 22px;
+  margin: 5px;
+  font-size: 15px;
   cursor: pointer;
-  border-radius: 14px;
+  border-radius: 12px;
   background: #05050a;
   color: #00f7ff;
   border: 2px solid #00f7ff;
-  box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff, inset 0 0 8px rgba(0,247,255,0.4);
+  box-shadow: 0 0 6px #00f7ff, 0 0 12px #00f7ff, inset 0 0 6px rgba(0,247,255,0.4);
   transition: 0.2s ease;
 }
 button:hover {
-  transform: scale(1.06);
-  box-shadow: 0 0 14px #00f7ff, 0 0 28px #00f7ff, inset 0 0 10px rgba(0,247,255,0.6);
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #00f7ff, 0 0 20px #00f7ff, inset 0 0 8px rgba(0,247,255,0.5);
 }
 </style>
 </head>
@@ -49,14 +49,18 @@ button:hover {
 <button id="back-create-btn">Back to Create</button>
 
 <script>
+// Use localStorage key for sandbox quizzes
+const MY_QUIZZES_KEY = "sandboxMyQuizzes";
+
 const listEl = document.getElementById("my-quizzes-list");
 const backBtn = document.getElementById("back-create-btn");
 
-// Load saved sandbox quizzes from localStorage
-const savedQuizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
+// Load saved sandbox quizzes or empty object
+const savedQuizzes = JSON.parse(localStorage.getItem(MY_QUIZZES_KEY) || "{}");
 
 function updateList() {
   listEl.innerHTML = "";
+
   if(Object.keys(savedQuizzes).length === 0){
     listEl.innerHTML = "<li>No quizzes yet!</li>";
   } else {
@@ -78,8 +82,8 @@ function updateList() {
       delBtn.onclick = () => {
         if(confirm(`Delete "${name}"?`)){
           delete savedQuizzes[name];
-          localStorage.setItem("myQuizzes", JSON.stringify(savedQuizzes));
-          li.remove();
+          localStorage.setItem(MY_QUIZZES_KEY, JSON.stringify(savedQuizzes));
+          updateList();
         }
       };
 
@@ -91,10 +95,8 @@ function updateList() {
   }
 }
 
-// Back to Create button
-backBtn.onclick = () => {
-  location.href = "sandbox.html"; // Go back to sandbox lobby
-};
+// Back to sandbox create page
+backBtn.onclick = () => location.href = "sandbox.html";
 
 updateList();
 </script>
