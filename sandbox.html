@@ -99,35 +99,16 @@ p { opacity: 0.85; }
 
     <button id="add-btn">Add Question</button>
     <button id="save-btn">Save Quiz</button>
-    <button id="play-btn">Play Current Quiz</button>
-    <button id="my-quizzes-btn">My Quizzes</button>
     <button id="archive-btn" class="archive">Archive Current Quiz</button>
-    <button id="back-lobby-btn">Back to Lobby</button>
 
     <ul id="questions-list"></ul>
-
-    <!-- ✅ My Quizzes section -->
-    <div id="my-quizzes-section" style="display:none;">
-      <h2>My Sandbox Quizzes</h2>
-      <ul id="my-quizzes-list"></ul>
-      <button id="my-quizzes-back-btn">Back to Create</button>
-    </div>
   </div>
 
-  <!-- RIGHT: Multiplayer Lobby -->
+  <!-- RIGHT: My Quizzes -->
   <div class="right">
-    <h1>Multiplayer Lobby</h1>
-    <p>Host or Join a Game</p>
-
-    <button id="host-btn">Host Game</button><br>
-    <button id="join-btn">Join Game</button><br>
-    <button id="players-btn">Players Joined</button><br>
-    <button id="play-quiz-btn">Play Quiz</button><br>
-
-    <h2>Leaderboard</h2>
-    <ul id="leaderboard-list">
-      <li>No players yet</li>
-    </ul>
+    <h1>My Quizzes</h1>
+    <ul id="my-quizzes-list"></ul>
+    <button id="back-create-btn">Back to Create</button>
   </div>
 
 </div>
@@ -135,158 +116,94 @@ p { opacity: 0.85; }
 <script>
 const q = id => document.getElementById(id);
 
-/* ===== LEFT: Sandbox Create Quiz ===== */
+/* ======= LEFT: Sandbox Create Quiz ======= */
 let questions = JSON.parse(sessionStorage.getItem("sandboxQuiz") || "[]");
 
 function updateList() {
   q("questions-list").innerHTML = "";
   questions.forEach((x,i)=>{
-    const li = document.createElement("li");
-    li.textContent = `${i+1}. ${x.q}`;
+    const li=document.createElement("li");
+    li.textContent=`${i+1}. ${x.q}`;
     q("questions-list").appendChild(li);
   });
 }
 
-q("add-btn").onclick = ()=>{
-  const question = q("question").value.trim();
-  const answers = [
+q("add-btn").onclick=()=>{
+  const question=q("question").value.trim();
+  const answers=[
     q("answer1").value.trim(),
     q("answer2").value.trim(),
     q("answer3").value.trim(),
     q("answer4").value.trim()
   ];
-  const correct = parseInt(q("correct").value)-1;
+  const correct=parseInt(q("correct").value)-1;
 
   if(!question||answers.some(a=>!a)||correct<0||correct>3){
     alert("Fill all fields correctly");
     return;
   }
 
-  questions.push({q:question, answers, correct});
-  sessionStorage.setItem("sandboxQuiz", JSON.stringify(questions));
+  questions.push({q:question,answers,correct});
+  sessionStorage.setItem("sandboxQuiz",JSON.stringify(questions));
   updateList();
 
-  q("question").value = "";
-  q("answer1").value = "";
-  q("answer2").value = "";
-  q("answer3").value = "";
-  q("answer4").value = "";
-  q("correct").value = "";
+  q("question").value="";
+  q("answer1").value="";
+  q("answer2").value="";
+  q("answer3").value="";
+  q("answer4").value="";
+  q("correct").value="";
 };
 
-q("save-btn").onclick = ()=>alert("Saved! (sandbox)");
-q("archive-btn").onclick = ()=>alert("Archived! (sandbox)");
-q("play-btn").onclick = ()=>alert("Play Current Quiz clicked (sandbox)");
-q("back-lobby-btn").onclick = ()=>location.href="lobby.html";
+q("save-btn").onclick=()=>alert("Saved! (sandbox)");
+q("archive-btn").onclick=()=>alert("Archived! (sandbox)");
 
-/* ===== My Quizzes Functionality ===== */
-q("my-quizzes-btn").onclick = ()=>{
-  q("questions-list").style.display = "none";
-  q("add-btn").style.display = "none";
-  q("save-btn").style.display = "none";
-  q("archive-btn").style.display = "none";
-  q("play-btn").style.display = "none";
-  q("my-quizzes-btn").style.display = "none";
-  q("back-lobby-btn").style.display = "none";
+/* ======= RIGHT: My Quizzes ======= */
+const MY_QUIZZES_KEY = "sandboxMyQuizzes";
+const myQuizzesList = q("my-quizzes-list");
+const backBtn = q("back-create-btn");
 
-  q("my-quizzes-section").style.display = "block";
+// Load saved quizzes (empty at first)
+let savedQuizzes = JSON.parse(localStorage.getItem(MY_QUIZZES_KEY) || "{}");
 
-  const savedQuizzes = JSON.parse(localStorage.getItem("myQuizzes")||"{}");
-  const listEl = q("my-quizzes-list");
-  listEl.innerHTML = "";
-
-  if(Object.keys(savedQuizzes).length===0){
-    listEl.innerHTML="<li>No quizzes yet!</li>";
+function updateMyQuizzesList() {
+  myQuizzesList.innerHTML = "";
+  if(Object.keys(savedQuizzes).length === 0){
+    myQuizzesList.innerHTML = "<li>No quizzes yet!</li>";
   } else {
-    Object.keys(savedQuizzes).forEach(name=>{
+    Object.keys(savedQuizzes).forEach(name => {
       const li = document.createElement("li");
       li.textContent = name;
 
       const useBtn = document.createElement("button");
-      useBtn.textContent="Use Quiz to Play";
-      useBtn.onclick=()=>{
+      useBtn.textContent = "Use Quiz to Play";
+      useBtn.onclick = () => {
         sessionStorage.setItem("currentPlayQuiz", JSON.stringify(savedQuizzes[name]));
         alert(`"${name}" selected for multiplayer!`);
       };
 
       const delBtn = document.createElement("button");
-      delBtn.textContent="Delete";
-      delBtn.onclick=()=>{
+      delBtn.textContent = "Delete";
+      delBtn.onclick = () => {
         if(confirm(`Delete "${name}"?`)){
           delete savedQuizzes[name];
-          localStorage.setItem("myQuizzes", JSON.stringify(savedQuizzes));
-          li.remove();
+          localStorage.setItem(MY_QUIZZES_KEY, JSON.stringify(savedQuizzes));
+          updateMyQuizzesList();
         }
       };
 
       li.appendChild(document.createElement("br"));
       li.appendChild(useBtn);
       li.appendChild(delBtn);
-      listEl.appendChild(li);
+      myQuizzesList.appendChild(li);
     });
   }
-};
-
-q("my-quizzes-back-btn").onclick = ()=>{
-  q("questions-list").style.display = "block";
-  q("add-btn").style.display = "inline-block";
-  q("save-btn").style.display = "inline-block";
-  q("archive-btn").style.display = "inline-block";
-  q("play-btn").style.display = "inline-block";
-  q("my-quizzes-btn").style.display = "inline-block";
-  q("back-lobby-btn").style.display = "inline-block";
-  q("my-quizzes-section").style.display = "none";
-};
-
-/* ===== RIGHT: Multiplayer Lobby ===== */
-let leaderboard = {};
-
-function updateLeaderboard(){
-  const listEl = q("leaderboard-list");
-  listEl.innerHTML="";
-  if(Object.keys(leaderboard).length===0){
-    listEl.innerHTML="<li>No players yet</li>";
-    return;
-  }
-  Object.entries(leaderboard).forEach(([name, points])=>{
-    const li=document.createElement("li");
-    li.textContent=`${name}: ${points} pts`;
-    listEl.appendChild(li);
-  });
 }
 
-q("host-btn").onclick = ()=>{
-  const quiz = JSON.parse(sessionStorage.getItem("currentPlayQuiz") || "[]");
-  if(quiz.length===0){
-    alert("Select a quiz first from My Quizzes!");
-    return;
-  }
-  leaderboard = {};
-  alert("Game hosted! Leaderboard reset.");
-  updateLeaderboard();
-};
-
-q("join-btn").onclick = ()=>{
-  const playerName = prompt("Enter your player name:");
-  if(!playerName) return;
-  if(leaderboard[playerName]) { alert("Name taken!"); return; }
-  leaderboard[playerName]=0;
-  updateLeaderboard();
-};
-
-q("players-btn").onclick = ()=>alert("Players Joined:\n" + Object.keys(leaderboard).join("\n"));
-
-q("play-quiz-btn").onclick = ()=>{
-  const quiz = JSON.parse(sessionStorage.getItem("currentPlayQuiz")||"[]");
-  if(quiz.length===0){ alert("Select a quiz first from My Quizzes!"); return; }
-  // Demo: randomly add points to each player
-  Object.keys(leaderboard).forEach(p=>leaderboard[p]+=Math.floor(Math.random()*2));
-  alert("Quiz played! Points awarded.");
-  updateLeaderboard();
-};
+backBtn.onclick = () => alert("Back to Create clicked!");
 
 updateList();
-updateLeaderboard();
+updateMyQuizzesList();
 </script>
 
 </body>
