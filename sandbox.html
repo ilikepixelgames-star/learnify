@@ -27,7 +27,6 @@ body{
   padding:20px;
   min-width:320px;
   box-shadow:0 0 12px #00f7ff;
-  transition:0.3s;
 }
 
 button{
@@ -61,7 +60,7 @@ input{
 
 <div class="container">
 
-<!-- CREATE PANEL -->
+<!-- CREATE QUIZ PANEL -->
 <div class="panel" id="createPanel">
 <h3>Create Quiz</h3>
 
@@ -99,7 +98,7 @@ input{
 <button onclick="joinGame()">Join Game</button><br>
 <button onclick="showPlayers()">Players Joined</button><br>
 <button onclick="startGame()">Start Game</button><br>
-<button id="backLobbyBtn">Back to Lobby</button>
+<button onclick="backToLobby()">Back to Lobby</button>
 </div>
 
 <div id="gameView" style="display:none;">
@@ -119,7 +118,7 @@ let lobby = null;
 let currentQuestionIndex = 0;
 let score = 0;
 
-/* CREATE QUIZ */
+/* -------- CREATE QUIZ -------- */
 function addQuestion(){
   const q = question.value.trim();
   const answers = [a1.value,a2.value,a3.value,a4.value];
@@ -149,7 +148,7 @@ function saveQuiz(){
   alert("Saved!");
 }
 
-/* MY QUIZZES */
+/* -------- MY QUIZZES -------- */
 function showMyQuizzes(){
   createPanel.style.display="none";
   myQuizPanel.style.display="block";
@@ -188,7 +187,7 @@ function deleteQuiz(){
   } else { alert("Quiz not found."); }
 }
 
-/* MULTIPLAYER */
+/* -------- MULTIPLAYER -------- */
 function hostGame(){
   if(questions.length===0){ alert("Create a quiz first!"); return; }
   lobby={players:["Host"]};
@@ -208,7 +207,7 @@ function showPlayers(){
   alert("Players:\n"+lobby.players.join("\n"));
 }
 
-/* GAME */
+/* -------- GAME -------- */
 function startGame(){
   if(!lobby){ alert("Host first!"); return; }
   currentQuestionIndex=0; score=0;
@@ -241,34 +240,29 @@ function showQuestion(){
   });
 }
 
-/* FULLY FUNCTIONAL BACK TO LOBBY */
-const backLobbyBtn = document.getElementById("backLobbyBtn");
-backLobbyBtn.onclick = () => {
-  // Reset game
+/* -------- FULLY FUNCTIONAL BACK TO LOBBY -------- */
+function backToLobby(){
+  // Reset game state
   currentQuestionIndex=0;
   score=0;
   gameQuestion.textContent="";
   answers.innerHTML="";
   scoreDisplay.textContent="";
 
-  // Reset lobby
+  // Reset lobby state
   lobby=null;
   lobbyStatus.textContent="Status: No Active Game";
 
-  // Show Lobby view
+  // Show lobby view
   lobbyView.style.display="block";
   gameView.style.display="none";
+}
 
-  // Visual flash
-  multiPanel.classList.add("flash");
-  setTimeout(()=>multiPanel.classList.remove("flash"),300);
-};
-
-/* RESET EVERYTHING */
+/* -------- RESET EVERYTHING -------- */
 function resetEverything(){
-  questions=[]; lobby=null;
+  questions=[]; 
+  backToLobby(); // reset multiplayer
   updateQuestionList();
-  backLobbyBtn.onclick(); // reuse fully working back-to-lobby
 }
 </script>
 
