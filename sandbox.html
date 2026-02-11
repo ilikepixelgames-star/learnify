@@ -26,12 +26,12 @@ body {
   padding: 20px;
 }
 
-.left, .right {
+.left, .right, .far-right {
   background: #0b0b12;
   border: 2px solid #00f7ff;
   border-radius: 16px;
   padding: 20px;
-  min-width: 350px;
+  min-width: 300px;
   box-shadow: 0 0 12px #00f7ff, 0 0 24px #00f7ff;
 }
 
@@ -46,32 +46,47 @@ input {
   margin-top: 20px;
   text-align: left;
   display: inline-block;
+  width: 100%;
 }
 
-li { margin-bottom: 5px; }
+li {
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #05050a;
+  padding: 6px 10px;
+  border: 2px solid #00f7ff;
+  border-radius: 12px;
+  box-shadow: 0 0 6px #00f7ff, 0 0 12px #00f7ff, inset 0 0 6px rgba(0,247,255,0.4);
+}
 
 button {
-  padding: 12px 26px;
-  margin: 8px;
-  font-size: 16px;
+  padding: 8px 18px;
+  margin: 4px;
+  font-size: 14px;
   cursor: pointer;
-  border-radius: 14px;
+  border-radius: 12px;
   background: #05050a;
   color: #00f7ff;
   border: 2px solid #00f7ff;
-  box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff, inset 0 0 8px rgba(0,247,255,0.4);
+  box-shadow: 0 0 6px #00f7ff, 0 0 12px #00f7ff, inset 0 0 6px rgba(0,247,255,0.4);
   transition: 0.2s ease;
 }
 
 button:hover {
-  transform: scale(1.06);
-  box-shadow: 0 0 14px #00f7ff, 0 0 28px #00f7ff, inset 0 0 10px rgba(0,247,255,0.6);
+  transform: scale(1.05);
+  box-shadow: 0 0 12px #00f7ff, 0 0 24px #00f7ff, inset 0 0 8px rgba(0,247,255,0.6);
 }
 
 button.archive {
   color:#ff004c;
   border-color:#ff004c;
-  box-shadow:0 0 8px #ff004c,0 0 16px #ff004c, inset 0 0 8px rgba(255,0,76,0.4);
+  box-shadow: 0 0 6px #ff004c,0 0 12px #ff004c,inset 0 0 6px rgba(255,0,76,0.4);
+}
+
+button.archive:hover {
+  box-shadow: 0 0 12px #ff004c,0 0 24px #ff004c,inset 0 0 8px rgba(255,0,76,0.6);
 }
 
 h1 { margin-bottom: 10px; }
@@ -89,25 +104,37 @@ p { opacity: 0.85; }
 
     <input type="text" id="quiz-name" placeholder="Quiz Name"><br>
     <input type="text" id="question" placeholder="Question"><br>
-
     <input type="text" id="answer1" placeholder="Answer 1">
     <input type="text" id="answer2" placeholder="Answer 2">
     <input type="text" id="answer3" placeholder="Answer 3">
     <input type="text" id="answer4" placeholder="Answer 4"><br>
-
     <input type="number" id="correct" placeholder="Correct answer (1-4)" min="1" max="4"><br>
 
     <button id="add-btn">Add Question</button>
     <button id="save-btn">Save Quiz</button>
+    <button id="my-quizzes-btn">My Quizzes</button>
     <button id="archive-btn" class="archive">Archive Current Quiz</button>
 
     <ul id="questions-list"></ul>
   </div>
 
-  <!-- RIGHT: My Quizzes -->
+  <!-- CENTER: Multiplayer Lobby -->
   <div class="right">
-    <h1>My Quizzes</h1>
+    <h1>Multiplayer Lobby</h1>
+    <p>Host or Join a Game</p>
+    <button id="host-btn">Host Game</button><br>
+    <button id="join-btn">Join Game</button><br>
+    <button id="players-btn">Players Joined</button><br>
+    <button id="reset-btn">Reset Lobby</button>
+    <button id="back-lobby-btn">Back to Main Lobby</button>
+  </div>
+
+  <!-- FAR RIGHT: My Quizzes Panel -->
+  <div class="far-right">
+    <h1>My Sandbox Quizzes</h1>
     <ul id="my-quizzes-list"></ul>
+    <button id="use-quiz-btn">Use Quiz to Play</button>
+    <button id="delete-quiz-btn" class="archive">Delete Selected Quiz</button>
     <button id="back-create-btn">Back to Create</button>
   </div>
 
@@ -116,35 +143,35 @@ p { opacity: 0.85; }
 <script>
 const q = id => document.getElementById(id);
 
-/* ======= LEFT: Sandbox Create Quiz ======= */
+/* ====== LEFT: Create Quiz ====== */
 let questions = JSON.parse(sessionStorage.getItem("sandboxQuiz") || "[]");
 
-function updateList() {
-  q("questions-list").innerHTML = "";
+function updateList(){
+  q("questions-list").innerHTML="";
   questions.forEach((x,i)=>{
-    const li=document.createElement("li");
-    li.textContent=`${i+1}. ${x.q}`;
+    const li = document.createElement("li");
+    li.textContent = `${i+1}. ${x.q}`;
     q("questions-list").appendChild(li);
   });
 }
 
-q("add-btn").onclick=()=>{
-  const question=q("question").value.trim();
-  const answers=[
+q("add-btn").onclick = () => {
+  const question = q("question").value.trim();
+  const answers = [
     q("answer1").value.trim(),
     q("answer2").value.trim(),
     q("answer3").value.trim(),
     q("answer4").value.trim()
   ];
-  const correct=parseInt(q("correct").value)-1;
+  const correct = parseInt(q("correct").value)-1;
 
-  if(!question||answers.some(a=>!a)||correct<0||correct>3){
-    alert("Fill all fields correctly");
+  if(!question || answers.some(a=>!a) || correct<0 || correct>3){
+    alert("Fill all fields correctly!");
     return;
   }
 
-  questions.push({q:question,answers,correct});
-  sessionStorage.setItem("sandboxQuiz",JSON.stringify(questions));
+  questions.push({q:question, answers, correct});
+  sessionStorage.setItem("sandboxQuiz", JSON.stringify(questions));
   updateList();
 
   q("question").value="";
@@ -155,55 +182,79 @@ q("add-btn").onclick=()=>{
   q("correct").value="";
 };
 
-q("save-btn").onclick=()=>alert("Saved! (sandbox)");
-q("archive-btn").onclick=()=>alert("Archived! (sandbox)");
+q("save-btn").onclick = () => {
+  const name = q("quiz-name").value || "Untitled Quiz";
+  const saved = JSON.parse(localStorage.getItem("mySandboxQuizzes")||"{}");
+  saved[name] = questions;
+  localStorage.setItem("mySandboxQuizzes", JSON.stringify(saved));
+  alert(`Saved quiz "${name}"!`);
+};
 
-/* ======= RIGHT: My Quizzes ======= */
-const MY_QUIZZES_KEY = "sandboxMyQuizzes";
-const myQuizzesList = q("my-quizzes-list");
-const backBtn = q("back-create-btn");
-
-// Load saved quizzes (empty at first)
-let savedQuizzes = JSON.parse(localStorage.getItem(MY_QUIZZES_KEY) || "{}");
-
-function updateMyQuizzesList() {
-  myQuizzesList.innerHTML = "";
-  if(Object.keys(savedQuizzes).length === 0){
-    myQuizzesList.innerHTML = "<li>No quizzes yet!</li>";
-  } else {
-    Object.keys(savedQuizzes).forEach(name => {
-      const li = document.createElement("li");
-      li.textContent = name;
-
-      const useBtn = document.createElement("button");
-      useBtn.textContent = "Use Quiz to Play";
-      useBtn.onclick = () => {
-        sessionStorage.setItem("currentPlayQuiz", JSON.stringify(savedQuizzes[name]));
-        alert(`"${name}" selected for multiplayer!`);
-      };
-
-      const delBtn = document.createElement("button");
-      delBtn.textContent = "Delete";
-      delBtn.onclick = () => {
-        if(confirm(`Delete "${name}"?`)){
-          delete savedQuizzes[name];
-          localStorage.setItem(MY_QUIZZES_KEY, JSON.stringify(savedQuizzes));
-          updateMyQuizzesList();
-        }
-      };
-
-      li.appendChild(document.createElement("br"));
-      li.appendChild(useBtn);
-      li.appendChild(delBtn);
-      myQuizzesList.appendChild(li);
-    });
-  }
-}
-
-backBtn.onclick = () => alert("Back to Create clicked!");
+q("archive-btn").onclick = () => alert("Archived! (sandbox)");
 
 updateList();
-updateMyQuizzesList();
+
+/* ====== CENTER: Multiplayer Lobby ====== */
+q("host-btn").onclick = () => alert("Host Game clicked!");
+q("join-btn").onclick = () => alert("Join Game clicked!");
+q("players-btn").onclick = () => alert("Players Joined!");
+q("reset-btn").onclick = () => {
+  questions = [];
+  sessionStorage.removeItem("sandboxQuiz");
+  updateList();
+  alert("Lobby reset!");
+};
+q("back-lobby-btn").onclick = () => window.location.href = "lobby.html";
+
+/* ====== FAR RIGHT: My Quizzes ====== */
+function renderMyQuizzes(){
+  const listEl = q("my-quizzes-list");
+  const quizzes = JSON.parse(localStorage.getItem("mySandboxQuizzes") || "{}");
+  listEl.innerHTML = "";
+  const names = Object.keys(quizzes);
+  if(names.length === 0){
+    const li = document.createElement("li");
+    li.textContent = "No quizzes yet!";
+    listEl.appendChild(li);
+    return;
+  }
+  names.forEach(name=>{
+    const li = document.createElement("li");
+    li.textContent = name;
+    li.dataset.quizName = name;
+    li.onclick = () => {
+      Array.from(listEl.children).forEach(c=>c.style.background="");
+      li.style.background="#002b33";
+      li.style.borderColor="#00f7ff";
+      q("use-quiz-btn").dataset.quizName = name;
+      q("delete-quiz-btn").dataset.quizName = name;
+    };
+    listEl.appendChild(li);
+  });
+}
+
+q("use-quiz-btn").onclick = () => {
+  const name = q("use-quiz-btn").dataset.quizName;
+  if(!name){ alert("Select a quiz first!"); return; }
+  const quizzes = JSON.parse(localStorage.getItem("mySandboxQuizzes") || "{}");
+  sessionStorage.setItem("sandboxCurrentQuiz", JSON.stringify(quizzes[name]));
+  alert(`Quiz "${name}" is now selected for multiplayer!`);
+};
+
+q("delete-quiz-btn").onclick = () => {
+  const name = q("delete-quiz-btn").dataset.quizName;
+  if(!name){ alert("Select a quiz first!"); return; }
+  if(confirm(`Delete "${name}"?`)){
+    const quizzes = JSON.parse(localStorage.getItem("mySandboxQuizzes") || "{}");
+    delete quizzes[name];
+    localStorage.setItem("mySandboxQuizzes", JSON.stringify(quizzes));
+    renderMyQuizzes();
+  }
+};
+
+q("back-create-btn").onclick = () => alert("Back to Create clicked (non-functional)");
+
+renderMyQuizzes();
 </script>
 
 </body>
