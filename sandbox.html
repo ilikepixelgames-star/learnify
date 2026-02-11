@@ -17,7 +17,6 @@ body {
   align-items: flex-start;
   min-height: 100vh;
 }
-
 .container {
   display: flex;
   justify-content: center;
@@ -25,7 +24,6 @@ body {
   flex-wrap: wrap;
   padding: 20px;
 }
-
 .left, .far-right, .right {
   background: #0b0b12;
   border: 2px solid #00f7ff;
@@ -34,17 +32,14 @@ body {
   min-width: 350px;
   box-shadow: 0 0 12px #00f7ff, 0 0 24px #00f7ff;
 }
-
 input {
   padding: 8px;
   margin: 5px;
   font-size: 16px;
   width: 90%;
 }
-
 ul { margin-top: 20px; text-align: left; display: inline-block; }
-li { margin-bottom: 5px; }
-
+li { margin-bottom: 5px; cursor:pointer; }
 button {
   padding: 12px 26px;
   margin: 8px;
@@ -72,30 +67,24 @@ p { opacity: 0.85; }
 </head>
 
 <body>
-
 <div class="container">
 
   <!-- LEFT: Sandbox Create Quiz -->
   <div class="left" id="left-panel">
     <h1>Sandbox Multiplayer</h1>
-
     <input type="text" id="quiz-name" placeholder="Quiz Name"><br>
     <input type="text" id="question" placeholder="Question"><br>
-
     <input type="text" id="answer1" placeholder="Answer 1">
     <input type="text" id="answer2" placeholder="Answer 2">
     <input type="text" id="answer3" placeholder="Answer 3">
     <input type="text" id="answer4" placeholder="Answer 4"><br>
-
     <input type="number" id="correct" placeholder="Correct answer (1-4)" min="1" max="4"><br>
-
     <button id="add-btn">Add Question</button>
     <button id="save-btn">Save Quiz</button>
     <button id="my-quizzes-btn">My Quizzes</button>
     <button id="archive-btn" class="archive">Archive Current Quiz</button>
     <button id="reset-btn">Reset Lobby</button>
     <button id="back-lobby-btn">Back to Lobby</button>
-
     <ul id="questions-list"></ul>
   </div>
 
@@ -114,10 +103,10 @@ p { opacity: 0.85; }
   <div class="right">
     <h1>Multiplayer Lobby</h1>
     <p>Host or Join a Game</p>
-
     <button id="host-btn">Host Game</button><br>
     <button id="join-btn">Join Game</button><br>
     <button id="players-btn">Players Joined</button><br>
+    <ul id="lobby-players-list"></ul>
   </div>
 
 </div>
@@ -157,13 +146,13 @@ q("save-btn").onclick=()=>{
 };
 
 q("archive-btn").onclick=()=>alert("Archived! (sandbox)");
-q("reset-btn").onclick=()=>alert("Lobby Reset! (sandbox)");
-
-q("back-lobby-btn").onclick=()=>{
-  alert("Returning to Lobby...");
-  // This can navigate to your lobby.html
-  // location.href="lobby.html";
+q("reset-btn").onclick=()=>{
+  alert("Lobby Reset!");
+  sessionStorage.removeItem("multiplayerLobby");
+  sessionStorage.removeItem("lobbyPlayers");
+  q("lobby-players-list").innerHTML="";
 };
+q("back-lobby-btn").onclick=()=>alert("Back to Lobby clicked");
 
 /* ======= FAR-RIGHT: My Quizzes Panel ======= */
 function renderMyQuizzes(){
@@ -216,10 +205,55 @@ q("delete-quiz-btn").onclick=()=>{
   }
 };
 
-/* ======= RIGHT: Multiplayer Lobby ======= */
-q("host-btn").onclick=()=>alert("Host Game clicked!");
-q("join-btn").onclick=()=>alert("Join Game clicked!");
-q("players-btn").onclick=()=>alert("Players Joined clicked!");
+/* ======= RIGHT: Multiplayer Lobby Functional ======= */
+function getLobby(){
+  return JSON.parse(sessionStorage.getItem("multiplayerLobby")||"{}");
+}
+
+function saveLobby(lobby){
+  sessionStorage.setItem("multiplayerLobby",JSON.stringify(lobby));
+}
+
+function updatePlayersList(){
+  const players=q("lobby-players-list");
+  const lobby=getLobby();
+  players.innerHTML="";
+  if(lobby.players){
+    lobby.players.forEach(p=>{
+      const li=document.createElement("li");
+      li.textContent=p;
+      players.appendChild(li);
+    });
+  }
+}
+
+q("host-btn").onclick=()=>{
+  const selectedQuiz=sessionStorage.getItem("selectedQuiz");
+  if(!selectedQuiz){
+    alert("Select a quiz from My Quizzes first!");
+    return;
+  }
+  const lobby={quiz:selectedQuiz,players:["Host"]};
+  saveLobby(lobby);
+  updatePlayersList();
+  alert(`Lobby hosted for quiz "${selectedQuiz}"`);
+};
+
+q("join-btn").onclick=()=>{
+  const name=prompt("Enter your player name:");
+  if(!name) return;
+  const lobby=getLobby();
+  if(!lobby.quiz){
+    alert("No lobby hosted yet!");
+    return;
+  }
+  lobby.players.push(name);
+  saveLobby(lobby);
+  updatePlayersList();
+  alert(`${name} joined the lobby!`);
+};
+
+q("players-btn").onclick=()=>updatePlayersList();
 
 /* ======= Restore panel on page load ======= */
 window.addEventListener("load",()=>{
@@ -232,9 +266,9 @@ window.addEventListener("load",()=>{
     q("left-panel").style.display="block";
     q("my-quizzes-panel").style.display="none";
   }
+  updateList();
+  updatePlayersList();
 });
-
-updateList();
 </script>
 
 </body>
