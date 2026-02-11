@@ -99,12 +99,14 @@ p { opacity: 0.85; }
 
     <button id="add-btn">Add Question</button>
     <button id="save-btn">Save Quiz</button>
+    <button id="play-btn">Play Current Quiz</button>
     <button id="my-quizzes-btn">My Quizzes</button>
     <button id="archive-btn" class="archive">Archive Current Quiz</button>
+    <button id="back-lobby-btn">Back to Lobby</button>
 
     <ul id="questions-list"></ul>
 
-    <!-- ✅ Restored My Quizzes section -->
+    <!-- ✅ My Quizzes section -->
     <div id="my-quizzes-section" style="display:none;">
       <h2>My Sandbox Quizzes</h2>
       <ul id="my-quizzes-list"></ul>
@@ -174,14 +176,18 @@ q("add-btn").onclick = ()=>{
 
 q("save-btn").onclick = ()=>alert("Saved! (sandbox)");
 q("archive-btn").onclick = ()=>alert("Archived! (sandbox)");
+q("play-btn").onclick = ()=>alert("Play Current Quiz clicked (sandbox)");
+q("back-lobby-btn").onclick = ()=>location.href="lobby.html";
 
-/* ✅ Restored My Quizzes Functionality */
+/* ===== My Quizzes Functionality ===== */
 q("my-quizzes-btn").onclick = ()=>{
   q("questions-list").style.display = "none";
   q("add-btn").style.display = "none";
   q("save-btn").style.display = "none";
   q("archive-btn").style.display = "none";
+  q("play-btn").style.display = "none";
   q("my-quizzes-btn").style.display = "none";
+  q("back-lobby-btn").style.display = "none";
 
   q("my-quizzes-section").style.display = "block";
 
@@ -226,7 +232,9 @@ q("my-quizzes-back-btn").onclick = ()=>{
   q("add-btn").style.display = "inline-block";
   q("save-btn").style.display = "inline-block";
   q("archive-btn").style.display = "inline-block";
+  q("play-btn").style.display = "inline-block";
   q("my-quizzes-btn").style.display = "inline-block";
+  q("back-lobby-btn").style.display = "inline-block";
   q("my-quizzes-section").style.display = "none";
 };
 
