@@ -42,7 +42,7 @@ input {
   width: 90%;
 }
 
-#questions-list, #my-quizzes-list, #game-questions-list {
+#questions-list, #my-quizzes-list {
   margin-top: 20px;
   text-align: left;
   display: inline-block;
@@ -104,7 +104,7 @@ p { opacity: 0.85; }
 
     <ul id="questions-list"></ul>
 
-    <!-- My Quizzes section -->
+    <!-- ✅ Restored My Quizzes section -->
     <div id="my-quizzes-section" style="display:none;">
       <h2>My Sandbox Quizzes</h2>
       <ul id="my-quizzes-list"></ul>
@@ -175,7 +175,7 @@ q("add-btn").onclick = ()=>{
 q("save-btn").onclick = ()=>alert("Saved! (sandbox)");
 q("archive-btn").onclick = ()=>alert("Archived! (sandbox)");
 
-/* My Quizzes Section */
+/* ✅ Restored My Quizzes Functionality */
 q("my-quizzes-btn").onclick = ()=>{
   q("questions-list").style.display = "none";
   q("add-btn").style.display = "none";
@@ -188,6 +188,7 @@ q("my-quizzes-btn").onclick = ()=>{
   const savedQuizzes = JSON.parse(localStorage.getItem("myQuizzes")||"{}");
   const listEl = q("my-quizzes-list");
   listEl.innerHTML = "";
+
   if(Object.keys(savedQuizzes).length===0){
     listEl.innerHTML="<li>No quizzes yet!</li>";
   } else {
@@ -270,7 +271,7 @@ q("players-btn").onclick = ()=>alert("Players Joined:\n" + Object.keys(leaderboa
 q("play-quiz-btn").onclick = ()=>{
   const quiz = JSON.parse(sessionStorage.getItem("currentPlayQuiz")||"[]");
   if(quiz.length===0){ alert("Select a quiz first from My Quizzes!"); return; }
-  // For demo, randomly assign 1 pt to each player to simulate scoring
+  // Demo: randomly add points to each player
   Object.keys(leaderboard).forEach(p=>leaderboard[p]+=Math.floor(Math.random()*2));
   alert("Quiz played! Points awarded.");
   updateLeaderboard();
