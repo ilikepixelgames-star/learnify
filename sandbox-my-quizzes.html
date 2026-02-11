@@ -2,153 +2,101 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My Quizzes</title>
+<title>Sandbox My Quizzes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
-  font-family: Arial;
-  text-align: center;
-  margin-top: 30px;
+  font-family: Arial, sans-serif;
   background: #0b0b12;
   color: white;
+  text-align: center;
+  margin-top: 30px;
 }
 
-#quizzes-list {
+#my-quizzes-list {
   margin-top: 20px;
-  display: inline-block;
   text-align: left;
-  min-width: 320px;
+  display: inline-block;
 }
-
-li {
-  list-style: none;
-  margin-bottom: 8px;
-  padding: 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  border: 2px solid #00f7ff;
-  color: #00f7ff;
-  background: #05050a;
-  box-shadow: 0 0 8px #00f7ff;
-  transition: 0.2s ease;
-}
-
-li:hover {
-  transform: scale(1.03);
-}
-
-li.selected {
-  background: #00f7ff;
-  color: #05050a;
-}
+li { margin-bottom: 5px; }
 
 button {
   padding: 12px 26px;
-  margin: 12px 6px;
+  margin: 8px;
   font-size: 16px;
   cursor: pointer;
   border-radius: 14px;
   background: #05050a;
   color: #00f7ff;
   border: 2px solid #00f7ff;
-  box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff;
+  box-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff, inset 0 0 8px rgba(0,247,255,0.4);
   transition: 0.2s ease;
 }
-
 button:hover {
   transform: scale(1.06);
-}
-
-button.delete {
-  color: #ff004c;
-  border-color: #ff004c;
-  box-shadow: 0 0 8px #ff004c, 0 0 16px #ff004c;
+  box-shadow: 0 0 14px #00f7ff, 0 0 28px #00f7ff, inset 0 0 10px rgba(0,247,255,0.6);
 }
 </style>
 </head>
 
 <body>
 
-<h1>My Quizzes</h1>
+<h1>My Sandbox Quizzes</h1>
 
-<ul id="quizzes-list"></ul>
+<ul id="my-quizzes-list"></ul>
 
-<div>
-  <button id="back-btn">Back to Create</button>
-  <button id="use-btn">Use Quiz to Play Game</button>
-  <button id="delete-btn" class="delete">Delete Quiz</button>
-</div>
+<button id="back-create-btn">Back to Create</button>
 
 <script>
-const STORAGE_KEY = "sandboxQuizzes";
-const SELECTED_KEY = "sandboxSelectedQuiz";
+const listEl = document.getElementById("my-quizzes-list");
+const backBtn = document.getElementById("back-create-btn");
 
-let quizzes = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-let selectedIndex = null;
+// Load saved sandbox quizzes from localStorage
+const savedQuizzes = JSON.parse(localStorage.getItem("myQuizzes") || "{}");
 
-const list = document.getElementById("quizzes-list");
+function updateList() {
+  listEl.innerHTML = "";
+  if(Object.keys(savedQuizzes).length === 0){
+    listEl.innerHTML = "<li>No quizzes yet!</li>";
+  } else {
+    Object.keys(savedQuizzes).forEach(name => {
+      const li = document.createElement("li");
+      li.textContent = name;
 
-function render() {
-  list.innerHTML = "";
+      // Use Quiz button
+      const useBtn = document.createElement("button");
+      useBtn.textContent = "Use Quiz to Play";
+      useBtn.onclick = () => {
+        sessionStorage.setItem("currentPlayQuiz", JSON.stringify(savedQuizzes[name]));
+        alert(`"${name}" selected for multiplayer!`);
+      };
 
-  if (quizzes.length === 0) {
-    const li = document.createElement("li");
-    li.textContent = "No quizzes yet!";
-    li.style.cursor = "default";
-    list.appendChild(li);
-    return;
+      // Delete button
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "Delete";
+      delBtn.onclick = () => {
+        if(confirm(`Delete "${name}"?`)){
+          delete savedQuizzes[name];
+          localStorage.setItem("myQuizzes", JSON.stringify(savedQuizzes));
+          li.remove();
+        }
+      };
+
+      li.appendChild(document.createElement("br"));
+      li.appendChild(useBtn);
+      li.appendChild(delBtn);
+      listEl.appendChild(li);
+    });
   }
-
-  quizzes.forEach((quiz, i) => {
-    const li = document.createElement("li");
-    li.textContent = `${quiz.name} (${quiz.questions.length} questions)`;
-    if (i === selectedIndex) li.classList.add("selected");
-    li.onclick = () => {
-      selectedIndex = i;
-      render();
-    };
-    list.appendChild(li);
-  });
 }
 
-// Back to create page
-document.getElementById("back-btn").onclick = () => {
-  location.href = "sandbox.html";
+// Back to Create button
+backBtn.onclick = () => {
+  location.href = "sandbox.html"; // Go back to sandbox lobby
 };
 
-// Use quiz and GO BACK automatically
-document.getElementById("use-btn").onclick = () => {
-  if (selectedIndex === null) {
-    alert("Select a quiz first!");
-    return;
-  }
-
-  sessionStorage.setItem(
-    SELECTED_KEY,
-    JSON.stringify(quizzes[selectedIndex])
-  );
-
-  alert("Quiz selected! Returning to create page...");
-  location.href = "sandbox.html";
-};
-
-// Delete quiz
-document.getElementById("delete-btn").onclick = () => {
-  if (selectedIndex === null) {
-    alert("Select a quiz to delete!");
-    return;
-  }
-
-  if (confirm("Delete this quiz?")) {
-    quizzes.splice(selectedIndex, 1);
-    selectedIndex = null;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(quizzes));
-    render();
-  }
-};
-
-render();
+updateList();
 </script>
 
 </body>
