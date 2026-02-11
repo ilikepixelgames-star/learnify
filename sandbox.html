@@ -91,6 +91,10 @@ button.archive:hover {
 
 h1 { margin-bottom: 10px; }
 p { opacity: 0.85; }
+
+.far-right {
+  display: none; /* hidden by default */
+}
 </style>
 </head>
 
@@ -129,7 +133,7 @@ p { opacity: 0.85; }
     <button id="back-lobby-btn">Back to Main Lobby</button>
   </div>
 
-  <!-- FAR RIGHT: My Quizzes Panel -->
+  <!-- FAR RIGHT: My Quizzes Panel (hidden by default) -->
   <div class="far-right">
     <h1>My Sandbox Quizzes</h1>
     <ul id="my-quizzes-list"></ul>
@@ -252,7 +256,18 @@ q("delete-quiz-btn").onclick = () => {
   }
 };
 
-q("back-create-btn").onclick = () => alert("Back to Create clicked (non-functional)");
+// ✅ Show My Quizzes panel when button clicked
+q("my-quizzes-btn").onclick = () => {
+  document.querySelector(".left").style.display = "none";
+  document.querySelector(".far-right").style.display = "block";
+  renderMyQuizzes();
+};
+
+// ✅ Back to Create Quiz panel
+q("back-create-btn").onclick = () => {
+  document.querySelector(".far-right").style.display = "none";
+  document.querySelector(".left").style.display = "block";
+};
 
 renderMyQuizzes();
 </script>
