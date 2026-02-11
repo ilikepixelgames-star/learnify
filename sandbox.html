@@ -31,7 +31,7 @@ body{
 }
 
 .flash{
-  box-shadow:0 0 25px #00ffcc;
+  box-shadow:0 0 30px #00ffcc;
 }
 
 button{
@@ -88,6 +88,8 @@ input{
 <div class="panel" id="myQuizPanel" style="display:none;">
 <h3>My Quizzes</h3>
 <ul id="quizList"></ul>
+
+<button onclick="deleteQuiz()" class="archive">Delete Quiz</button>
 <button onclick="backToCreate()">Back</button>
 </div>
 
@@ -182,6 +184,11 @@ function renderQuizzes(){
   quizList.innerHTML="";
   let saved = JSON.parse(localStorage.getItem("myQuizzes")||"{}");
 
+  if(Object.keys(saved).length===0){
+    quizList.innerHTML="<li>No quizzes saved</li>";
+    return;
+  }
+
   for(let name in saved){
     let li=document.createElement("li");
     li.textContent=name;
@@ -191,6 +198,19 @@ function renderQuizzes(){
       alert("Loaded "+name);
     };
     quizList.appendChild(li);
+  }
+}
+
+function deleteQuiz(){
+  let saved = JSON.parse(localStorage.getItem("myQuizzes")||"{}");
+  const name = prompt("Enter quiz name to delete:");
+  if(saved[name]){
+    delete saved[name];
+    localStorage.setItem("myQuizzes",JSON.stringify(saved));
+    renderQuizzes();
+    alert("Deleted!");
+  } else {
+    alert("Quiz not found.");
   }
 }
 
@@ -256,22 +276,25 @@ function showQuestion(){
   });
 }
 
-/* BACK TO LOBBY WITH VISUAL FEEDBACK */
+/* BACK TO LOBBY */
 
 function backToLobby(){
 
+  // Always force lobby view
   lobbyView.style.display="block";
   gameView.style.display="none";
 
+  // Reset game state
   currentQuestionIndex=0;
   score=0;
   gameQuestion.textContent="";
   answers.innerHTML="";
   scoreDisplay.textContent="";
+
   lobby=null;
   lobbyStatus.textContent="Status: No Active Game";
 
-  // VISUAL FLASH EFFECT
+  // Visual flash so you SEE it worked
   multiPanel.classList.add("flash");
   setTimeout(()=>{
     multiPanel.classList.remove("flash");
