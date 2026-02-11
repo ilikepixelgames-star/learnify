@@ -30,10 +30,6 @@ body{
   transition:0.3s;
 }
 
-.flash{
-  box-shadow:0 0 30px #00ffcc;
-}
-
 button{
   margin:6px;
   padding:10px 18px;
@@ -103,7 +99,7 @@ input{
 <button onclick="joinGame()">Join Game</button><br>
 <button onclick="showPlayers()">Players Joined</button><br>
 <button onclick="startGame()">Start Game</button><br>
-<button onclick="backToLobby()">Back to Lobby</button>
+<button id="backLobbyBtn">Back to Lobby</button>
 </div>
 
 <div id="gameView" style="display:none;">
@@ -124,26 +120,14 @@ let currentQuestionIndex = 0;
 let score = 0;
 
 /* CREATE QUIZ */
-
 function addQuestion(){
   const q = question.value.trim();
   const answers = [a1.value,a2.value,a3.value,a4.value];
   const correctIndex = parseInt(correct.value)-1;
-
-  if(!q || answers.includes("") || correctIndex<0 || correctIndex>3){
-    alert("Fill everything correctly!");
-    return;
-  }
-
+  if(!q || answers.includes("") || correctIndex<0 || correctIndex>3){ alert("Fill everything correctly!"); return; }
   questions.push({q,answers,correct:correctIndex});
   updateQuestionList();
-
-  question.value="";
-  a1.value="";
-  a2.value="";
-  a3.value="";
-  a4.value="";
-  correct.value="";
+  question.value=""; a1.value=""; a2.value=""; a3.value=""; a4.value=""; correct.value="";
 }
 
 function updateQuestionList(){
@@ -157,18 +141,15 @@ function updateQuestionList(){
 
 function saveQuiz(){
   if(questions.length===0){ alert("No questions!"); return; }
-
   let saved = JSON.parse(localStorage.getItem("myQuizzes")||"{}");
   const name = prompt("Quiz name:");
   if(!name) return;
-
   saved[name]=questions;
   localStorage.setItem("myQuizzes",JSON.stringify(saved));
   alert("Saved!");
 }
 
 /* MY QUIZZES */
-
 function showMyQuizzes(){
   createPanel.style.display="none";
   myQuizPanel.style.display="block";
@@ -183,12 +164,7 @@ function backToCreate(){
 function renderQuizzes(){
   quizList.innerHTML="";
   let saved = JSON.parse(localStorage.getItem("myQuizzes")||"{}");
-
-  if(Object.keys(saved).length===0){
-    quizList.innerHTML="<li>No quizzes saved</li>";
-    return;
-  }
-
+  if(Object.keys(saved).length===0){ quizList.innerHTML="<li>No quizzes saved</li>"; return; }
   for(let name in saved){
     let li=document.createElement("li");
     li.textContent=name;
@@ -209,13 +185,10 @@ function deleteQuiz(){
     localStorage.setItem("myQuizzes",JSON.stringify(saved));
     renderQuizzes();
     alert("Deleted!");
-  } else {
-    alert("Quiz not found.");
-  }
+  } else { alert("Quiz not found."); }
 }
 
 /* MULTIPLAYER */
-
 function hostGame(){
   if(questions.length===0){ alert("Create a quiz first!"); return; }
   lobby={players:["Host"]};
@@ -227,43 +200,35 @@ function joinGame(){
   const name=prompt("Player name:");
   if(!name) return;
   lobby.players.push(name);
+  lobbyStatus.textContent="Status: "+lobby.players.join(", ")+" in Lobby";
 }
 
 function showPlayers(){
   if(!lobby){ alert("No active game!"); return; }
-  alert(lobby.players.join("\n"));
+  alert("Players:\n"+lobby.players.join("\n"));
 }
 
 /* GAME */
-
 function startGame(){
   if(!lobby){ alert("Host first!"); return; }
-
-  currentQuestionIndex=0;
-  score=0;
-
+  currentQuestionIndex=0; score=0;
   lobbyView.style.display="none";
   gameView.style.display="block";
   lobbyStatus.textContent="Status: In Game";
-
   showQuestion();
 }
 
 function showQuestion(){
-
   if(currentQuestionIndex>=questions.length){
     gameQuestion.textContent="Game Over!";
     answers.innerHTML="";
     scoreDisplay.textContent="Final Score: "+score;
     return;
   }
-
   let q=questions[currentQuestionIndex];
-
   gameQuestion.textContent=q.q;
   answers.innerHTML="";
   scoreDisplay.textContent="Score: "+score;
-
   q.answers.forEach((ans,i)=>{
     let btn=document.createElement("button");
     btn.textContent=ans;
@@ -276,38 +241,34 @@ function showQuestion(){
   });
 }
 
-/* BACK TO LOBBY */
-
-function backToLobby(){
-
-  // Always force lobby view
-  lobbyView.style.display="block";
-  gameView.style.display="none";
-
-  // Reset game state
+/* FULLY FUNCTIONAL BACK TO LOBBY */
+const backLobbyBtn = document.getElementById("backLobbyBtn");
+backLobbyBtn.onclick = () => {
+  // Reset game
   currentQuestionIndex=0;
   score=0;
   gameQuestion.textContent="";
   answers.innerHTML="";
   scoreDisplay.textContent="";
 
+  // Reset lobby
   lobby=null;
   lobbyStatus.textContent="Status: No Active Game";
 
-  // Visual flash so you SEE it worked
+  // Show Lobby view
+  lobbyView.style.display="block";
+  gameView.style.display="none";
+
+  // Visual flash
   multiPanel.classList.add("flash");
-  setTimeout(()=>{
-    multiPanel.classList.remove("flash");
-  },300);
-}
+  setTimeout(()=>multiPanel.classList.remove("flash"),300);
+};
 
-/* RESET */
-
+/* RESET EVERYTHING */
 function resetEverything(){
-  questions=[];
-  lobby=null;
+  questions=[]; lobby=null;
   updateQuestionList();
-  backToLobby();
+  backLobbyBtn.onclick(); // reuse fully working back-to-lobby
 }
 </script>
 
