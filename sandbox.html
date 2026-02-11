@@ -82,6 +82,9 @@ input{
 <div class="panel">
 <h3>Multiplayer Lobby</h3>
 
+<!-- ✅ ADDED STATUS DISPLAY -->
+<p id="lobbyStatus">Status: No Active Game</p>
+
 <div id="lobbyView">
 <button onclick="hostGame()">Host Game</button><br>
 <button onclick="joinGame()">Join Game</button><br>
@@ -152,6 +155,7 @@ function hostGame(){
     return;
   }
   lobby = { players:["Host"] };
+  lobbyStatus.textContent = "Status: Game Hosted";
   alert("Game Hosted!");
 }
 
@@ -188,6 +192,8 @@ function startGame(){
   lobbyView.style.display="none";
   gameView.style.display="block";
 
+  lobbyStatus.textContent = "Status: In Game";
+
   showQuestion();
 }
 
@@ -222,22 +228,19 @@ function showQuestion(){
 
 function backToLobby(){
 
-  // Always force lobby view
   lobbyView.style.display="block";
   gameView.style.display="none";
 
-  // Reset game state
   currentQuestionIndex = 0;
   score = 0;
 
-  // Clear game display
   gameQuestion.textContent="";
   answers.innerHTML="";
   scoreDisplay.textContent="";
 
-  // Clear lobby session
   lobby = null;
 
+  lobbyStatus.textContent = "Status: No Active Game";
 }
 
 /* -------- RESET EVERYTHING -------- */
@@ -249,6 +252,7 @@ function resetEverything(){
     currentQuestionIndex=0;
     score=0;
     updateQuestionList();
+    lobbyStatus.textContent = "Status: No Active Game";
     backToLobby();
   }
 }
