@@ -10,10 +10,22 @@ const app = express();
 app.use(bodyParser.json());
 
 
-// CREATE ASSIGNMENT (teacher)
+// ====== ORIGINAL LOBBY ======
+app.get('/lobby', (req, res) => {
+    res.send("Welcome to the Learnify Lobby! Play any quiz you want.");
+});
+
+
+// ====== TEACHER ASSIGNMENT SYSTEM ======
+
+// Teacher creates an assignment
 app.post('/create-assignment', (req, res) => {
 
     const { quizId, teacher } = req.body;
+
+    if (!quizId || !teacher) {
+        return res.json({ error: "quizId and teacher are required" });
+    }
 
     const code = createAssignment(quizId, teacher);
 
@@ -21,30 +33,39 @@ app.post('/create-assignment', (req, res) => {
         message: "Assignment created",
         code: code
     });
-
 });
 
 
-// JOIN ASSIGNMENT (student)
+// Student joins assignment with code
 app.post('/join-assignment', (req, res) => {
 
     const { code } = req.body;
 
+    if (!code) {
+        return res.json({ error: "Assignment code is required" });
+    }
+
     const assignment = findAssignment(code);
 
     if (!assignment) {
-        return res.json({
-            error: "Assignment not found"
-        });
+        return res.json({ error: "Assignment not found" });
     }
 
     res.json({
         quizId: assignment.quizId
     });
-
 });
 
 
-app.listen(5000, () => {
-    console.log("Learnify server running on port 5000");
+// ====== OPTIONAL: HEALTH CHECK ======
+app.get('/', (req, res) => {
+    res.send("Learnify server is running!");
+});
+
+
+// ====== START SERVER ======
+const PORT = 5000;
+
+app.listen(PORT, () => {
+    console.log(`Learnify server running on port ${PORT}`);
 });
